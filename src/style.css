@@ -456,25 +456,6 @@ button:disabled {
   background: linear-gradient(180deg, #8e0a0a, #1b0202);
 }
 
-.symbol-card.jackpot::before {
-  content: 'FAMILIE CLUB 2000';
-  position: absolute;
-  z-index: 2;
-  top: 7px;
-  left: 50%;
-  max-width: 86%;
-  padding: 5px 8px 4px;
-  border: 1px solid var(--gold);
-  border-radius: 4px 4px 10px 10px;
-  background: linear-gradient(180deg, #fff2a4, #d99013 62%, #6d2104);
-  color: #260900;
-  font-size: clamp(7px, 2vw, 10px);
-  line-height: 1;
-  text-align: center;
-  transform: translateX(-50%);
-  box-shadow: 0 0 12px rgba(255, 212, 77, 0.6);
-}
-
 .symbol-card.joker {
   place-items: center;
   background:

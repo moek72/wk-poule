@@ -77,7 +77,7 @@ export function showJackpotPopup(win, onClose) {
   showPopup(`
     <div class="popup-card jackpot-card">
       <p class="popup-kicker">ALLE LAMPEN AAN</p>
-      <div class="crown-mark"><span>FAMILIE CLUB 2000</span></div>
+      <div class="crown-mark"><span>MOEK JACKPOT</span></div>
       <h2>JACKPOT! 3x MOEK!</h2>
       ${imageStrip(win.symbols)}
       <div class="jackpot-value led-display">200</div>

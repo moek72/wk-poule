@@ -170,7 +170,7 @@ export function evaluateFeatureWin(symbols, mysteryAmount = generateMysteryPrize
   if (target.tier === 'jackpot' && nonWild.length + wildCount >= 3) {
     return {
       kind: 'feature-crown',
-      title: 'CLUBSPEL KROONKANS',
+      title: 'FAMILIE CLUB 2000 PRIJS',
       amount: 100,
       symbol: target,
       symbols,
