@@ -25,6 +25,7 @@ import {
 
 const app = document.getElementById('app');
 let cancelSpin = null;
+let holdUsedThisSpin = false;
 
 function boot() {
   patchState({
@@ -138,6 +139,7 @@ function beginSpin({ feature, holds }) {
   closePopup();
   cancelSpin?.();
   const mode = feature ? 'feature-spinning' : 'spinning';
+  holdUsedThisSpin = !feature && holds.some(Boolean);
   const result = buildSpinResult({
     current: state.reels,
     holds,
@@ -185,7 +187,7 @@ function finishSpin(symbols, feature) {
     reels: symbols,
     stats,
     mode: 'idle',
-    holds: win && !feature ? holdMaskForWin(symbols, win) : [false, false, false],
+    holds: win && !feature && !holdUsedThisSpin ? holdMaskForWin(symbols, win) : [false, false, false],
   });
   setAllHolds(state.holds, feature);
   setClubRingActive(false);
