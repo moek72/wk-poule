@@ -1,3 +1,7 @@
+import { randomSymbol } from '../data/symbols.js';
+
+const lastSymbol = [null, null, null];
+
 function symbolMarkup(symbol) {
   if (!symbol) return `<div class="symbol-card empty"><span>?</span></div>`;
   if (symbol.type === 'joker') {
@@ -16,6 +20,14 @@ function symbolMarkup(symbol) {
   `;
 }
 
+function reelHTML(index, midSymbol) {
+  return `
+    <div class="reel-slot top-slot" id="reelSlot${index}-top">${symbolMarkup(randomSymbol())}</div>
+    <div class="reel-slot mid-slot" id="reelSlot${index}-mid">${symbolMarkup(midSymbol)}</div>
+    <div class="reel-slot bot-slot" id="reelSlot${index}-bot">${symbolMarkup(randomSymbol())}</div>
+  `;
+}
+
 export function renderReelsPanel(reels) {
   return `
     <section class="lower-panel" id="lowerPanel">
@@ -23,8 +35,8 @@ export function renderReelsPanel(reels) {
         <div class="win-line" id="winLine"></div>
         ${[0, 1, 2].map((index) => `
           <div class="reel-shell" id="reelShell${index}">
-            <div class="reel-window" id="reel${index}">
-              ${symbolMarkup(reels[index])}
+            <div class="reel-track" id="reel${index}">
+              ${reelHTML(index, reels[index])}
             </div>
           </div>
         `).join('')}
@@ -37,13 +49,26 @@ export function renderReelsPanel(reels) {
 }
 
 export function updateReel(index, symbol) {
-  const node = document.getElementById(`reel${index}`);
-  if (!node) return;
-  node.innerHTML = symbolMarkup(symbol);
+  const topNode = document.getElementById(`reelSlot${index}-top`);
+  const midNode = document.getElementById(`reelSlot${index}-mid`);
+  const botNode = document.getElementById(`reelSlot${index}-bot`);
+  if (!midNode) return;
+  lastSymbol[index] = symbol;
+  if (topNode) topNode.innerHTML = midNode.innerHTML;
+  midNode.innerHTML = symbolMarkup(symbol);
+  if (botNode) botNode.innerHTML = symbolMarkup(randomSymbol());
 }
 
 export function setReelSpinning(index, active) {
   document.getElementById(`reelShell${index}`)?.classList.toggle('spinning', active);
+  if (!active && lastSymbol[index]) {
+    const topNode = document.getElementById(`reelSlot${index}-top`);
+    const midNode = document.getElementById(`reelSlot${index}-mid`);
+    const botNode = document.getElementById(`reelSlot${index}-bot`);
+    if (midNode) midNode.innerHTML = symbolMarkup(lastSymbol[index]);
+    if (topNode) topNode.innerHTML = symbolMarkup(randomSymbol());
+    if (botNode) botNode.innerHTML = symbolMarkup(randomSymbol());
+  }
 }
 
 export function setHoldActive(index, active, disabled = false) {

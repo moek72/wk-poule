@@ -362,7 +362,7 @@ button:disabled {
 .reel-shell {
   position: relative;
   min-width: 0;
-  aspect-ratio: 0.78;
+  height: clamp(240px, 64vw, 330px);
   overflow: hidden;
   border: 2px solid #f2d879;
   border-radius: 6px;
@@ -391,12 +391,24 @@ button:disabled {
   background: linear-gradient(0deg, rgba(0, 0, 0, 0.52), transparent);
 }
 
-.reel-window {
+.reel-track {
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  transition: transform 0.12s ease;
 }
 
-.reel-shell.spinning .reel-window {
+.reel-slot {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.reel-slot.top-slot,
+.reel-slot.bot-slot {
+  opacity: 0.55;
+}
+
+.reel-shell.spinning .reel-track {
   filter: blur(2px) saturate(1.25);
   animation: reelJitter 0.12s linear infinite;
 }
@@ -820,10 +832,6 @@ button:disabled {
   .reel-stage {
     gap: 14px;
     padding: 14px 20px;
-  }
-
-  .reel-shell {
-    aspect-ratio: 0.8;
   }
 
   .controls {

@@ -4,7 +4,7 @@ export const TIERS = {
   jackpot: { label: 'JACKPOT', threeOfKind: 200, twoOfKind: null, weight: 1 },
   high: { label: 'HIGH', threeOfKind: 50, twoOfKind: 10, weight: 4 },
   mid: { label: 'MID', threeOfKind: 20, twoOfKind: 5, weight: 7 },
-  low: { label: 'LOW', threeOfKind: 8, twoOfKind: null, weight: 10 },
+  low: { label: 'LOW', threeOfKind: 8, twoOfKind: 2, weight: 10 },
 };
 
 export const JOKER = {
