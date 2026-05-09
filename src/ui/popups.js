@@ -77,6 +77,7 @@ export function showJackpotPopup(win, onClose) {
   showPopup(`
     <div class="popup-card jackpot-card">
       <p class="popup-kicker">ALLE LAMPEN AAN</p>
+      <div class="crown-mark"><span>FAMILIE CLUB 2000</span></div>
       <h2>JACKPOT! 3x MOEK!</h2>
       ${imageStrip(win.symbols)}
       <div class="jackpot-value led-display">200</div>
@@ -86,13 +87,17 @@ export function showJackpotPopup(win, onClose) {
   document.querySelector('[data-popup-action="ok"]')?.addEventListener('click', onClose);
 }
 
-export function showLoseToast(message = 'Helaas, de kast had andere plannen.') {
+export function showCollectPopup(win, onCollect) {
   showPopup(`
-    <div class="popup-card small-card">
-      <h2>${message}</h2>
+    <div class="popup-card win-card collect-card">
+      <p class="popup-kicker">CLUBSPEL PRIJS</p>
+      <h2>${win.title}</h2>
+      ${imageStrip(win.symbols)}
+      <div class="jackpot-value led-display">${String(win.amount).padStart(3, '0')}</div>
+      <button class="popup-button primary" data-popup-action="collect" type="button">COLLECT</button>
     </div>
   `);
-  window.setTimeout(closePopup, 1050);
+  document.querySelector('[data-popup-action="collect"]')?.addEventListener('click', onCollect);
 }
 
 export function showPrizeToast(title, symbols, amount, onDone) {

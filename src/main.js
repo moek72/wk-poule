@@ -15,6 +15,7 @@ import {
   renderPopupRoot,
   showBonusPopup,
   showCoinFlip,
+  showCollectPopup,
   showGambleResult,
   showIntro,
   showJackpotPopup,
@@ -65,7 +66,10 @@ function renderDebugPanel() {
     <aside class="debug-panel ${state.debug ? 'show' : ''}" id="debugPanel">
       <strong>DEBUG</strong>
       <button data-debug="moek" type="button">Force 3x Moek</button>
+      <button data-debug="nowin" type="button">Force No Win</button>
       <button data-debug="high" type="button">Force High win</button>
+      <button data-debug="low" type="button">Force Low win</button>
+      <button data-debug="featurecross" type="button">Force Feature Criss-Cross</button>
       <button data-debug="joker" type="button">Force Joker</button>
       <button data-debug="club" type="button">Geef 100 Club punten</button>
       <button data-debug="reset" type="button">Reset game</button>
@@ -193,18 +197,17 @@ function finishSpin(symbols, feature) {
     sounds.lose();
     setMessage(feature ? 'Geen feature prijs deze ronde' : 'Geen prijs - START staat klaar');
     updateEverything();
-    maybeBonus();
     return;
   }
 
   setWinLine('hit');
   if (feature) {
-    addClub(win.amount);
     sounds.win();
     pulseFeatureLights('feature');
-    setMessage(`${win.title}: ${win.amount} punten naar Club Meter`);
+    patchState({ pendingWin: win, mode: 'collecting' });
+    setMessage(`${win.title}: ${win.amount} punten - druk COLLECT`);
     updateEverything();
-    showPrizeToast(win.title, win.symbols, win.amount);
+    showCollectPopup(win, collectPending);
     return;
   }
 
@@ -309,10 +312,30 @@ function handleDebug(action) {
     setState('forcedResult', [moek, moek, moek]);
     setMessage('Debug: volgende draai is 3x Moek');
   }
+  if (action === 'nowin') {
+    setState('forcedResult', [
+      { type: 'character', ...getCharactersByTier('high')[0] },
+      { type: 'character', ...getCharactersByTier('mid')[0] },
+      { type: 'character', ...getCharactersByTier('low')[0] },
+    ]);
+    setMessage('Debug: volgende draai heeft geen prijs');
+  }
   if (action === 'high') {
     const high = { type: 'character', ...getCharactersByTier('high')[0] };
     setState('forcedResult', [high, high, high]);
     setMessage('Debug: volgende draai is high win');
+  }
+  if (action === 'low') {
+    const low = { type: 'character', ...getCharactersByTier('low')[0] };
+    setState('forcedResult', [low, low, low]);
+    setMessage('Debug: volgende draai is low win');
+  }
+  if (action === 'featurecross') {
+    const high = { type: 'character', ...getCharactersByTier('high')[0] };
+    const lowA = { type: 'character', ...getCharactersByTier('low')[0] };
+    const lowB = { type: 'character', ...getCharactersByTier('low')[1] };
+    setState('forcedResult', [high, lowA, lowB]);
+    setMessage('Debug: volgende clubspel draai is criss-cross');
   }
   if (action === 'joker') {
     setState('forcedResult', [

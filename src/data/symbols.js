@@ -117,6 +117,30 @@ export function evaluateBaseWin(symbols, mysteryAmount = generateMysteryPrize())
 
 export function evaluateFeatureWin(symbols, mysteryAmount = generateMysteryPrize()) {
   if (!symbols || symbols.length !== 3) return null;
+
+  if (sameCharacter(symbols)) {
+    if (symbols[0].id === 'moek') {
+      return {
+        kind: 'jackpot',
+        title: 'KROON JACKPOT! 3x MOEK!',
+        amount: 200,
+        symbols,
+        forceJackpot: true,
+        canGamble: false,
+      };
+    }
+
+    const tier = TIERS[symbols[0].tier];
+    return {
+      kind: 'feature-three',
+      title: `CLUBSPEL 3x ${symbols[0].name}`,
+      amount: tier.threeOfKind,
+      symbol: symbols[0],
+      symbols,
+      canGamble: false,
+    };
+  }
+
   if (symbols.some((symbol) => symbol.type === 'joker')) {
     return {
       kind: 'mystery',
@@ -141,7 +165,18 @@ export function evaluateFeatureWin(symbols, mysteryAmount = generateMysteryPrize
 
   const target = nonWild[0];
   const allMatch = nonWild.every((symbol) => symbol.id === target.id);
-  if (!allMatch || target.tier === 'jackpot') return null;
+  if (!allMatch) return null;
+
+  if (target.tier === 'jackpot' && nonWild.length + wildCount >= 3) {
+    return {
+      kind: 'feature-crown',
+      title: 'CLUBSPEL KROONKANS',
+      amount: 100,
+      symbol: target,
+      symbols,
+      canGamble: false,
+    };
+  }
 
   if (target.tier === 'high' && nonWild.length + wildCount >= 3) {
     return {

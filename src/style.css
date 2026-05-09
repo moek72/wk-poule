@@ -414,6 +414,7 @@ button:disabled {
 }
 
 .symbol-card {
+  position: relative;
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto;
   align-items: end;
@@ -453,6 +454,25 @@ button:disabled {
 
 .symbol-card.jackpot .symbol-name {
   background: linear-gradient(180deg, #8e0a0a, #1b0202);
+}
+
+.symbol-card.jackpot::before {
+  content: 'FAMILIE CLUB 2000';
+  position: absolute;
+  z-index: 2;
+  top: 7px;
+  left: 50%;
+  max-width: 86%;
+  padding: 5px 8px 4px;
+  border: 1px solid var(--gold);
+  border-radius: 4px 4px 10px 10px;
+  background: linear-gradient(180deg, #fff2a4, #d99013 62%, #6d2104);
+  color: #260900;
+  font-size: clamp(7px, 2vw, 10px);
+  line-height: 1;
+  text-align: center;
+  transform: translateX(-50%);
+  box-shadow: 0 0 12px rgba(255, 212, 77, 0.6);
 }
 
 .symbol-card.joker {
@@ -608,6 +628,7 @@ button:disabled {
   padding: 16px;
   background: rgba(0, 0, 0, 0.64);
   backdrop-filter: blur(3px);
+  pointer-events: none;
 }
 
 .popup-root.show {
@@ -626,6 +647,27 @@ button:disabled {
   text-align: center;
   transform-origin: center;
   animation: popupIn 0.24s ease both;
+  pointer-events: auto;
+}
+
+.crown-mark {
+  position: relative;
+  width: min(260px, 80%);
+  height: 72px;
+  margin: 0 auto 10px;
+  clip-path: polygon(0 100%, 0 38%, 18% 63%, 31% 12%, 50% 58%, 69% 12%, 82% 63%, 100% 38%, 100% 100%);
+  background: linear-gradient(180deg, #fff6b6, #f7c32e 48%, #a85c08);
+  box-shadow: 0 0 26px rgba(255, 212, 77, 0.65);
+}
+
+.crown-mark span {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: 10px;
+  color: #2b0a00;
+  font-size: clamp(10px, 3vw, 15px);
+  line-height: 1;
 }
 
 .popup-kicker {
