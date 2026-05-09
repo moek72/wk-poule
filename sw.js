@@ -2,7 +2,7 @@
 // Cache strategy: cache-first for assets, network-first for data
 // Bump CACHE_NAME version when deploying updates
 
-const CACHE_NAME = 'familie-club2000-v4';
+const CACHE_NAME = 'familie-club2000-v5';
 
 const ASSETS = [
   './',

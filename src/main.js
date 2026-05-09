@@ -18,7 +18,6 @@ import {
   showGambleResult,
   showIntro,
   showJackpotPopup,
-  showLoseToast,
   showMysteryPopup,
   showPrizeToast,
   showWinPopup,
@@ -192,7 +191,7 @@ function finishSpin(symbols, feature) {
   if (!win) {
     setWinLine('miss');
     sounds.lose();
-    setMessage(feature ? 'Geen feature prijs deze ronde' : 'Helaas, de kast had andere plannen.');
+    setMessage(feature ? 'Geen feature prijs deze ronde' : 'Geen prijs - START staat klaar');
     updateEverything();
     maybeBonus();
     return;
@@ -256,11 +255,11 @@ function chooseGamble(choice) {
       const updatedWin = { ...currentWin, amount };
       patchState({ pendingWin: updatedWin });
       sounds.win();
-      showGambleResult(result, amount, () => {
+      setMessage(`Goed! Prijs verdubbeld naar ${amount}`);
+      window.setTimeout(() => {
         if (amount >= 200) collectPending();
         else showGamblePrompt(updatedWin);
-      });
-      setMessage(`Goed! Prijs verdubbeld naar ${amount}`);
+      }, 450);
     } else {
       patchState({ pendingWin: null, mode: 'idle' });
       sounds.lose();
@@ -297,10 +296,7 @@ function toggleHold(index) {
 }
 
 function maybeBonus() {
-  if (Math.random() > 0.08) {
-    showLoseToast();
-    return;
-  }
+  if (Math.random() > 0.08) return;
   setState('bonus', state.bonus + 1);
   sounds.dogBonus();
   updateEverything();
