@@ -16,3 +16,9 @@ build/
 
 # Logs
 *.log
+
+# Local config
+.claude/
+
+# Temp files
+*.zip
