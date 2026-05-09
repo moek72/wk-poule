@@ -3,7 +3,7 @@ import { JOKER, randomSymbol } from './data/symbols.js';
 import { state, setState, patchState, setMessage, addClub, spendClub, spendCredit, resetState } from './game/state.js';
 import { initAudio, isMuted, setMuted, sounds, startHum } from './game/audio.js';
 import { buildSpinResult, spinReels } from './game/reels.js';
-import { evaluateSpin, holdMaskForWin, labelForSymbols } from './game/engine.js';
+import { evaluateSpin, labelForSymbols } from './game/engine.js';
 import { flipCoin, doublePrize } from './game/gamble.js';
 import { FEATURE_COST, canStartFeature } from './game/feature.js';
 import { renderUpperPanel, pulseFeatureLights, setClubRingActive } from './ui/upper-panel.js';
@@ -187,7 +187,7 @@ function finishSpin(symbols, feature) {
     reels: symbols,
     stats,
     mode: 'idle',
-    holds: win && !feature && !holdUsedThisSpin ? holdMaskForWin(symbols, win) : [false, false, false],
+    holds: [false, false, false],
   });
   setAllHolds(state.holds, feature);
   setClubRingActive(false);
