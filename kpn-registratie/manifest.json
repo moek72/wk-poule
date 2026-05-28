@@ -1,6 +1,6 @@
 {
-  "name": "KPN Rittenregistratie",
-  "short_name": "KPN Ritten",
+  "name": "Moek's Rittenregistratie",
+  "short_name": "Moek's Ritten",
   "description": "Registreer uw zakelijke en privéritten voor de belastingdienst",
   "start_url": "./index.html",
   "display": "standalone",

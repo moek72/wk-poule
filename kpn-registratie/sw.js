@@ -1,6 +1,6 @@
-// KPN Rittenregistratie — service worker (cache-first)
+// Moek's Rittenregistratie — service worker (cache-first)
 
-const CACHE = 'kpn-ritten-v1';
+const CACHE = 'moeks-ritten-v1';
 
 const ASSETS = [
   './',

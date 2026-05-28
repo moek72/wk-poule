@@ -1,8 +1,8 @@
 // KPN Rittenregistratie — app logica
 
-const TRIPS_KEY    = 'kpn_ritten_v1';
-const SETTINGS_KEY = 'kpn_settings_v1';
-const ACTIVE_KEY   = 'kpn_active_rit_v1';
+const TRIPS_KEY    = 'moek_ritten_v1';
+const SETTINGS_KEY = 'moek_settings_v1';
+const ACTIVE_KEY   = 'moek_active_rit_v1';
 
 let trips      = [];
 let settings   = {};
@@ -149,12 +149,18 @@ function closeModal(id) {
 
 function initStartModal() {
   document.getElementById('btn-start').addEventListener('click', () => {
-    document.getElementById('start-km').value        = '';
+    // Vul beginstand automatisch in met de laatste eindstand
+    const lastKm = trips.length > 0 ? trips[trips.length - 1].kmEnd : '';
+    document.getElementById('start-km').value        = lastKm || '';
     document.getElementById('start-postcode').value  = '';
     document.getElementById('start-plaats').value    = '';
     document.querySelector('input[name="start-soort"][value="zakelijk"]').checked = true;
     openModal('modal-start');
-    setTimeout(() => document.getElementById('start-km').focus(), 300);
+    setTimeout(() => {
+      const kmInput = document.getElementById('start-km');
+      kmInput.focus();
+      kmInput.select();
+    }, 300);
   });
 
   document.getElementById('btn-start-annuleer').addEventListener('click', () => closeModal('modal-start'));
@@ -183,14 +189,26 @@ function initStartModal() {
   });
 }
 
+// ── Km-diff berekening ─────────────────────────────────────────────────────
+
+function updateKmDiff() {
+  const end  = parseInt(document.getElementById('stop-km').value, 10);
+  const diff = document.getElementById('km-diff');
+  if (activeTrip && Number.isFinite(end) && end > activeTrip.kmStart) {
+    diff.textContent = `Gereden kilometers: ${end - activeTrip.kmStart} km`;
+  } else {
+    diff.textContent = 'Gereden kilometers: -- km';
+  }
+}
+
 // ── Beëindig rit ───────────────────────────────────────────────────────────
 
 function initStopModal() {
   document.getElementById('btn-stop').addEventListener('click', () => {
-    document.getElementById('stop-km').value       = '';
+    document.getElementById('stop-km').value        = '';
     document.getElementById('stop-postcode').value  = '';
     document.getElementById('stop-plaats').value    = '';
-    document.getElementById('km-diff').textContent  = 'Gereden kilometers: -- km';
+    updateKmDiff();
     openModal('modal-stop');
     setTimeout(() => document.getElementById('stop-km').focus(), 300);
   });
@@ -198,15 +216,7 @@ function initStopModal() {
   document.getElementById('btn-stop-annuleer').addEventListener('click', () => closeModal('modal-stop'));
   document.querySelector('#modal-stop .modal-backdrop').addEventListener('click', () => closeModal('modal-stop'));
 
-  document.getElementById('stop-km').addEventListener('input', e => {
-    const end = parseInt(e.target.value, 10);
-    const diff = document.getElementById('km-diff');
-    if (activeTrip && Number.isFinite(end) && end > activeTrip.kmStart) {
-      diff.textContent = `Gereden kilometers: ${end - activeTrip.kmStart} km`;
-    } else {
-      diff.textContent = 'Gereden kilometers: -- km';
-    }
-  });
+  document.getElementById('stop-km').addEventListener('input', updateKmDiff);
 
   document.getElementById('btn-gps-stop').addEventListener('click', () =>
     fetchGPS('stop-postcode', 'stop-plaats', 'btn-gps-stop')
@@ -353,7 +363,7 @@ function exportExcel() {
       </x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook>
     </xml><![endif]-->
   </head><body><table>
-    <tr><td colspan="9"><b>KPN Rittenregistratie</b></td></tr>
+    <tr><td colspan="9"><b>Moek's Rittenregistratie</b></td></tr>
     <tr><td>Naam:</td><td colspan="8">${naam}</td></tr>
     <tr><td>Kenteken:</td><td colspan="8">${kenteken}</td></tr>
     <tr><td>Voertuig:</td><td colspan="8">${voertuig}</td></tr>
@@ -371,7 +381,7 @@ function exportExcel() {
   const url  = URL.createObjectURL(blob);
   const a    = Object.assign(document.createElement('a'), {
     href:     url,
-    download: `kpn-ritten-${new Date().toISOString().slice(0, 10)}.xls`,
+    download: `moeks-ritten-${new Date().toISOString().slice(0, 10)}.xls`,
   });
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 5000);
