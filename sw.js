@@ -2,7 +2,10 @@
 // Cache strategy: cache-first for assets, network-first for data
 // Bump CACHE_NAME version when deploying updates
 
-const CACHE_NAME = 'familie-club2000-v10';
+const CACHE_NAME = 'familie-club2000-v11';
+
+// Paden die NOOIT gecachet mogen worden (altijd vers van het netwerk)
+const NETWORK_ONLY = ['wkpoule.html'];
 
 const ASSETS = [
   './',
@@ -84,7 +87,13 @@ self.addEventListener('activate', event => {
 // Fetch event: cache-first
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
-  
+
+  // WK Poule altijd vers van het netwerk halen (live data + updates)
+  if (NETWORK_ONLY.some(p => event.request.url.includes(p))) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then(cached => {
       if (cached) return cached;

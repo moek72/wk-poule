@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Familie WK Poule 2026</title>
+<title>Jaikaran Family WK Poule 2026</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;700;800;900&display=swap');
 :root{--rood:#E8003D;--goud:#FFD700;--groen:#00C853;--donker:#060610;--card:#0f0f1e;--card2:#161628;--border:#1e1e35;--tekst:#f0f0ff;--dim:#6b6b8a;--oranje:#FF6D00;}
@@ -11,7 +11,8 @@
 body{background:var(--donker);color:var(--tekst);font-family:'Nunito',sans-serif;min-height:100vh;overflow-x:hidden;}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(232,0,61,.06),transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(255,215,0,.05),transparent 50%);pointer-events:none;z-index:0;}
 .header{position:relative;z-index:1;padding:20px 16px 14px;text-align:center;border-bottom:1px solid var(--border);background:linear-gradient(180deg,rgba(232,0,61,.08),transparent);}
-.logo{font-size:2.6rem;animation:bounce 2s ease-in-out infinite;}
+.logo{animation:bounce 2s ease-in-out infinite;}
+.logo img{width:86px;height:86px;border-radius:50%;box-shadow:0 0 30px rgba(255,215,0,.3);}
 @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
 h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:var(--goud);letter-spacing:3px;line-height:1;text-shadow:0 0 40px rgba(255,215,0,.35);margin:5px 0 3px;}
 .sub{font-size:.73rem;color:var(--dim);letter-spacing:1px;}
@@ -155,26 +156,12 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 .daghdr{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--tekst);letter-spacing:1.5px;margin:16px 0 8px;display:flex;align-items:center;gap:8px;}
 .daghdr::after{content:'';flex:1;height:1px;background:var(--border);}
 
-/* ── Firebase Setup Overlay ── */
+/* ── Modal (uitslagen invoeren) ── */
 .mo{position:fixed;inset:0;background:rgba(6,6,16,.97);z-index:500;display:none;align-items:center;justify-content:center;padding:15px;overflow-y:auto;}
 .mo.open{display:flex;}
-.md{background:var(--card);border:1px solid var(--border);border-radius:17px;padding:22px;max-width:480px;width:100%;}
+.md{background:var(--card);border:1px solid var(--border);border-radius:17px;padding:22px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;}
 .md h2{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--goud);letter-spacing:2px;margin-bottom:6px;}
-.md .intro{font-size:.8rem;color:var(--dim);margin-bottom:16px;line-height:1.5;}
-.step{display:flex;gap:10px;margin-bottom:14px;align-items:flex-start;}
-.snum{background:var(--rood);color:#fff;font-weight:900;font-size:.75rem;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
-.stxt{font-size:.79rem;color:#ccc;line-height:1.55;}
-.stxt a{color:var(--goud);text-decoration:none;}
-.stxt code{background:var(--donker);border:1px solid var(--border);border-radius:5px;padding:1px 5px;font-size:.72rem;color:#CE93D8;}
-.cfg-lbl{font-size:.72rem;font-weight:800;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;margin-top:10px;}
-.cfg-in{width:100%;background:var(--donker);border:2px solid var(--border);border-radius:10px;padding:9px 12px;color:var(--tekst);font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:700;outline:none;transition:border-color .2s;}
-.cfg-in:focus{border-color:var(--goud);}
-.cfg-in::placeholder{color:var(--dim);font-weight:400;}
-.cfg-hint{font-size:.66rem;color:var(--dim);margin-top:3px;}
-.rules-box{background:var(--donker);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:.69rem;color:#CE93D8;line-height:1.7;margin:6px 0 10px;font-family:monospace;white-space:pre;}
-.conn-status{text-align:center;padding:12px;font-size:.82rem;font-weight:800;border-radius:10px;margin-bottom:10px;display:none;}
-.conn-status.ok{background:rgba(0,200,83,.1);border:1px solid rgba(0,200,83,.3);color:var(--groen);}
-.conn-status.err{background:rgba(232,0,61,.1);border:1px solid rgba(232,0,61,.3);color:var(--rood);}
+.md p{font-size:.8rem;color:var(--dim);margin-bottom:14px;line-height:1.5;}
 </style>
 </head>
 <body>
@@ -182,8 +169,8 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 <div class="sbar" id="sbar"><span id="si">⏳</span><span id="st">Verbinden met database...</span></div>
 
 <div class="header">
-  <div class="logo">⚽</div>
-  <h1>Familie WK Poule 2026</h1>
+  <div class="logo"><img src="assets/jaikaran-logo.png" alt="Jaikaran Family"></div>
+  <h1>Jaikaran WK Poule 2026</h1>
   <div class="sub">11 JUN – 19 JUL · VS · CANADA · MEXICO · 104 WEDSTRIJDEN</div>
   <div class="prijs">🍖 Hoofdprijs: Geheel verzorgde BBQ door Kawita thuis! 🤣</div>
 </div>
@@ -266,7 +253,6 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
       <h3>🔐 Beheerder</h3>
       <p>Uitslagen van gespeelde wedstrijden invoeren (met pincode). De ranglijst en het Uitslagen-tabblad worden direct live bijgewerkt voor iedereen.</p>
       <button class="btn bg" onclick="openAdmin()" style="margin-top:8px">📝 Uitslagen invoeren</button>
-      <button class="btn bred" onclick="document.getElementById('fmo').classList.add('open')">🔧 Database instellingen</button>
     </div>
   </div>
 </div>
@@ -274,9 +260,6 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 <button class="sab" id="sab" onclick="slaOp()">💾 Opslaan</button>
 <div class="toast" id="toast"></div>
 
-<!-- ══════════════════════════════════════════════
-     FIREBASE SETUP WIZARD
-══════════════════════════════════════════════ -->
 <div class="mo" id="amo">
   <div class="md">
     <h2>🔐 Uitslagen invoeren</h2>
@@ -287,37 +270,6 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
   </div>
 </div>
 
-<div class="mo" id="fmo">
-  <div class="md">
-    <h2>⚙️ Database instellingen</h2>
-    <p class="intro">De app is al gekoppeld aan Firebase. Gebruik dit scherm alleen als de Realtime Database URL afwijkt (bv. andere regio).</p>
-
-    <div class="step">
-      <div class="snum">1</div>
-      <div class="stxt">Zorg dat je in Firebase Console een <strong>Realtime Database</strong> hebt aangemaakt (<strong>Build → Realtime Database → Database aanmaken → Europe-west1 → testmodus</strong>).</div>
-    </div>
-
-    <div class="step">
-      <div class="snum">2</div>
-      <div class="stxt">Pas de <strong>Regels</strong> aan in de Realtime Database:</div>
-    </div>
-    <div class="rules-box">{"rules": {".read": true, ".write": true}}</div>
-
-    <div class="step">
-      <div class="snum">3</div>
-      <div class="stxt">Kopieer de Database URL (staat bovenaan het Data-tabblad) en plak hem hieronder als hij anders is dan de standaard.</div>
-    </div>
-
-    <div class="cfg-lbl">Database URL (alleen invullen als afwijkend)</div>
-    <input class="cfg-in" id="cfg-dbUrl" placeholder="https://wk-2026-poule-867ae-default-rtdb.europe-west1.firebasedatabase.app" autocomplete="off" spellcheck="false">
-    <div class="cfg-hint">Standaard: europe-west1 — laat leeg om de standaard te gebruiken</div>
-
-    <div class="conn-status" id="conn-status"></div>
-
-    <button class="btn bg" style="margin-top:14px" onclick="slaConfigOp()">💾 Opslaan & herladen</button>
-    <button class="btn bred" onclick="document.getElementById('fmo').classList.remove('open')">✕ Sluiten</button>
-  </div>
-</div>
 
 <script type="module">
 // ════════════════════════════════════════════════════════
@@ -449,29 +401,12 @@ const FIREBASE_CONFIG = {
   appId: "1:889661679081:web:5fce0db1b56b3f90ff9778"
 };
 
-function toonConnStatus(msg,type){
-  const el=document.getElementById('conn-status');
-  el.textContent=msg;el.style.display='block';
-  el.className='conn-status'+(type?' '+type:'');
-}
-
-// Wizard: handmatig database-URL overschrijven (voor beheerder)
-function slaConfigOp(){
-  const dbUrl=document.getElementById('cfg-dbUrl').value.trim();
-  if(!dbUrl){toonConnStatus('Vul de Database URL in','err');return;}
-  localStorage.setItem('wk_db_url_override',dbUrl);
-  toonConnStatus('✅ Opgeslagen! Pagina herlaadt...','ok');
-  setTimeout(()=>location.reload(),1000);
-}
-
 // ── Firebase laden ──
 async function initFirebase(){
   try{
     const {initializeApp}=await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
     const {getDatabase,ref,set,get,onValue,update}=await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js");
     const cfg={...FIREBASE_CONFIG};
-    const override=localStorage.getItem('wk_db_url_override');
-    if(override)cfg.databaseURL=override;
     const app=initializeApp(cfg,'wkpoule');
     const db=getDatabase(app);
     _db=db;_ref=ref;_set=set;_get=get;_onValue=onValue;_update=update;
@@ -841,8 +776,6 @@ function tt(msg,err){
   t.textContent=msg;t.className='toast'+(err?' e':'');
   t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);
 }
-
-window.slaConfigOp=slaConfigOp;
 
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('ni').addEventListener('keypress',e=>{if(e.key==='Enter')setN();});
