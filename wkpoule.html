@@ -253,53 +253,33 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 ══════════════════════════════════════════════ -->
 <div class="mo" id="fmo">
   <div class="md">
-    <h2>⚙️ Firebase Koppelen</h2>
-    <p class="intro">Volg deze 5 stappen om de live database aan te zetten. Dit hoef je maar één keer te doen — de instellingen worden opgeslagen op dit apparaat.</p>
+    <h2>⚙️ Database instellingen</h2>
+    <p class="intro">De app is al gekoppeld aan Firebase. Gebruik dit scherm alleen als de Realtime Database URL afwijkt (bv. andere regio).</p>
 
     <div class="step">
       <div class="snum">1</div>
-      <div class="stxt">Ga naar <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a> en maak een <strong>nieuw project</strong> aan. Naam maakt niet uit (bv. <code>familie-wk-poule</code>). Google Analytics kun je uitschakelen.</div>
+      <div class="stxt">Zorg dat je in Firebase Console een <strong>Realtime Database</strong> hebt aangemaakt (<strong>Build → Realtime Database → Database aanmaken → Europe-west1 → testmodus</strong>).</div>
     </div>
 
     <div class="step">
       <div class="snum">2</div>
-      <div class="stxt">In je project: klik op <strong>Realtime Database</strong> → <strong>Database aanmaken</strong>. Kies <strong>Europe-west1</strong> als locatie. Start in <strong>testmodus</strong>.</div>
-    </div>
-
-    <div class="step">
-      <div class="snum">3</div>
-      <div class="stxt">Ga naar <strong>Projectinstellingen</strong> (tandwiel ⚙️ bovenaan) → tabblad <strong>Algemeen</strong> → scroll naar beneden → klik op het web-icoon <code>&lt;/&gt;</code> → registreer de app. Je ziet dan de <code>firebaseConfig</code>. Kopieer de waarden hieronder.</div>
-    </div>
-
-    <div class="step">
-      <div class="snum">4</div>
-      <div class="stxt">Pas in de Realtime Database de <strong>Regels</strong> aan zodat iedereen kan lezen én schrijven:</div>
+      <div class="stxt">Pas de <strong>Regels</strong> aan in de Realtime Database:</div>
     </div>
     <div class="rules-box">{"rules": {".read": true, ".write": true}}</div>
 
     <div class="step">
-      <div class="snum">5</div>
-      <div class="stxt">Vul hieronder je Firebase gegevens in en klik op <strong>Verbinden</strong>.</div>
+      <div class="snum">3</div>
+      <div class="stxt">Kopieer de Database URL (staat bovenaan het Data-tabblad) en plak hem hieronder als hij anders is dan de standaard.</div>
     </div>
 
-    <div class="cfg-lbl">API Key</div>
-    <input class="cfg-in" id="cfg-apiKey" placeholder="AIzaSy..." autocomplete="off" spellcheck="false">
-
-    <div class="cfg-lbl">Project ID</div>
-    <input class="cfg-in" id="cfg-projectId" placeholder="familie-wk-poule" autocomplete="off" spellcheck="false">
-    <div class="cfg-hint">Vind je bovenaan de Firebase projectpagina</div>
-
-    <div class="cfg-lbl">Database URL</div>
-    <input class="cfg-in" id="cfg-dbUrl" placeholder="https://familie-wk-poule-default-rtdb.europe-west1.firebasedatabase.app" autocomplete="off" spellcheck="false">
-    <div class="cfg-hint">Staat in Realtime Database → Data tabblad bovenaan</div>
-
-    <div class="cfg-lbl">App ID</div>
-    <input class="cfg-in" id="cfg-appId" placeholder="1:123456789:web:abc..." autocomplete="off" spellcheck="false">
+    <div class="cfg-lbl">Database URL (alleen invullen als afwijkend)</div>
+    <input class="cfg-in" id="cfg-dbUrl" placeholder="https://wk-2026-poule-867ae-default-rtdb.europe-west1.firebasedatabase.app" autocomplete="off" spellcheck="false">
+    <div class="cfg-hint">Standaard: europe-west1 — laat leeg om de standaard te gebruiken</div>
 
     <div class="conn-status" id="conn-status"></div>
 
-    <button class="btn bg" style="margin-top:14px" onclick="slaConfigOp()">🔌 Verbinden & opslaan</button>
-    <button class="btn bred" onclick="document.getElementById('fmo').classList.remove('open')">✕ Annuleren</button>
+    <button class="btn bg" style="margin-top:14px" onclick="slaConfigOp()">💾 Opslaan & herladen</button>
+    <button class="btn bred" onclick="document.getElementById('fmo').classList.remove('open')">✕ Sluiten</button>
   </div>
 </div>
 
@@ -423,30 +403,15 @@ const TOT=W.length;
 let sp=null, fbK=false, cdT={};
 let _db,_ref,_set,_get,_onValue,_update;
 
-// ── Config opslaan / laden uit localStorage ──
-function laadConfig(){
-  try{return JSON.parse(localStorage.getItem('wk_fb_cfg')||'null');}catch(e){return null;}
-}
-function slaConfigOp(){
-  const apiKey=document.getElementById('cfg-apiKey').value.trim();
-  const projectId=document.getElementById('cfg-projectId').value.trim();
-  const dbUrl=document.getElementById('cfg-dbUrl').value.trim();
-  const appId=document.getElementById('cfg-appId').value.trim();
-  if(!apiKey||!projectId||!dbUrl){
-    toonConnStatus('Vul minimaal API Key, Project ID en Database URL in','err');return;
-  }
-  const cfg={apiKey,authDomain:`${projectId}.firebaseapp.com`,databaseURL:dbUrl,projectId,storageBucket:`${projectId}.appspot.com`,messagingSenderId:'',appId};
-  localStorage.setItem('wk_fb_cfg',JSON.stringify(cfg));
-  toonConnStatus('⏳ Verbinding testen...','');
-  initFirebase(cfg).then(ok=>{
-    if(ok){
-      toonConnStatus('✅ Verbonden! Pagina herlaadt...','ok');
-      setTimeout(()=>location.reload(),1200);
-    }else{
-      toonConnStatus('❌ Verbinding mislukt — controleer de gegevens','err');
-    }
-  });
-}
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyCeu-e2lUD_xUQESb8rdoYczCVBq8O2Vkk",
+  authDomain: "wk-2026-poule-867ae.firebaseapp.com",
+  databaseURL: "https://wk-2026-poule-867ae-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "wk-2026-poule-867ae",
+  storageBucket: "wk-2026-poule-867ae.firebasestorage.app",
+  messagingSenderId: "889661679081",
+  appId: "1:889661679081:web:5fce0db1b56b3f90ff9778"
+};
 
 function toonConnStatus(msg,type){
   const el=document.getElementById('conn-status');
@@ -454,18 +419,25 @@ function toonConnStatus(msg,type){
   el.className='conn-status'+(type?' '+type:'');
 }
 
-// ── Firebase dynamisch laden ──
-async function initFirebase(cfg){
+// Wizard: handmatig database-URL overschrijven (voor beheerder)
+function slaConfigOp(){
+  const dbUrl=document.getElementById('cfg-dbUrl').value.trim();
+  if(!dbUrl){toonConnStatus('Vul de Database URL in','err');return;}
+  localStorage.setItem('wk_db_url_override',dbUrl);
+  toonConnStatus('✅ Opgeslagen! Pagina herlaadt...','ok');
+  setTimeout(()=>location.reload(),1000);
+}
+
+// ── Firebase laden ──
+async function initFirebase(){
   try{
-    const {initializeApp,getApps,deleteApp}=await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+    const {initializeApp}=await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
     const {getDatabase,ref,set,get,onValue,update}=await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js");
-    // Ruim bestaande app op als die er al is
-    const bestaand=getApps().find(a=>a.name==='wkpoule');
-    if(bestaand)await deleteApp(bestaand);
+    const cfg={...FIREBASE_CONFIG};
+    const override=localStorage.getItem('wk_db_url_override');
+    if(override)cfg.databaseURL=override;
     const app=initializeApp(cfg,'wkpoule');
     const db=getDatabase(app);
-    // Test of verbinding werkt
-    await get(ref(db,'.info/connected'));
     _db=db;_ref=ref;_set=set;_get=get;_onValue=onValue;_update=update;
     return true;
   }catch(e){console.error('Firebase init fout:',e);return false;}
@@ -473,23 +445,9 @@ async function initFirebase(cfg){
 
 // ── App opstarten ──
 async function start(){
-  const cfg=laadConfig();
-  if(!cfg){
-    // Geen config opgeslagen — open setup wizard
-    document.getElementById('fmo').classList.add('open');
-    document.getElementById('sbar').innerHTML='<span style="color:var(--rood)">●</span><span style="color:var(--rood);font-size:.68rem;font-weight:700">Database niet gekoppeld</span>';
-    return;
-  }
-  // Config gevonden — probeer te verbinden
-  const ok=await initFirebase(cfg);
+  const ok=await initFirebase();
   if(!ok){
-    document.getElementById('sbar').innerHTML='<span style="color:var(--rood)">●</span><span style="color:var(--rood);font-size:.68rem;font-weight:700">Verbinding mislukt — <button onclick="document.getElementById(\'fmo\').classList.add(\'open\')" style="background:none;border:none;color:var(--goud);cursor:pointer;font-weight:700;font-size:.68rem">opnieuw instellen</button></span>';
-    document.getElementById('fmo').classList.add('open');
-    // Vul config-velden alvast in voor makkelijk corrigeren
-    if(cfg.apiKey)document.getElementById('cfg-apiKey').value=cfg.apiKey;
-    if(cfg.projectId)document.getElementById('cfg-projectId').value=cfg.projectId;
-    if(cfg.databaseURL)document.getElementById('cfg-dbUrl').value=cfg.databaseURL;
-    if(cfg.appId)document.getElementById('cfg-appId').value=cfg.appId;
+    document.getElementById('sbar').innerHTML='<span style="color:var(--rood)">●</span><span style="color:var(--rood);font-size:.68rem;font-weight:700">Verbinding mislukt</span>';
     return;
   }
   fbK=true;
@@ -721,7 +679,6 @@ function tt(msg,err){
   t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);
 }
 
-// ── Config wizard vanuit Regels tab ──
 window.slaConfigOp=slaConfigOp;
 
 document.addEventListener('DOMContentLoaded',()=>{
