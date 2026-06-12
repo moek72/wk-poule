@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Familie WK Poule 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;700;800;900&display=swap');
+:root{--rood:#E8003D;--goud:#FFD700;--groen:#00C853;--donker:#060610;--card:#0f0f1e;--card2:#161628;--border:#1e1e35;--tekst:#f0f0ff;--dim:#6b6b8a;--oranje:#FF6D00;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--donker);color:var(--tekst);font-family:'Nunito',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(232,0,61,.06),transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(255,215,0,.05),transparent 50%);pointer-events:none;z-index:0;}
+.header{position:relative;z-index:1;padding:20px 16px 14px;text-align:center;border-bottom:1px solid var(--border);background:linear-gradient(180deg,rgba(232,0,61,.08),transparent);}
+.logo{font-size:2.6rem;animation:bounce 2s ease-in-out infinite;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:var(--goud);letter-spacing:3px;line-height:1;text-shadow:0 0 40px rgba(255,215,0,.35);margin:5px 0 3px;}
+.sub{font-size:.73rem;color:var(--dim);letter-spacing:1px;}
+.prijs{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(90deg,#B71C1C,var(--rood));border-radius:30px;padding:6px 18px;margin-top:10px;font-weight:900;font-size:.83rem;color:#fff;box-shadow:0 4px 24px rgba(232,0,61,.45);animation:gp 2.5s ease-in-out infinite;}
+@keyframes gp{0%,100%{box-shadow:0 4px 24px rgba(232,0,61,.45);}50%{box-shadow:0 4px 40px rgba(232,0,61,.75);}}
+.sbar{display:flex;align-items:center;justify-content:center;gap:6px;padding:5px;font-size:.68rem;font-weight:700;color:var(--dim);border-bottom:1px solid var(--border);}
+.tabs{position:sticky;top:0;z-index:100;display:flex;background:rgba(6,6,16,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{flex:1;min-width:68px;padding:10px 5px;text-align:center;font-size:.63rem;font-weight:800;color:var(--dim);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;text-transform:uppercase;letter-spacing:.5px;}
+.tab.active{color:var(--goud);border-bottom-color:var(--goud);}
+.ti{font-size:1.05rem;display:block;margin-bottom:2px;}
+.content{position:relative;z-index:1;padding:13px;max-width:640px;margin:0 auto;padding-bottom:80px;}
+.panel{display:none;animation:fi .25s ease;}
+.panel.active{display:block;}
+@keyframes fi{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.ncard{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px 16px;margin-bottom:13px;text-align:center;}
+.ncard h2{font-family:'Bebas Neue',sans-serif;font-size:1.55rem;color:var(--goud);margin-bottom:5px;letter-spacing:2px;}
+.ncard p{font-size:.8rem;color:var(--dim);margin-bottom:13px;}
+.ni{width:100%;background:var(--donker);border:2px solid var(--border);border-radius:13px;padding:11px 14px;color:var(--tekst);font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;margin-bottom:9px;outline:none;transition:border-color .2s;text-align:center;}
+.ni:focus{border-color:var(--goud);}
+.bnn{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-top:4px;}
+.nc{background:var(--card2);border:1px solid var(--border);border-radius:9px;padding:6px 12px;color:var(--tekst);font-family:'Nunito',sans-serif;font-weight:800;font-size:.78rem;cursor:pointer;transition:all .2s;}
+.nc:hover{border-color:var(--goud);color:var(--goud);}
+.btn{display:block;width:100%;padding:12px;border-radius:13px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.9rem;cursor:pointer;border:none;transition:all .2s;margin-bottom:7px;}
+.bg{background:linear-gradient(135deg,#FFD700,#e6b800);color:#000;}
+.bg:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(255,215,0,.4);}
+.bai{background:linear-gradient(135deg,#6200EA,#9C27B0);color:#fff;}
+.bai:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(98,0,234,.4);}
+.bred{background:linear-gradient(135deg,#D32F2F,var(--rood));color:#fff;}
+.bred:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(232,0,61,.4);}
+.wban{background:linear-gradient(135deg,rgba(255,215,0,.08),rgba(255,215,0,.03));border:1px solid rgba(255,215,0,.2);border-radius:15px;padding:12px 15px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:9px;}
+.wnm{font-weight:900;color:var(--goud);font-size:.92rem;}
+.wsb{font-size:.71rem;color:var(--dim);margin-top:2px;}
+.wb{background:none;border:1px solid var(--border);border-radius:7px;padding:6px 11px;color:var(--dim);font-size:.7rem;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;white-space:nowrap;transition:all .2s;}
+.wb:hover{border-color:var(--goud);color:var(--goud);}
+.vgw{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:12px 15px;margin-bottom:12px;}
+.vgr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
+.vgl{font-size:.73rem;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:1px;}
+.vgn{font-family:'Bebas Neue',sans-serif;font-size:1.35rem;color:var(--groen);}
+.pt{height:5px;background:var(--border);border-radius:5px;overflow:hidden;}
+.pf{height:100%;background:linear-gradient(90deg,var(--groen),#69f0ae);border-radius:5px;transition:width .5s ease;}
+.ais{background:linear-gradient(135deg,rgba(98,0,234,.12),rgba(156,39,176,.08));border:1px solid rgba(98,0,234,.3);border-radius:15px;padding:13px;margin-bottom:12px;}
+.ait{font-weight:900;font-size:.81rem;color:#CE93D8;margin-bottom:3px;}
+.ais2{font-size:.74rem;color:var(--dim);margin-bottom:9px;}
+.ail{display:none;align-items:center;gap:7px;font-size:.8rem;color:#CE93D8;}
+.sp{width:15px;height:15px;border:2px solid rgba(206,147,216,.3);border-top-color:#CE93D8;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.rt{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--goud);letter-spacing:2px;margin:18px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.rc{font-size:.7rem;color:var(--dim);font-family:'Nunito',sans-serif;font-weight:700;letter-spacing:0;}
+.wc{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:12px;margin-bottom:8px;transition:border-color .2s;position:relative;overflow:hidden;}
+.wc.hi{border-color:rgba(0,200,83,.35);}
+.wc.om{border-color:rgba(255,109,0,.4);}
+.wc.om.hi{border-color:rgba(255,109,0,.7);}
+.wc.lk{opacity:.6;}
+.wc.lk::after{content:'Gesloten';position:absolute;top:8px;right:8px;background:rgba(232,0,61,.15);border:1px solid rgba(232,0,61,.3);border-radius:6px;padding:2px 7px;font-size:.6rem;font-weight:800;color:var(--rood);}
+.wm{display:flex;gap:6px;font-size:.64rem;color:var(--dim);margin-bottom:7px;flex-wrap:wrap;}
+.mc{background:var(--card2);border-radius:5px;padding:2px 5px;font-weight:700;}
+.oc{background:rgba(255,109,0,.2);color:var(--oranje);border-radius:5px;padding:2px 6px;font-weight:900;font-size:.61rem;}
+.ab{display:inline-block;background:rgba(98,0,234,.2);border:1px solid rgba(98,0,234,.4);color:#CE93D8;font-size:.56rem;font-weight:800;padding:1px 5px;border-radius:4px;margin-left:3px;vertical-align:middle;}
+.cdw{background:rgba(232,0,61,.08);border:1px solid rgba(232,0,61,.2);border-radius:8px;padding:6px 10px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
+.cdw.gr{background:rgba(0,200,83,.08);border-color:rgba(0,200,83,.2);}
+.cdl{font-size:.64rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--rood);}
+.cdw.gr .cdl{color:var(--groen);}
+.cdt{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:1px;color:var(--rood);}
+.cdw.gr .cdt{color:var(--groen);}
+.tg{display:grid;grid-template-columns:1fr 36px 1fr;align-items:center;gap:5px;margin-bottom:8px;}
+.tn{font-weight:800;font-size:.82rem;text-align:center;line-height:1.2;}
+.tn.ho{text-align:right;}
+.vs{background:var(--border);border-radius:6px;padding:4px 3px;font-family:'Bebas Neue',sans-serif;font-size:.82rem;color:var(--dim);text-align:center;}
+.si{display:grid;grid-template-columns:1fr 20px 1fr;align-items:center;gap:5px;}
+.sin{background:var(--donker);border:2px solid var(--border);border-radius:10px;padding:9px 3px;color:var(--tekst);font-family:'Bebas Neue',sans-serif;font-size:1.8rem;text-align:center;width:100%;outline:none;transition:border-color .2s;-moz-appearance:textfield;}
+.sin::-webkit-outer-spin-button,.sin::-webkit-inner-spin-button{-webkit-appearance:none;}
+.sin:focus{border-color:var(--goud);}
+.sin:disabled{opacity:.4;cursor:not-allowed;}
+.ss{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--dim);text-align:center;}
+.sab{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);z-index:200;padding:12px 34px;background:linear-gradient(135deg,var(--groen),#00a044);color:#000;border:none;border-radius:30px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.9rem;cursor:pointer;transition:all .2s;box-shadow:0 6px 30px rgba(0,200,83,.5);white-space:nowrap;display:none;}
+.sab.v{display:block;}
+.sab:hover{transform:translateX(-50%) translateY(-3px);}
+.rh{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.rh h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--goud);letter-spacing:2px;}
+.ld{display:inline-flex;align-items:center;gap:5px;font-size:.68rem;font-weight:700;color:var(--groen);}
+.ld::before{content:'';width:6px;height:6px;background:var(--groen);border-radius:50%;animation:lp 1.2s ease-in-out infinite;}
+@keyframes lp{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(1.3);}}
+.rkc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:7px;display:flex;align-items:center;gap:12px;animation:si2 .3s ease;}
+@keyframes si2{from{opacity:0;transform:translateX(-10px);}to{opacity:1;transform:translateX(0);}}
+.r1{border-color:rgba(255,215,0,.5);background:linear-gradient(135deg,rgba(255,215,0,.07),rgba(255,215,0,.03));}
+.r2{border-color:rgba(192,192,192,.3);}
+.r3{border-color:rgba(205,127,50,.3);}
+.rnr{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;width:32px;text-align:center;flex-shrink:0;color:var(--dim);}
+.r1 .rnr{color:var(--goud);}
+.r2 .rnr{color:#C0C0C0;}
+.r3 .rnr{color:#CD7F32;}
+.ri{flex:1;min-width:0;}
+.rna{font-weight:900;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rs{font-size:.68rem;color:var(--dim);margin-top:2px;}
+.rs span{color:var(--tekst);font-weight:700;}
+.rr{text-align:right;flex-shrink:0;}
+.rpt{font-family:'Bebas Neue',sans-serif;font-size:1.65rem;color:var(--goud);}
+.ri2{font-size:.66rem;color:var(--dim);margin-top:1px;}
+.mb{display:inline-flex;align-items:center;gap:3px;background:linear-gradient(135deg,#D32F2F,#F44336);color:#fff;font-size:.6rem;font-weight:900;padding:2px 7px;border-radius:20px;margin-top:3px;}
+.dg{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:7px;margin-bottom:13px;}
+.dc{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:10px;text-align:center;}
+.dc.a{border-color:rgba(0,200,83,.4);background:rgba(0,200,83,.05);}
+.da{font-size:1.6rem;display:block;margin-bottom:3px;}
+.dn{font-weight:800;font-size:.78rem;}
+.dv{font-size:.66rem;color:var(--dim);margin-top:2px;}
+.db{height:3px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:4px;}
+.df{height:100%;background:var(--groen);border-radius:3px;}
+.ic{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:15px;margin-bottom:10px;}
+.ic h3{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--goud);margin-bottom:8px;letter-spacing:1px;}
+.ic p,.ic li{font-size:.81rem;color:#bbb;line-height:1.6;margin-bottom:4px;}
+.ic ul{padding-left:15px;}
+.pr{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:.81rem;}
+.pr:last-child{border-bottom:none;}
+.pb{background:var(--goud);color:#000;font-weight:900;padding:2px 10px;border-radius:20px;font-size:.76rem;white-space:nowrap;}
+.ow{background:linear-gradient(135deg,rgba(255,109,0,.12),rgba(255,109,0,.05));border:1px solid rgba(255,109,0,.35);border-radius:10px;padding:10px 13px;margin-bottom:6px;}
+.ow .od{font-size:.7rem;color:var(--dim);margin-bottom:2px;}
+.ow .om2{font-weight:900;font-size:.9rem;color:var(--oranje);}
+.sd{display:flex;align-items:center;gap:7px;margin:6px 0 11px;color:var(--dim);font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;}
+.sd::before,.sd::after{content:'';flex:1;height:1px;background:var(--border);}
+.toast{position:fixed;bottom:76px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--groen);color:#000;padding:9px 19px;border-radius:30px;font-weight:900;font-size:.81rem;z-index:999;transition:transform .3s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;box-shadow:0 4px 24px rgba(0,0,0,.5);max-width:90vw;text-align:center;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.e{background:var(--rood);color:#fff;}
+.leeg{text-align:center;padding:34px 18px;color:var(--dim);}
+.li{font-size:2.6rem;display:block;margin-bottom:9px;}
+.leeg p{font-size:.83rem;}
+
+/* ── Firebase Setup Overlay ── */
+.mo{position:fixed;inset:0;background:rgba(6,6,16,.97);z-index:500;display:none;align-items:center;justify-content:center;padding:15px;overflow-y:auto;}
+.mo.open{display:flex;}
+.md{background:var(--card);border:1px solid var(--border);border-radius:17px;padding:22px;max-width:480px;width:100%;}
+.md h2{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--goud);letter-spacing:2px;margin-bottom:6px;}
+.md .intro{font-size:.8rem;color:var(--dim);margin-bottom:16px;line-height:1.5;}
+.step{display:flex;gap:10px;margin-bottom:14px;align-items:flex-start;}
+.snum{background:var(--rood);color:#fff;font-weight:900;font-size:.75rem;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.stxt{font-size:.79rem;color:#ccc;line-height:1.55;}
+.stxt a{color:var(--goud);text-decoration:none;}
+.stxt code{background:var(--donker);border:1px solid var(--border);border-radius:5px;padding:1px 5px;font-size:.72rem;color:#CE93D8;}
+.cfg-lbl{font-size:.72rem;font-weight:800;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;margin-top:10px;}
+.cfg-in{width:100%;background:var(--donker);border:2px solid var(--border);border-radius:10px;padding:9px 12px;color:var(--tekst);font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:700;outline:none;transition:border-color .2s;}
+.cfg-in:focus{border-color:var(--goud);}
+.cfg-in::placeholder{color:var(--dim);font-weight:400;}
+.cfg-hint{font-size:.66rem;color:var(--dim);margin-top:3px;}
+.rules-box{background:var(--donker);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:.69rem;color:#CE93D8;line-height:1.7;margin:6px 0 10px;font-family:monospace;white-space:pre;}
+.conn-status{text-align:center;padding:12px;font-size:.82rem;font-weight:800;border-radius:10px;margin-bottom:10px;display:none;}
+.conn-status.ok{background:rgba(0,200,83,.1);border:1px solid rgba(0,200,83,.3);color:var(--groen);}
+.conn-status.err{background:rgba(232,0,61,.1);border:1px solid rgba(232,0,61,.3);color:var(--rood);}
+</style>
+</head>
+<body>
+
+<div class="sbar" id="sbar"><span id="si">⏳</span><span id="st">Verbinden met database...</span></div>
+
+<div class="header">
+  <div class="logo">⚽</div>
+  <h1>Familie WK Poule 2026</h1>
+  <div class="sub">11 JUN – 19 JUL · VS · CANADA · MEXICO · 104 WEDSTRIJDEN</div>
+  <div class="prijs">🍔 Hoofdprijs: McDonalds menu naar keuze!</div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('inv',this)"><span class="ti">✏️</span>Invullen</div>
+  <div class="tab" onclick="showTab('rang',this)"><span class="ti">🏆</span>Ranglijst</div>
+  <div class="tab" onclick="showTab('deel',this)"><span class="ti">👥</span>Wie mee?</div>
+  <div class="tab" onclick="showTab('uit',this)"><span class="ti">📋</span>Regels</div>
+</div>
+
+<div class="content">
+  <div class="panel active" id="panel-inv">
+    <div id="nsec" class="ncard">
+      <h2>👤 Wie ben jij?</h2>
+      <p>Kies je naam om te beginnen</p>
+      <input type="text" class="ni" id="ni" placeholder="Je naam..." maxlength="20" onkeypress="if(event.key==='Enter')setN()">
+      <button class="btn bg" onclick="setN()">⚽ Start invullen!</button>
+      <div class="sd">of kies</div>
+      <div class="bnn" id="bnn"></div>
+    </div>
+    <div id="ssec" style="display:none">
+      <div class="wban">
+        <div><div class="wnm" id="wnm">Hey!</div><div class="wsb">Invullen vóór aftrap ⬇️</div></div>
+        <button class="wb" onclick="wisN()">↩ Wisselen</button>
+      </div>
+      <div class="vgw">
+        <div class="vgr"><span class="vgl">📊 Voortgang</span><span class="vgn" id="vgn">0/104</span></div>
+        <div class="pt"><div class="pf" id="pf" style="width:0%"></div></div>
+      </div>
+      <div class="ais">
+        <div class="ait">🤖 AI Voorspeller</div>
+        <div class="ais2">Laat AI alle lege wedstrijden automatisch invullen</div>
+        <div class="ail" id="ail"><div class="sp"></div>AI berekent...</div>
+        <button class="btn bai" id="aib" onclick="aiVul()">🎲 Laat AI alles invullen</button>
+      </div>
+      <div id="wcon"></div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-rang">
+    <div class="rh"><h2>🏆 Ranglijst</h2><span class="ld">LIVE</span></div>
+    <div id="rcon"><div class="leeg"><span class="li">⏳</span><p>Nog geen deelnemers</p></div></div>
+  </div>
+
+  <div class="panel" id="panel-deel">
+    <div class="rh">
+      <h2 style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--goud);letter-spacing:2px">👥 Deelnemers</h2>
+      <span class="ld">LIVE</span>
+    </div>
+    <p style="font-size:.76rem;color:var(--dim);margin-bottom:12px">Wie heeft al ingevuld?</p>
+    <div id="dcon" class="dg"><div class="leeg"><span class="li">👀</span><p>Nog niemand!</p></div></div>
+  </div>
+
+  <div class="panel" id="panel-uit">
+    <div class="ic"><h3>🍔 Hoofdprijs</h3><p style="font-size:.95rem;font-weight:900;color:var(--goud)">McDonalds menu naar keuze!</p><p>Meeste punten op 19 juli wint. Bij gelijkstand: meeste exacte scores.</p></div>
+    <div class="ic"><h3>⏰ Deadline</h3><p>Voorspelling moet in zijn <strong style="color:var(--rood)">vóór de aftrap</strong>. Daarna vergrendeld.</p></div>
+    <div class="ic"><h3>📐 Punten</h3>
+      <div class="pr"><span>⚽ Juiste winnaar / gelijkspel</span><span class="pb">2 pt</span></div>
+      <div class="pr"><span>🎯 Exacte score</span><span class="pb">5 pt</span></div>
+      <div class="pr"><span>❌ Fout</span><span class="pb">0 pt</span></div>
+    </div>
+    <div class="ic"><h3>🇳🇱 Oranje</h3>
+      <div class="ow"><div class="od">14 juni · 22:00</div><div class="om2">🇳🇱 Nederland vs Japan 🇯🇵</div></div>
+      <div class="ow"><div class="od">20 juni · 19:00</div><div class="om2">🇳🇱 Nederland vs Zweden 🇸🇪</div></div>
+      <div class="ow"><div class="od">26 juni · 01:00</div><div class="om2">🇹🇳 Tunesië vs Nederland 🇳🇱</div></div>
+    </div>
+    <div class="ic"><h3>📅 WK 2026</h3><ul><li>11 juni – 19 juli 2026</li><li>VS, Canada & Mexico</li><li>48 landen · 104 wedstrijden</li><li>Finale: MetLife Stadium, New York</li></ul></div>
+    <div class="ic"><h3>🤖 AI Voorspeller</h3><p>Geen zin om alles in te vullen? AI vult scores in op basis van teamsterkte. Jij kunt daarna nog aanpassen!</p></div>
+    <div class="ic" style="border-color:rgba(255,215,0,.2);">
+      <h3>⚙️ Database instellingen</h3>
+      <p>Beheerder kan de Firebase verbinding opnieuw instellen.</p>
+      <button class="btn bg" onclick="document.getElementById('fmo').classList.add('open')" style="margin-top:8px">🔧 Firebase opnieuw instellen</button>
+    </div>
+  </div>
+</div>
+
+<button class="sab" id="sab" onclick="slaOp()">💾 Opslaan</button>
+<div class="toast" id="toast"></div>
+
+<!-- ══════════════════════════════════════════════
+     FIREBASE SETUP WIZARD
+══════════════════════════════════════════════ -->
+<div class="mo" id="fmo">
+  <div class="md">
+    <h2>⚙️ Firebase Koppelen</h2>
+    <p class="intro">Volg deze 5 stappen om de live database aan te zetten. Dit hoef je maar één keer te doen — de instellingen worden opgeslagen op dit apparaat.</p>
+
+    <div class="step">
+      <div class="snum">1</div>
+      <div class="stxt">Ga naar <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a> en maak een <strong>nieuw project</strong> aan. Naam maakt niet uit (bv. <code>familie-wk-poule</code>). Google Analytics kun je uitschakelen.</div>
+    </div>
+
+    <div class="step">
+      <div class="snum">2</div>
+      <div class="stxt">In je project: klik op <strong>Realtime Database</strong> → <strong>Database aanmaken</strong>. Kies <strong>Europe-west1</strong> als locatie. Start in <strong>testmodus</strong>.</div>
+    </div>
+
+    <div class="step">
+      <div class="snum">3</div>
+      <div class="stxt">Ga naar <strong>Projectinstellingen</strong> (tandwiel ⚙️ bovenaan) → tabblad <strong>Algemeen</strong> → scroll naar beneden → klik op het web-icoon <code>&lt;/&gt;</code> → registreer de app. Je ziet dan de <code>firebaseConfig</code>. Kopieer de waarden hieronder.</div>
+    </div>
+
+    <div class="step">
+      <div class="snum">4</div>
+      <div class="stxt">Pas in de Realtime Database de <strong>Regels</strong> aan zodat iedereen kan lezen én schrijven:</div>
+    </div>
+    <div class="rules-box">{"rules": {".read": true, ".write": true}}</div>
+
+    <div class="step">
+      <div class="snum">5</div>
+      <div class="stxt">Vul hieronder je Firebase gegevens in en klik op <strong>Verbinden</strong>.</div>
+    </div>
+
+    <div class="cfg-lbl">API Key</div>
+    <input class="cfg-in" id="cfg-apiKey" placeholder="AIzaSy..." autocomplete="off" spellcheck="false">
+
+    <div class="cfg-lbl">Project ID</div>
+    <input class="cfg-in" id="cfg-projectId" placeholder="familie-wk-poule" autocomplete="off" spellcheck="false">
+    <div class="cfg-hint">Vind je bovenaan de Firebase projectpagina</div>
+
+    <div class="cfg-lbl">Database URL</div>
+    <input class="cfg-in" id="cfg-dbUrl" placeholder="https://familie-wk-poule-default-rtdb.europe-west1.firebasedatabase.app" autocomplete="off" spellcheck="false">
+    <div class="cfg-hint">Staat in Realtime Database → Data tabblad bovenaan</div>
+
+    <div class="cfg-lbl">App ID</div>
+    <input class="cfg-in" id="cfg-appId" placeholder="1:123456789:web:abc..." autocomplete="off" spellcheck="false">
+
+    <div class="conn-status" id="conn-status"></div>
+
+    <button class="btn bg" style="margin-top:14px" onclick="slaConfigOp()">🔌 Verbinden & opslaan</button>
+    <button class="btn bred" onclick="document.getElementById('fmo').classList.remove('open')">✕ Annuleren</button>
+  </div>
+</div>
+
+<script type="module">
+// ════════════════════════════════════════════════════════
+// WK 2026 WEDSTRIJDEN
+// Alle tijden = Nederlandse tijd (CEST = UTC+2)
+// ════════════════════════════════════════════════════════
+const W=[
+{id:1, d:"11 jun",t:"21:00",iso:"2026-06-11T19:00:00Z",th:"Mexico",ui:"Zuid-Afrika",g:"A"},
+{id:2, d:"12 jun",t:"04:00",iso:"2026-06-12T02:00:00Z",th:"Zuid-Korea",ui:"Tsjechie",g:"A"},
+{id:3, d:"18 jun",t:"18:00",iso:"2026-06-18T16:00:00Z",th:"Tsjechie",ui:"Zuid-Afrika",g:"A"},
+{id:4, d:"19 jun",t:"03:00",iso:"2026-06-19T01:00:00Z",th:"Mexico",ui:"Zuid-Korea",g:"A"},
+{id:5, d:"25 jun",t:"03:00",iso:"2026-06-25T01:00:00Z",th:"Zuid-Afrika",ui:"Zuid-Korea",g:"A"},
+{id:6, d:"25 jun",t:"03:00",iso:"2026-06-25T01:00:00Z",th:"Tsjechie",ui:"Mexico",g:"A"},
+{id:7, d:"12 jun",t:"21:00",iso:"2026-06-12T19:00:00Z",th:"Canada",ui:"Bosnie & Herz.",g:"B"},
+{id:8, d:"13 jun",t:"21:00",iso:"2026-06-13T19:00:00Z",th:"Qatar",ui:"Zwitserland",g:"B"},
+{id:9, d:"18 jun",t:"21:00",iso:"2026-06-18T19:00:00Z",th:"Zwitserland",ui:"Bosnie & Herz.",g:"B"},
+{id:10,d:"19 jun",t:"00:00",iso:"2026-06-18T22:00:00Z",th:"Canada",ui:"Qatar",g:"B"},
+{id:11,d:"24 jun",t:"21:00",iso:"2026-06-24T19:00:00Z",th:"Zwitserland",ui:"Canada",g:"B"},
+{id:12,d:"24 jun",t:"21:00",iso:"2026-06-24T19:00:00Z",th:"Bosnie & Herz.",ui:"Qatar",g:"B"},
+{id:13,d:"14 jun",t:"00:00",iso:"2026-06-13T22:00:00Z",th:"Brazilie",ui:"Marokko",g:"C"},
+{id:14,d:"14 jun",t:"03:00",iso:"2026-06-14T01:00:00Z",th:"Haiti",ui:"Schotland",g:"C"},
+{id:15,d:"20 jun",t:"00:00",iso:"2026-06-19T22:00:00Z",th:"Schotland",ui:"Marokko",g:"C"},
+{id:16,d:"20 jun",t:"03:00",iso:"2026-06-20T01:00:00Z",th:"Brazilie",ui:"Haiti",g:"C"},
+{id:17,d:"25 jun",t:"00:00",iso:"2026-06-24T22:00:00Z",th:"Schotland",ui:"Brazilie",g:"C"},
+{id:18,d:"25 jun",t:"00:00",iso:"2026-06-24T22:00:00Z",th:"Marokko",ui:"Haiti",g:"C"},
+{id:19,d:"13 jun",t:"03:00",iso:"2026-06-13T01:00:00Z",th:"Verenigde Staten",ui:"Paraguay",g:"D"},
+{id:20,d:"14 jun",t:"06:00",iso:"2026-06-14T04:00:00Z",th:"Australie",ui:"Turkije",g:"D"},
+{id:21,d:"19 jun",t:"21:00",iso:"2026-06-19T19:00:00Z",th:"Verenigde Staten",ui:"Australie",g:"D"},
+{id:22,d:"20 jun",t:"06:00",iso:"2026-06-20T04:00:00Z",th:"Turkije",ui:"Paraguay",g:"D"},
+{id:23,d:"26 jun",t:"04:00",iso:"2026-06-26T02:00:00Z",th:"Turkije",ui:"Verenigde Staten",g:"D"},
+{id:24,d:"26 jun",t:"04:00",iso:"2026-06-26T02:00:00Z",th:"Paraguay",ui:"Australie",g:"D"},
+{id:25,d:"14 jun",t:"19:00",iso:"2026-06-14T17:00:00Z",th:"Duitsland",ui:"Curacao",g:"E"},
+{id:26,d:"15 jun",t:"01:00",iso:"2026-06-14T23:00:00Z",th:"Ivoorkust",ui:"Ecuador",g:"E"},
+{id:27,d:"20 jun",t:"22:00",iso:"2026-06-20T20:00:00Z",th:"Duitsland",ui:"Ivoorkust",g:"E"},
+{id:28,d:"21 jun",t:"02:00",iso:"2026-06-21T00:00:00Z",th:"Ecuador",ui:"Curacao",g:"E"},
+{id:29,d:"25 jun",t:"22:00",iso:"2026-06-25T20:00:00Z",th:"Ecuador",ui:"Duitsland",g:"E"},
+{id:30,d:"25 jun",t:"22:00",iso:"2026-06-25T20:00:00Z",th:"Curacao",ui:"Ivoorkust",g:"E"},
+{id:31,d:"14 jun",t:"22:00",iso:"2026-06-14T20:00:00Z",th:"Nederland",ui:"Japan",g:"F",o:true},
+{id:32,d:"15 jun",t:"04:00",iso:"2026-06-15T02:00:00Z",th:"Zweden",ui:"Tunisie",g:"F"},
+{id:33,d:"20 jun",t:"06:00",iso:"2026-06-20T04:00:00Z",th:"Tunisie",ui:"Japan",g:"F"},
+{id:34,d:"20 jun",t:"19:00",iso:"2026-06-20T17:00:00Z",th:"Nederland",ui:"Zweden",g:"F",o:true},
+{id:35,d:"26 jun",t:"01:00",iso:"2026-06-25T23:00:00Z",th:"Japan",ui:"Zweden",g:"F"},
+{id:36,d:"26 jun",t:"01:00",iso:"2026-06-25T23:00:00Z",th:"Tunisie",ui:"Nederland",g:"F",o:true},
+{id:37,d:"15 jun",t:"21:00",iso:"2026-06-15T19:00:00Z",th:"Belgie",ui:"Egypte",g:"G"},
+{id:38,d:"16 jun",t:"03:00",iso:"2026-06-16T01:00:00Z",th:"Iran",ui:"Nieuw-Zeeland",g:"G"},
+{id:39,d:"21 jun",t:"21:00",iso:"2026-06-21T19:00:00Z",th:"Belgie",ui:"Iran",g:"G"},
+{id:40,d:"22 jun",t:"03:00",iso:"2026-06-22T01:00:00Z",th:"Nieuw-Zeeland",ui:"Egypte",g:"G"},
+{id:41,d:"27 jun",t:"05:00",iso:"2026-06-27T03:00:00Z",th:"Egypte",ui:"Iran",g:"G"},
+{id:42,d:"27 jun",t:"05:00",iso:"2026-06-27T03:00:00Z",th:"Nieuw-Zeeland",ui:"Belgie",g:"G"},
+{id:43,d:"15 jun",t:"18:00",iso:"2026-06-15T16:00:00Z",th:"Spanje",ui:"Kaapverdie",g:"H"},
+{id:44,d:"16 jun",t:"00:00",iso:"2026-06-15T22:00:00Z",th:"Saoedi-Arabie",ui:"Uruguay",g:"H"},
+{id:45,d:"21 jun",t:"18:00",iso:"2026-06-21T16:00:00Z",th:"Spanje",ui:"Saoedi-Arabie",g:"H"},
+{id:46,d:"22 jun",t:"00:00",iso:"2026-06-21T22:00:00Z",th:"Uruguay",ui:"Kaapverdie",g:"H"},
+{id:47,d:"27 jun",t:"02:00",iso:"2026-06-27T00:00:00Z",th:"Kaapverdie",ui:"Saoedi-Arabie",g:"H"},
+{id:48,d:"27 jun",t:"02:00",iso:"2026-06-27T00:00:00Z",th:"Uruguay",ui:"Spanje",g:"H"},
+{id:49,d:"16 jun",t:"21:00",iso:"2026-06-16T19:00:00Z",th:"Frankrijk",ui:"Senegal",g:"I"},
+{id:50,d:"17 jun",t:"00:00",iso:"2026-06-16T22:00:00Z",th:"Irak",ui:"Noorwegen",g:"I"},
+{id:51,d:"22 jun",t:"23:00",iso:"2026-06-22T21:00:00Z",th:"Frankrijk",ui:"Irak",g:"I"},
+{id:52,d:"23 jun",t:"02:00",iso:"2026-06-23T00:00:00Z",th:"Noorwegen",ui:"Senegal",g:"I"},
+{id:53,d:"26 jun",t:"21:00",iso:"2026-06-26T19:00:00Z",th:"Noorwegen",ui:"Frankrijk",g:"I"},
+{id:54,d:"26 jun",t:"21:00",iso:"2026-06-26T19:00:00Z",th:"Senegal",ui:"Irak",g:"I"},
+{id:55,d:"17 jun",t:"03:00",iso:"2026-06-17T01:00:00Z",th:"Argentinie",ui:"Algerije",g:"J"},
+{id:56,d:"17 jun",t:"06:00",iso:"2026-06-17T04:00:00Z",th:"Oostenrijk",ui:"Jordanie",g:"J"},
+{id:57,d:"22 jun",t:"19:00",iso:"2026-06-22T17:00:00Z",th:"Argentinie",ui:"Oostenrijk",g:"J"},
+{id:58,d:"23 jun",t:"04:00",iso:"2026-06-23T02:00:00Z",th:"Jordanie",ui:"Algerije",g:"J"},
+{id:59,d:"28 jun",t:"04:00",iso:"2026-06-28T02:00:00Z",th:"Algerije",ui:"Oostenrijk",g:"J"},
+{id:60,d:"28 jun",t:"04:00",iso:"2026-06-28T02:00:00Z",th:"Jordanie",ui:"Argentinie",g:"J"},
+{id:61,d:"17 jun",t:"19:00",iso:"2026-06-17T17:00:00Z",th:"Portugal",ui:"Congo",g:"K"},
+{id:62,d:"18 jun",t:"04:00",iso:"2026-06-18T02:00:00Z",th:"Oezbekistan",ui:"Colombia",g:"K"},
+{id:63,d:"23 jun",t:"19:00",iso:"2026-06-23T17:00:00Z",th:"Portugal",ui:"Oezbekistan",g:"K"},
+{id:64,d:"24 jun",t:"04:00",iso:"2026-06-24T02:00:00Z",th:"Colombia",ui:"Congo",g:"K"},
+{id:65,d:"28 jun",t:"01:30",iso:"2026-06-27T23:30:00Z",th:"Colombia",ui:"Portugal",g:"K"},
+{id:66,d:"28 jun",t:"01:30",iso:"2026-06-27T23:30:00Z",th:"Congo",ui:"Oezbekistan",g:"K"},
+{id:67,d:"17 jun",t:"22:00",iso:"2026-06-17T20:00:00Z",th:"Engeland",ui:"Kroatie",g:"L"},
+{id:68,d:"18 jun",t:"01:00",iso:"2026-06-17T23:00:00Z",th:"Ghana",ui:"Panama",g:"L"},
+{id:69,d:"23 jun",t:"22:00",iso:"2026-06-23T20:00:00Z",th:"Engeland",ui:"Ghana",g:"L"},
+{id:70,d:"24 jun",t:"01:00",iso:"2026-06-23T23:00:00Z",th:"Panama",ui:"Kroatie",g:"L"},
+{id:71,d:"27 jun",t:"23:00",iso:"2026-06-27T21:00:00Z",th:"Panama",ui:"Engeland",g:"L"},
+{id:72,d:"27 jun",t:"23:00",iso:"2026-06-27T21:00:00Z",th:"Kroatie",ui:"Ghana",g:"L"},
+{id:73,d:"28 jun",t:"21:00",iso:"2026-06-28T19:00:00Z",th:"2e Poule A",ui:"2e Poule B",g:"X"},
+{id:74,d:"29 jun",t:"19:00",iso:"2026-06-29T17:00:00Z",th:"Winnaar Poule C",ui:"2e Poule F",g:"X"},
+{id:75,d:"29 jun",t:"22:30",iso:"2026-06-29T20:30:00Z",th:"Winnaar Poule E",ui:"3e AB/C/D/F",g:"X"},
+{id:76,d:"30 jun",t:"03:00",iso:"2026-06-30T01:00:00Z",th:"Winnaar Poule F",ui:"2e Poule C",g:"X"},
+{id:77,d:"30 jun",t:"19:00",iso:"2026-06-30T17:00:00Z",th:"2e Poule E",ui:"2e Poule I",g:"X"},
+{id:78,d:"30 jun",t:"23:00",iso:"2026-06-30T21:00:00Z",th:"Winnaar Poule I",ui:"3e C/D/F/G/H",g:"X"},
+{id:79,d:"1 jul",t:"03:00",iso:"2026-07-01T01:00:00Z",th:"Winnaar Poule A",ui:"3e C/E/F/H/I",g:"X"},
+{id:80,d:"1 jul",t:"18:00",iso:"2026-07-01T16:00:00Z",th:"Winnaar Poule L",ui:"3e E/H/I/J/K",g:"X"},
+{id:81,d:"1 jul",t:"22:00",iso:"2026-07-01T20:00:00Z",th:"Winnaar Poule G",ui:"3e A/E/H/I/J",g:"X"},
+{id:82,d:"2 jul",t:"02:00",iso:"2026-07-02T00:00:00Z",th:"Winnaar Poule D",ui:"3e B/E/F/I/J",g:"X"},
+{id:83,d:"2 jul",t:"21:00",iso:"2026-07-02T19:00:00Z",th:"Winnaar Poule H",ui:"2e Poule J",g:"X"},
+{id:84,d:"3 jul",t:"01:00",iso:"2026-07-02T23:00:00Z",th:"2e Poule K",ui:"2e Poule L",g:"X"},
+{id:85,d:"3 jul",t:"05:00",iso:"2026-07-03T03:00:00Z",th:"Winnaar Poule B",ui:"3e E/F/G/I/J",g:"X"},
+{id:86,d:"3 jul",t:"20:00",iso:"2026-07-03T18:00:00Z",th:"2e Poule D",ui:"2e Poule G",g:"X"},
+{id:87,d:"4 jul",t:"00:00",iso:"2026-07-03T22:00:00Z",th:"Winnaar Poule J",ui:"2e Poule H",g:"X"},
+{id:88,d:"4 jul",t:"03:30",iso:"2026-07-04T01:30:00Z",th:"Winnaar Poule K",ui:"3e D/E/I/J/L",g:"X"},
+{id:89,d:"4 jul",t:"19:00",iso:"2026-07-04T17:00:00Z",th:"W73",ui:"W75",g:"R"},
+{id:90,d:"4 jul",t:"23:00",iso:"2026-07-04T21:00:00Z",th:"W74",ui:"W77",g:"R"},
+{id:91,d:"5 jul",t:"22:00",iso:"2026-07-05T20:00:00Z",th:"W76",ui:"W78",g:"R"},
+{id:92,d:"6 jul",t:"02:00",iso:"2026-07-06T00:00:00Z",th:"W79",ui:"W80",g:"R"},
+{id:93,d:"6 jul",t:"21:00",iso:"2026-07-06T19:00:00Z",th:"W83",ui:"W84",g:"R"},
+{id:94,d:"7 jul",t:"02:00",iso:"2026-07-07T00:00:00Z",th:"W81",ui:"W82",g:"R"},
+{id:95,d:"7 jul",t:"18:00",iso:"2026-07-07T16:00:00Z",th:"W86",ui:"W88",g:"R"},
+{id:96,d:"7 jul",t:"22:00",iso:"2026-07-07T20:00:00Z",th:"W85",ui:"W87",g:"R"},
+{id:97, d:"9 jul",t:"22:00",iso:"2026-07-09T20:00:00Z",th:"W89",ui:"W90",g:"KF"},
+{id:98, d:"10 jul",t:"21:00",iso:"2026-07-10T19:00:00Z",th:"W93",ui:"W94",g:"KF"},
+{id:99, d:"11 jul",t:"23:00",iso:"2026-07-11T21:00:00Z",th:"W91",ui:"W92",g:"KF"},
+{id:100,d:"12 jul",t:"03:00",iso:"2026-07-12T01:00:00Z",th:"W95",ui:"W96",g:"KF"},
+{id:101,d:"14 jul",t:"21:00",iso:"2026-07-14T19:00:00Z",th:"W97",ui:"W98",g:"HF"},
+{id:102,d:"15 jul",t:"21:00",iso:"2026-07-15T19:00:00Z",th:"W99",ui:"W100",g:"HF"},
+{id:103,d:"18 jul",t:"23:00",iso:"2026-07-18T21:00:00Z",th:"Verliezer HF1",ui:"Verliezer HF2",g:"3P"},
+{id:104,d:"19 jul",t:"21:00",iso:"2026-07-19T19:00:00Z",th:"Winnaar HF1",ui:"Winnaar HF2",g:"FIN"}
+];
+
+const LBL={A:"Groep A",B:"Groep B",C:"Groep C",D:"Groep D",E:"Groep E","F":"Groep F 🇳🇱",G:"Groep G",H:"Groep H",I:"Groep I",J:"Groep J",K:"Groep K",L:"Groep L",X:"1/16 Finales",R:"1/8 Finales",KF:"⚡ Kwartfinales",HF:"🔥 Halve Finales","3P":"🥉 Derde Plaats",FIN:"🏆 FINALE"};
+const VLG=["A","B","C","D","E","F","G","H","I","J","K","L","X","R","KF","HF","3P","FIN"];
+const AVT=["⚽","🏃","👑","🦁","🐯","🦅","🌟","🎯","💪","🔥","🎲","🌍","🦊","🐉","🎪","🚀"];
+const TOT=W.length;
+
+let sp=null, fbK=false, cdT={};
+let _db,_ref,_set,_get,_onValue,_update;
+
+// ── Config opslaan / laden uit localStorage ──
+function laadConfig(){
+  try{return JSON.parse(localStorage.getItem('wk_fb_cfg')||'null');}catch(e){return null;}
+}
+function slaConfigOp(){
+  const apiKey=document.getElementById('cfg-apiKey').value.trim();
+  const projectId=document.getElementById('cfg-projectId').value.trim();
+  const dbUrl=document.getElementById('cfg-dbUrl').value.trim();
+  const appId=document.getElementById('cfg-appId').value.trim();
+  if(!apiKey||!projectId||!dbUrl){
+    toonConnStatus('Vul minimaal API Key, Project ID en Database URL in','err');return;
+  }
+  const cfg={apiKey,authDomain:`${projectId}.firebaseapp.com`,databaseURL:dbUrl,projectId,storageBucket:`${projectId}.appspot.com`,messagingSenderId:'',appId};
+  localStorage.setItem('wk_fb_cfg',JSON.stringify(cfg));
+  toonConnStatus('⏳ Verbinding testen...','');
+  initFirebase(cfg).then(ok=>{
+    if(ok){
+      toonConnStatus('✅ Verbonden! Pagina herlaadt...','ok');
+      setTimeout(()=>location.reload(),1200);
+    }else{
+      toonConnStatus('❌ Verbinding mislukt — controleer de gegevens','err');
+    }
+  });
+}
+
+function toonConnStatus(msg,type){
+  const el=document.getElementById('conn-status');
+  el.textContent=msg;el.style.display='block';
+  el.className='conn-status'+(type?' '+type:'');
+}
+
+// ── Firebase dynamisch laden ──
+async function initFirebase(cfg){
+  try{
+    const {initializeApp,getApps,deleteApp}=await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+    const {getDatabase,ref,set,get,onValue,update}=await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js");
+    // Ruim bestaande app op als die er al is
+    const bestaand=getApps().find(a=>a.name==='wkpoule');
+    if(bestaand)await deleteApp(bestaand);
+    const app=initializeApp(cfg,'wkpoule');
+    const db=getDatabase(app);
+    // Test of verbinding werkt
+    await get(ref(db,'.info/connected'));
+    _db=db;_ref=ref;_set=set;_get=get;_onValue=onValue;_update=update;
+    return true;
+  }catch(e){console.error('Firebase init fout:',e);return false;}
+}
+
+// ── App opstarten ──
+async function start(){
+  const cfg=laadConfig();
+  if(!cfg){
+    // Geen config opgeslagen — open setup wizard
+    document.getElementById('fmo').classList.add('open');
+    document.getElementById('sbar').innerHTML='<span style="color:var(--rood)">●</span><span style="color:var(--rood);font-size:.68rem;font-weight:700">Database niet gekoppeld</span>';
+    return;
+  }
+  // Config gevonden — probeer te verbinden
+  const ok=await initFirebase(cfg);
+  if(!ok){
+    document.getElementById('sbar').innerHTML='<span style="color:var(--rood)">●</span><span style="color:var(--rood);font-size:.68rem;font-weight:700">Verbinding mislukt — <button onclick="document.getElementById(\'fmo\').classList.add(\'open\')" style="background:none;border:none;color:var(--goud);cursor:pointer;font-weight:700;font-size:.68rem">opnieuw instellen</button></span>';
+    document.getElementById('fmo').classList.add('open');
+    // Vul config-velden alvast in voor makkelijk corrigeren
+    if(cfg.apiKey)document.getElementById('cfg-apiKey').value=cfg.apiKey;
+    if(cfg.projectId)document.getElementById('cfg-projectId').value=cfg.projectId;
+    if(cfg.databaseURL)document.getElementById('cfg-dbUrl').value=cfg.databaseURL;
+    if(cfg.appId)document.getElementById('cfg-appId').value=cfg.appId;
+    return;
+  }
+  fbK=true;
+  document.getElementById('sbar').innerHTML='<span style="color:var(--groen)">●</span><span style="color:var(--groen);font-size:.68rem;font-weight:700">Verbonden · Live actief</span>';
+  laadN();startLive();
+}
+
+start();
+
+// ── Naam instellen ──
+function setN(){const v=document.getElementById('ni').value.trim();if(!v){tt('Vul een naam in',true);return;}activ(v);}
+window.setN=setN;
+
+function activ(naam){
+  sp=naam;
+  document.getElementById('nsec').style.display='none';
+  document.getElementById('ssec').style.display='block';
+  document.getElementById('wnm').textContent='Hey '+naam+'! 👋';
+  document.getElementById('sab').classList.add('v');
+  laadR();
+}
+window.activ=activ;
+
+function wisN(){
+  sp=null;
+  document.getElementById('nsec').style.display='block';
+  document.getElementById('ssec').style.display='none';
+  document.getElementById('wcon').innerHTML='';
+  document.getElementById('sab').classList.remove('v');
+  document.getElementById('ni').value='';
+  Object.values(cdT).forEach(clearInterval);cdT={};
+  laadN();
+}
+window.wisN=wisN;
+
+async function laadN(){
+  if(!fbK)return;
+  try{
+    const s=await _get(_ref(_db,'v'));
+    const nn=s.exists()?Object.keys(s.val()):[];
+    document.getElementById('bnn').innerHTML=nn.map(n=>`<button class="nc" onclick="activ('${n.replace(/'/g,"\\'")}')">${n}</button>`).join('');
+  }catch(e){}
+}
+
+async function laadR(){
+  let sd={};
+  if(fbK){
+    try{const s=await _get(_ref(_db,`v/${sp}`));if(s.exists())sd=s.val();}catch(e){}
+  }
+  renW(sd);
+}
+
+// ── Wedstrijden renderen ──
+function renW(sd){
+  const gr={};W.forEach(w=>{if(!gr[w.g])gr[w.g]=[];gr[w.g].push(w);});
+  let h='';
+  VLG.forEach(g=>{
+    if(!gr[g])return;
+    const ws=gr[g];
+    const inv=ws.filter(w=>{const k=sd[`w${w.id}`];return k&&k.t!==undefined&&k.u!==undefined;}).length;
+    h+=`<div class="rt">${LBL[g]||g}<span class="rc">${inv}/${ws.length}</span></div>`;
+    ws.forEach(w=>{
+      const key=`w${w.id}`;const sv=sd[key]||{};
+      const tv=sv.t!==undefined?sv.t:'',uv=sv.u!==undefined?sv.u:'';
+      const hi=tv!==''&&uv!=='',ai=sv.ai===true,lk=new Date(w.iso)<new Date();
+      h+=`<div class="wc ${hi?'hi':''} ${w.o?'om':''} ${lk?'lk':''}" id="c${w.id}">
+        <div class="wm"><span class="mc">📅 ${w.d}</span><span class="mc">⏰ ${w.t}</span>${w.o?'<span class="oc">🇳🇱 ORANJE!</span>':''}${ai?'<span class="ab">🤖 AI</span>':''}</div>
+        <div id="cd${w.id}"></div>
+        <div class="tg"><div class="tn ho">${w.th}</div><div class="vs">VS</div><div class="tn">${w.ui}</div></div>
+        <div class="si">
+          <input type="number" class="sin" id="t${w.id}" min="0" max="20" placeholder="?" value="${tv}" ${lk?'disabled':''} oninput="sgw(${w.id})">
+          <div class="ss">-</div>
+          <input type="number" class="sin" id="u${w.id}" min="0" max="20" placeholder="?" value="${uv}" ${lk?'disabled':''} oninput="sgw(${w.id})">
+        </div></div>`;
+    });
+  });
+  document.getElementById('wcon').innerHTML=h;
+  W.forEach(w=>sCD(w));upVG(sd);
+}
+
+function sCD(w){
+  const el=document.getElementById(`cd${w.id}`);if(!el)return;
+  function u(){
+    const diff=new Date(w.iso)-new Date();
+    if(diff<=0){
+      el.innerHTML='<div class="cdw"><span class="cdl">🔒 Gesloten</span></div>';
+      clearInterval(cdT[w.id]);
+      const c=document.getElementById(`c${w.id}`);
+      if(c){c.classList.add('lk');c.querySelectorAll('.sin').forEach(i=>i.disabled=true);}
+      return;
+    }
+    const d=Math.floor(diff/86400000),uu=Math.floor((diff%86400000)/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
+    const urg=diff<3600000;
+    const txt=d>0?`${d}d ${uu}u ${m}m`:uu>0?`${uu}u ${m}m ${s}s`:`${m}m ${s}s`;
+    el.innerHTML=`<div class="cdw ${urg?'':'gr'}"><span class="cdl">${urg?'⚠️ Sluit bijna!':'⏳ Sluit over'}</span><span class="cdt">${txt}</span></div>`;
+  }
+  u();cdT[w.id]=setInterval(u,1000);
+}
+
+function sgw(id){
+  const c=document.getElementById(`c${id}`);
+  const t=document.getElementById(`t${id}`).value,u=document.getElementById(`u${id}`).value;
+  if(t!==''&&u!=='')c.classList.add('hi');else c.classList.remove('hi');
+  upVGL();
+}
+window.sgw=sgw;
+
+function upVGL(){
+  let n=0;
+  W.forEach(w=>{const t=document.getElementById(`t${w.id}`),u=document.getElementById(`u${w.id}`);if(t&&u&&t.value!==''&&u.value!=='')n++;});
+  document.getElementById('vgn').textContent=`${n}/${TOT}`;
+  document.getElementById('pf').style.width=`${Math.round(n/TOT*100)}%`;
+}
+
+function upVG(sd){
+  let n=0;
+  W.forEach(w=>{const k=sd[`w${w.id}`];if(k&&k.t!==undefined&&k.u!==undefined)n++;});
+  document.getElementById('vgn').textContent=`${n}/${TOT}`;
+  document.getElementById('pf').style.width=`${Math.round(n/TOT*100)}%`;
+}
+
+// ── Opslaan ──
+async function slaOp(){
+  if(!sp)return;
+  const ups={};let n=0;
+  W.forEach(w=>{
+    const te=document.getElementById(`t${w.id}`),ue=document.getElementById(`u${w.id}`);
+    if(!te||!ue)return;
+    if(te.value!==''&&ue.value!==''){
+      ups[`v/${sp}/w${w.id}`]={t:parseInt(te.value),u:parseInt(ue.value),ai:te.dataset.ai==='true'};
+      n++;
+    }
+  });
+  if(!fbK){tt('Firebase niet verbonden',true);return;}
+  try{
+    await _update(_ref(_db),ups);
+    tt(`💾 ${n} voorspellingen opgeslagen!`);
+  }catch(e){tt('Fout bij opslaan',true);}
+}
+window.slaOp=slaOp;
+
+// ── AI invullen ──
+async function aiVul(){
+  document.getElementById('aib').style.display='none';
+  document.getElementById('ail').style.display='flex';
+  await new Promise(r=>setTimeout(r,1300));
+  const sterk=["Brazilie","Argentinie","Duitsland","Spanje","Portugal","Frankrijk","Nederland","Belgie","Engeland","Uruguay","Marokko","Japan"];
+  W.forEach(w=>{
+    const te=document.getElementById(`t${w.id}`),ue=document.getElementById(`u${w.id}`);
+    if(!te||!ue||te.disabled)return;
+    if(te.value===''||ue.value===''){
+      const ts=sterk.some(s=>w.th.includes(s)),us=sterk.some(s=>w.ui.includes(s));
+      te.value=ts?Math.floor(Math.random()*3):Math.floor(Math.random()*2);
+      ue.value=us?Math.floor(Math.random()*3):Math.floor(Math.random()*2);
+      te.dataset.ai='true';ue.dataset.ai='true';
+      document.getElementById(`c${w.id}`)?.classList.add('hi');
+    }
+  });
+  upVGL();
+  await new Promise(r=>setTimeout(r,300));
+  document.getElementById('aib').style.display='block';
+  document.getElementById('ail').style.display='none';
+  tt('🤖 AI heeft alle lege wedstrijden ingevuld!');
+}
+window.aiVul=aiVul;
+
+// ── Live ranglijst ──
+function startLive(){
+  if(!fbK)return;
+  _onValue(_ref(_db,'v'),snap=>{
+    const all=snap.exists()?snap.val():{};const res=all._r||{};
+    const sc=Object.entries(all).filter(([k])=>k!=='_r').map(([naam,sd])=>{
+      let pt=0,ex=0,inv=0;
+      W.forEach(w=>{
+        const v=sd[`w${w.id}`],e=res[`w${w.id}`];
+        if(!v||v.t===undefined)return;inv++;
+        if(!e)return;
+        if(v.t===e.t&&v.u===e.u){pt+=5;ex++;}
+        else if((v.t>v.u&&e.t>e.u)||(v.t<v.u&&e.t<e.u)||(v.t===v.u&&e.t===e.u))pt+=2;
+      });
+      return{naam,pt,ex,inv};
+    }).sort((a,b)=>b.pt-a.pt||b.ex-a.ex);
+    renR(sc);renD(sc);
+  });
+}
+
+function renR(sc){
+  if(!sc.length){
+    document.getElementById('rcon').innerHTML='<div class="leeg"><span class="li">⏳</span><p>Nog geen deelnemers</p></div>';
+    return;
+  }
+  document.getElementById('rcon').innerHTML=sc.map((s,i)=>`
+    <div class="rkc ${i===0?'r1':i===1?'r2':i===2?'r3':''}">
+      <div class="rnr">${i===0?'👑':i===1?'🥈':i===2?'🥉':i+1}</div>
+      <div class="ri">
+        <div class="rna">${s.naam}</div>
+        <div class="rs"><span>${s.inv}</span> wedstr. · <span>${s.ex}</span> exact</div>
+        ${i===0&&s.pt>0?'<div class="mb">🍔 Winnaar!</div>':''}
+      </div>
+      <div class="rr"><div class="rpt">${s.pt} pt</div><div class="ri2">${s.inv} ingevuld</div></div>
+    </div>`).join('');
+}
+
+function renD(data){
+  if(!data||!data.length){
+    document.getElementById('dcon').innerHTML='<div class="leeg"><span class="li">👀</span><p>Nog niemand!</p></div>';
+    return;
+  }
+  document.getElementById('dcon').innerHTML=[...data].sort((a,b)=>b.inv-a.inv).map((s,i)=>{
+    const p=Math.round(s.inv/TOT*100);
+    return`<div class="dc ${s.inv>0?'a':''}"><span class="da">${AVT[i%AVT.length]}</span><div class="dn">${s.naam}</div><div class="dv">${s.inv}/${TOT} · ${p}%</div><div class="db"><div class="df" style="width:${p}%"></div></div></div>`;
+  }).join('');
+}
+
+// ── Tabs ──
+function showTab(naam,el){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(`panel-${naam}`).classList.add('active');
+  el.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+window.showTab=showTab;
+
+// ── Toast ──
+function tt(msg,err){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast'+(err?' e':'');
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ── Config wizard vanuit Regels tab ──
+window.slaConfigOp=slaConfigOp;
+
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('ni').addEventListener('keypress',e=>{if(e.key==='Enter')setN();});
+});
+</script>
+</body>
+</html>
