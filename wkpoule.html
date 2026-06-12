@@ -139,6 +139,22 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 .li{font-size:2.6rem;display:block;margin-bottom:9px;}
 .leeg p{font-size:.83rem;}
 
+/* ── Filter chips ── */
+.fchips{display:flex;gap:5px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none;}
+.fchips::-webkit-scrollbar{display:none;}
+.fc2{flex-shrink:0;background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:6px 13px;font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;color:var(--dim);cursor:pointer;white-space:nowrap;transition:all .2s;}
+.fc2.act{background:var(--goud);color:#000;border-color:var(--goud);}
+/* ── Uitslagen ── */
+.resc{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:12px;margin-bottom:8px;}
+.resc.om{border-color:rgba(255,109,0,.4);}
+.res-score{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--goud);text-align:center;letter-spacing:2px;}
+.wkchips{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;justify-content:center;}
+.wk5{background:rgba(255,215,0,.15);border:1px solid rgba(255,215,0,.4);color:var(--goud);font-size:.65rem;font-weight:800;border-radius:14px;padding:3px 9px;}
+.wk2{background:rgba(0,200,83,.12);border:1px solid rgba(0,200,83,.35);color:var(--groen);font-size:.65rem;font-weight:800;border-radius:14px;padding:3px 9px;}
+.wachten{text-align:center;color:var(--dim);font-size:.75rem;padding:6px;background:var(--card2);border-radius:8px;margin-top:6px;}
+.daghdr{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--tekst);letter-spacing:1.5px;margin:16px 0 8px;display:flex;align-items:center;gap:8px;}
+.daghdr::after{content:'';flex:1;height:1px;background:var(--border);}
+
 /* ── Firebase Setup Overlay ── */
 .mo{position:fixed;inset:0;background:rgba(6,6,16,.97);z-index:500;display:none;align-items:center;justify-content:center;padding:15px;overflow-y:auto;}
 .mo.open{display:flex;}
@@ -169,11 +185,12 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
   <div class="logo">⚽</div>
   <h1>Familie WK Poule 2026</h1>
   <div class="sub">11 JUN – 19 JUL · VS · CANADA · MEXICO · 104 WEDSTRIJDEN</div>
-  <div class="prijs">🍔 Hoofdprijs: McDonalds menu naar keuze!</div>
+  <div class="prijs">🍖 Hoofdprijs: Geheel verzorgde BBQ door Kawita thuis! 🤣</div>
 </div>
 
 <div class="tabs">
   <div class="tab active" onclick="showTab('inv',this)"><span class="ti">✏️</span>Invullen</div>
+  <div class="tab" onclick="showTab('res',this)"><span class="ti">📊</span>Uitslagen</div>
   <div class="tab" onclick="showTab('rang',this)"><span class="ti">🏆</span>Ranglijst</div>
   <div class="tab" onclick="showTab('deel',this)"><span class="ti">👥</span>Wie mee?</div>
   <div class="tab" onclick="showTab('uit',this)"><span class="ti">📋</span>Regels</div>
@@ -204,12 +221,20 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
         <div class="ail" id="ail"><div class="sp"></div>AI berekent...</div>
         <button class="btn bai" id="aib" onclick="aiVul()">🎲 Laat AI alles invullen</button>
       </div>
+      <div class="fchips" id="fchips"></div>
       <div id="wcon"></div>
     </div>
   </div>
 
+  <div class="panel" id="panel-res">
+    <div class="rh"><h2>📊 Uitslagen</h2><span class="ld">LIVE</span></div>
+    <p style="font-size:.72rem;color:var(--dim);margin-bottom:10px">🎯 = exacte score (+5 pt) · ✅ = juiste winnaar (+2 pt)</p>
+    <div id="rescon"><div class="leeg"><span class="li">📭</span><p>Nog geen wedstrijden gespeeld</p></div></div>
+  </div>
+
   <div class="panel" id="panel-rang">
     <div class="rh"><h2>🏆 Ranglijst</h2><span class="ld">LIVE</span></div>
+    <p id="rcnt" style="font-size:.72rem;color:var(--dim);margin-bottom:10px"></p>
     <div id="rcon"><div class="leeg"><span class="li">⏳</span><p>Nog geen deelnemers</p></div></div>
   </div>
 
@@ -223,7 +248,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
   </div>
 
   <div class="panel" id="panel-uit">
-    <div class="ic"><h3>🍔 Hoofdprijs</h3><p style="font-size:.95rem;font-weight:900;color:var(--goud)">McDonalds menu naar keuze!</p><p>Meeste punten op 19 juli wint. Bij gelijkstand: meeste exacte scores.</p></div>
+    <div class="ic"><h3>🍖 Hoofdprijs</h3><p style="font-size:.95rem;font-weight:900;color:var(--goud)">Geheel verzorgde BBQ door Kawita thuis! 🤣</p><p>Meeste punten op 19 juli wint. Bij gelijkstand: meeste exacte scores.</p></div>
     <div class="ic"><h3>⏰ Deadline</h3><p>Voorspelling moet in zijn <strong style="color:var(--rood)">vóór de aftrap</strong>. Daarna vergrendeld.</p></div>
     <div class="ic"><h3>📐 Punten</h3>
       <div class="pr"><span>⚽ Juiste winnaar / gelijkspel</span><span class="pb">2 pt</span></div>
@@ -238,9 +263,10 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
     <div class="ic"><h3>📅 WK 2026</h3><ul><li>11 juni – 19 juli 2026</li><li>VS, Canada & Mexico</li><li>48 landen · 104 wedstrijden</li><li>Finale: MetLife Stadium, New York</li></ul></div>
     <div class="ic"><h3>🤖 AI Voorspeller</h3><p>Geen zin om alles in te vullen? AI vult scores in op basis van teamsterkte. Jij kunt daarna nog aanpassen!</p></div>
     <div class="ic" style="border-color:rgba(255,215,0,.2);">
-      <h3>⚙️ Database instellingen</h3>
-      <p>Beheerder kan de Firebase verbinding opnieuw instellen.</p>
-      <button class="btn bg" onclick="document.getElementById('fmo').classList.add('open')" style="margin-top:8px">🔧 Firebase opnieuw instellen</button>
+      <h3>🔐 Beheerder</h3>
+      <p>Uitslagen van gespeelde wedstrijden invoeren (met pincode). De ranglijst en het Uitslagen-tabblad worden direct live bijgewerkt voor iedereen.</p>
+      <button class="btn bg" onclick="openAdmin()" style="margin-top:8px">📝 Uitslagen invoeren</button>
+      <button class="btn bred" onclick="document.getElementById('fmo').classList.add('open')">🔧 Database instellingen</button>
     </div>
   </div>
 </div>
@@ -251,6 +277,16 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 <!-- ══════════════════════════════════════════════
      FIREBASE SETUP WIZARD
 ══════════════════════════════════════════════ -->
+<div class="mo" id="amo">
+  <div class="md">
+    <h2>🔐 Uitslagen invoeren</h2>
+    <p>Vul de echte uitslagen in van gespeelde wedstrijden. Alles wordt direct live bijgewerkt voor alle deelnemers.</p>
+    <div id="acon"></div>
+    <button class="btn bg" style="margin-top:12px" onclick="slaAdminOp()">💾 Uitslagen opslaan</button>
+    <button class="btn bred" onclick="document.getElementById('amo').classList.remove('open')">✕ Sluiten</button>
+  </div>
+</div>
+
 <div class="mo" id="fmo">
   <div class="md">
     <h2>⚙️ Database instellingen</h2>
@@ -508,6 +544,7 @@ function renW(sd){
     if(!gr[g])return;
     const ws=gr[g];
     const inv=ws.filter(w=>{const k=sd[`w${w.id}`];return k&&k.t!==undefined&&k.u!==undefined;}).length;
+    h+=`<div class="gsec" data-g="${g}">`;
     h+=`<div class="rt">${LBL[g]||g}<span class="rc">${inv}/${ws.length}</span></div>`;
     ws.forEach(w=>{
       const key=`w${w.id}`;const sv=sd[key]||{};
@@ -523,9 +560,53 @@ function renW(sd){
           <input type="number" class="sin" id="u${w.id}" min="0" max="20" placeholder="?" value="${uv}" ${lk?'disabled':''} oninput="sgw(${w.id})">
         </div></div>`;
     });
+    h+=`</div>`;
   });
   document.getElementById('wcon').innerHTML=h;
   W.forEach(w=>sCD(w));upVG(sd);
+  bouwChips();pasFilterToe();
+}
+
+// ── Filteren op poule / vandaag ──
+const KORT={A:'A',B:'B',C:'C',D:'D',E:'E',F:'F 🇳🇱',G:'G',H:'H',I:'I',J:'J',K:'K',L:'L',X:'1/16',R:'1/8',KF:'KF',HF:'HF','3P':'3e pl.',FIN:'🏆 Finale'};
+let filt='all';
+function bouwChips(){
+  const el=document.getElementById('fchips');if(!el||el.children.length)return;
+  const items=[['all','Alles'],['today','📅 Vandaag'],...VLG.map(g=>[g,KORT[g]||g])];
+  el.innerHTML=items.map(([k,l])=>`<button class="fc2 ${k===filt?'act':''}" data-f="${k}" onclick="zetFilter('${k}',this)">${l}</button>`).join('');
+}
+function zetFilter(f,el){
+  filt=f;
+  document.querySelectorAll('.fc2').forEach(c=>c.classList.remove('act'));
+  el.classList.add('act');
+  pasFilterToe();
+}
+window.zetFilter=zetFilter;
+function pasFilterToe(){
+  const vandaag=new Date();
+  document.querySelectorAll('#wcon .gsec').forEach(sec=>{
+    const g=sec.dataset.g;
+    if(filt==='all'){
+      sec.style.display='';
+      sec.querySelectorAll('.wc').forEach(c=>c.style.display='');
+      return;
+    }
+    if(filt==='today'){
+      let zicht=0;
+      sec.querySelectorAll('.wc').forEach(c=>{
+        const id=parseInt(c.id.slice(1));
+        const w=W.find(x=>x.id===id);
+        const dt=new Date(w.iso);
+        const zelfde=dt.getDate()===vandaag.getDate()&&dt.getMonth()===vandaag.getMonth();
+        c.style.display=zelfde?'':'none';
+        if(zelfde)zicht++;
+      });
+      sec.style.display=zicht?'':'none';
+      return;
+    }
+    sec.style.display=(g===filt)?'':'none';
+    sec.querySelectorAll('.wc').forEach(c=>c.style.display='');
+  });
 }
 
 function sCD(w){
@@ -614,15 +695,16 @@ async function aiVul(){
 }
 window.aiVul=aiVul;
 
-// ── Live ranglijst ──
+// ── Live data ──
+let liveAll={},liveRes={};
 function startLive(){
   if(!fbK)return;
   _onValue(_ref(_db,'v'),snap=>{
-    const all=snap.exists()?snap.val():{};const res=all._r||{};
-    const sc=Object.entries(all).filter(([k])=>k!=='_r').map(([naam,sd])=>{
+    liveAll=snap.exists()?snap.val():{};liveRes=liveAll._r||{};
+    const sc=Object.entries(liveAll).filter(([k])=>k!=='_r').map(([naam,sd])=>{
       let pt=0,ex=0,inv=0;
       W.forEach(w=>{
-        const v=sd[`w${w.id}`],e=res[`w${w.id}`];
+        const v=sd[`w${w.id}`],e=liveRes[`w${w.id}`];
         if(!v||v.t===undefined)return;inv++;
         if(!e)return;
         if(v.t===e.t&&v.u===e.u){pt+=5;ex++;}
@@ -630,22 +712,103 @@ function startLive(){
       });
       return{naam,pt,ex,inv};
     }).sort((a,b)=>b.pt-a.pt||b.ex-a.ex);
-    renR(sc);renD(sc);
+    renR(sc);renD(sc);renRes();
   });
 }
 
+// ── Uitslagen tab: gespeelde wedstrijden per dag + wie had het goed ──
+function renRes(){
+  const el=document.getElementById('rescon');if(!el)return;
+  const now=new Date();
+  const past=W.filter(w=>new Date(w.iso)<now).sort((a,b)=>new Date(b.iso)-new Date(a.iso));
+  if(!past.length){el.innerHTML='<div class="leeg"><span class="li">📭</span><p>Nog geen wedstrijden gespeeld</p></div>';return;}
+  const spelers=Object.entries(liveAll).filter(([k])=>k!=='_r');
+  let h='',lastDay='';
+  past.forEach(w=>{
+    if(w.d!==lastDay){h+=`<div class="daghdr">📅 ${w.d}</div>`;lastDay=w.d;}
+    const e=liveRes[`w${w.id}`];
+    h+=`<div class="resc ${w.o?'om':''}">
+      <div class="wm"><span class="mc">⏰ ${w.t}</span><span class="mc">${LBL[w.g]||w.g}</span>${w.o?'<span class="oc">🇳🇱 ORANJE!</span>':''}</div>
+      <div class="tg"><div class="tn ho">${w.th}</div><div class="vs">VS</div><div class="tn">${w.ui}</div></div>`;
+    if(e&&e.t!==undefined){
+      h+=`<div class="res-score">${e.t} - ${e.u}</div>`;
+      const ex=[],gd=[];
+      spelers.forEach(([naam,sd])=>{
+        const v=sd[`w${w.id}`];if(!v||v.t===undefined)return;
+        if(v.t===e.t&&v.u===e.u)ex.push(naam);
+        else if((v.t>v.u&&e.t>e.u)||(v.t<v.u&&e.t<e.u)||(v.t===v.u&&e.t===e.u))gd.push(naam);
+      });
+      if(ex.length||gd.length){
+        h+=`<div class="wkchips">${ex.map(n=>`<span class="wk5">🎯 ${n} +5</span>`).join('')}${gd.map(n=>`<span class="wk2">✅ ${n} +2</span>`).join('')}</div>`;
+      }else{
+        h+=`<div class="wachten">Niemand had het goed 😅</div>`;
+      }
+    }else{
+      h+=`<div class="wachten">⏳ Wacht op uitslag…</div>`;
+    }
+    h+=`</div>`;
+  });
+  el.innerHTML=h;
+}
+
+// ── Beheerder: uitslagen invoeren ──
+const ADMIN_PIN='2026';
+function openAdmin(){
+  const pin=prompt('Beheerder pincode:');
+  if(pin===null)return;
+  if(pin!==ADMIN_PIN){tt('Verkeerde pincode',true);return;}
+  renAdmin();
+  document.getElementById('amo').classList.add('open');
+}
+window.openAdmin=openAdmin;
+
+function renAdmin(){
+  const now=new Date();
+  const past=W.filter(w=>new Date(w.iso)<now).sort((a,b)=>new Date(a.iso)-new Date(b.iso));
+  const el=document.getElementById('acon');
+  if(!past.length){el.innerHTML='<p style="color:var(--dim);font-size:.8rem">Nog geen gespeelde wedstrijden.</p>';return;}
+  el.innerHTML=past.map(w=>{
+    const e=liveRes[`w${w.id}`]||{};
+    return`<div class="resc"><div class="wm"><span class="mc">📅 ${w.d} ${w.t}</span><span class="mc">${LBL[w.g]||w.g}</span></div>
+      <div class="tg"><div class="tn ho">${w.th}</div><div class="vs">VS</div><div class="tn">${w.ui}</div></div>
+      <div class="si">
+        <input type="number" class="sin" id="at${w.id}" min="0" max="20" placeholder="?" value="${e.t!==undefined?e.t:''}">
+        <div class="ss">-</div>
+        <input type="number" class="sin" id="au${w.id}" min="0" max="20" placeholder="?" value="${e.u!==undefined?e.u:''}">
+      </div></div>`;
+  }).join('');
+}
+
+async function slaAdminOp(){
+  const ups={};let n=0;const now=new Date();
+  W.filter(w=>new Date(w.iso)<now).forEach(w=>{
+    const t=document.getElementById(`at${w.id}`),u=document.getElementById(`au${w.id}`);
+    if(!t||!u)return;
+    if(t.value!==''&&u.value!==''){ups[`v/_r/w${w.id}`]={t:parseInt(t.value),u:parseInt(u.value)};n++;}
+  });
+  if(!fbK){tt('Firebase niet verbonden',true);return;}
+  try{
+    await _update(_ref(_db),ups);
+    tt(`✅ ${n} uitslagen opgeslagen!`);
+    document.getElementById('amo').classList.remove('open');
+  }catch(e){tt('Fout bij opslaan',true);}
+}
+window.slaAdminOp=slaAdminOp;
+
 function renR(sc){
+  document.getElementById('rcnt').textContent=sc.length?`${sc.length} deelnemer${sc.length===1?'':'s'} · winnaar krijgt de BBQ van Kawita 🍖`:'';
   if(!sc.length){
     document.getElementById('rcon').innerHTML='<div class="leeg"><span class="li">⏳</span><p>Nog geen deelnemers</p></div>';
     return;
   }
+  const top=sc[0].pt;
   document.getElementById('rcon').innerHTML=sc.map((s,i)=>`
     <div class="rkc ${i===0?'r1':i===1?'r2':i===2?'r3':''}">
       <div class="rnr">${i===0?'👑':i===1?'🥈':i===2?'🥉':i+1}</div>
       <div class="ri">
         <div class="rna">${s.naam}</div>
-        <div class="rs"><span>${s.inv}</span> wedstr. · <span>${s.ex}</span> exact</div>
-        ${i===0&&s.pt>0?'<div class="mb">🍔 Winnaar!</div>':''}
+        <div class="rs"><span>${s.inv}</span> wedstr. · <span>${s.ex}</span> exact${i>0&&top>0?` · <span>${top-s.pt}</span> achter`:''}</div>
+        ${i===0&&s.pt>0?'<div class="mb">🍖 Aan kop voor de BBQ!</div>':''}
       </div>
       <div class="rr"><div class="rpt">${s.pt} pt</div><div class="ri2">${s.inv} ingevuld</div></div>
     </div>`).join('');
