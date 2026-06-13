@@ -6,7 +6,7 @@
 <title>Jaikaran Family WK Poule 2026</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;700;800;900&display=swap');
-:root{--rood:#E8003D;--goud:#FFD700;--groen:#00C853;--donker:#060610;--card:#0f0f1e;--card2:#161628;--border:#1e1e35;--tekst:#f0f0ff;--dim:#6b6b8a;--oranje:#FF6D00;}
+:root{--rood:#E8003D;--goud:#FFD700;--groen:#00C853;--donker:#060610;--card:#0f0f1e;--card2:#161628;--border:#1e1e35;--tekst:#f0f0ff;--dim:#6b6b8a;--oranje:#FF6D00;--cyan:#00C8FF;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--donker);color:var(--tekst);font-family:'Nunito',sans-serif;min-height:100vh;overflow-x:hidden;}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(232,0,61,.06),transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(255,215,0,.05),transparent 50%);pointer-events:none;z-index:0;}
@@ -140,15 +140,40 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 .li{font-size:2.6rem;display:block;margin-bottom:9px;}
 .leeg p{font-size:.83rem;}
 
-/* ── Filter chips ── */
-.fchips{display:flex;gap:5px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none;}
-.fchips::-webkit-scrollbar{display:none;}
-.fc2{flex-shrink:0;background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:6px 13px;font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;color:var(--dim);cursor:pointer;white-space:nowrap;transition:all .2s;}
-.fc2.act{background:var(--goud);color:#000;border-color:var(--goud);}
+/* ── Filter dropdown ── */
+.fbar{display:flex;align-items:center;gap:8px;padding:2px 0 12px;}
+.fsel{flex:1;background:var(--card2);border:2px solid var(--border);border-radius:11px;padding:9px 12px;color:var(--tekst);font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;outline:none;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23FFD700' stroke-width='2' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
+.fsel:focus{border-color:var(--goud);}
+.flegend{display:flex;gap:9px;flex-wrap:wrap;font-size:.62rem;font-weight:700;color:var(--dim);margin-bottom:10px;}
+.flegend span{display:inline-flex;align-items:center;gap:4px;}
+.fdot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+.fdot.op{background:var(--cyan,#00FFE5);}
+.fdot.bz{background:var(--oranje);}
+.fdot.cl{background:var(--groen);}
+/* ── Match status kleuren ── */
+.wc.live{border-color:rgba(255,109,0,.7);box-shadow:0 0 0 1px rgba(255,109,0,.3),0 0 18px rgba(255,109,0,.15);}
+.wc.done{border-color:rgba(0,200,83,.45);}
+.wc.done::after,.wc.live::after{content:none;}
+.lvbadge{display:inline-flex;align-items:center;gap:4px;background:rgba(255,109,0,.2);color:var(--oranje);border-radius:5px;padding:2px 7px;font-weight:900;font-size:.61rem;}
+.lvbadge::before{content:'';width:6px;height:6px;background:var(--oranje);border-radius:50%;animation:lp 1s ease-in-out infinite;}
+.dnbadge{display:inline-flex;align-items:center;gap:3px;background:rgba(0,200,83,.18);color:var(--groen);border-radius:5px;padding:2px 7px;font-weight:900;font-size:.61rem;}
+.liveS{text-align:center;margin:4px 0 2px;}
+.liveS .sc{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;letter-spacing:2px;}
+.liveS.bz .sc{color:var(--oranje);}
+.liveS.cl .sc{color:var(--groen);}
+.liveS .mn{font-size:.62rem;font-weight:800;color:var(--dim);margin-left:6px;vertical-align:middle;}
+.jecheck{font-size:.64rem;font-weight:800;text-align:center;margin-top:6px;padding:4px;border-radius:7px;}
+.jecheck.g5{background:rgba(255,215,0,.12);color:var(--goud);}
+.jecheck.g2{background:rgba(0,200,83,.1);color:var(--groen);}
+.jecheck.g0{background:rgba(232,0,61,.08);color:var(--rood);}
 /* ── Uitslagen ── */
 .resc{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:12px;margin-bottom:8px;}
 .resc.om{border-color:rgba(255,109,0,.4);}
+.resc.live{border-color:rgba(255,109,0,.7);}
+.resc.done{border-color:rgba(0,200,83,.4);}
 .res-score{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--goud);text-align:center;letter-spacing:2px;}
+.res-score.bz{color:var(--oranje);}
+.res-score.cl{color:var(--groen);}
 .wkchips{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;justify-content:center;}
 .wk5{background:rgba(255,215,0,.15);border:1px solid rgba(255,215,0,.4);color:var(--goud);font-size:.65rem;font-weight:800;border-radius:14px;padding:3px 9px;}
 .wk2{background:rgba(0,200,83,.12);border:1px solid rgba(0,200,83,.35);color:var(--groen);font-size:.65rem;font-weight:800;border-radius:14px;padding:3px 9px;}
@@ -208,7 +233,14 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
         <div class="ail" id="ail"><div class="sp"></div>AI berekent...</div>
         <button class="btn bai" id="aib" onclick="aiVul()">🎲 Laat AI alles invullen</button>
       </div>
-      <div class="fchips" id="fchips"></div>
+      <div class="fbar">
+        <select class="fsel" id="fsel" onchange="zetFilter(this.value)"></select>
+      </div>
+      <div class="flegend">
+        <span><span class="fdot op"></span>Open</span>
+        <span><span class="fdot bz"></span>Bezig (live)</span>
+        <span><span class="fdot cl"></span>Gesloten</span>
+      </div>
       <div id="wcon"></div>
     </div>
   </div>
@@ -390,6 +422,7 @@ const TOT=W.length;
 
 let sp=null, fbK=false, cdT={};
 let _db,_ref,_set,_get,_onValue,_update;
+let userSd={}, espnScores={}, espnPollT=null;
 
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyCeu-e2lUD_xUQESb8rdoYczCVBq8O2Vkk",
@@ -400,6 +433,70 @@ const FIREBASE_CONFIG = {
   messagingSenderId: "889661679081",
   appId: "1:889661679081:web:5fce0db1b56b3f90ff9778"
 };
+
+// ── ESPN naam mapping (Engels → Nederlands) ──
+const ESPN_NL={
+  "Mexico":"Mexico","South Africa":"Zuid-Afrika","South Korea":"Zuid-Korea",
+  "Czech Republic":"Tsjechie","Czechia":"Tsjechie",
+  "Bosnia and Herzegovina":"Bosnie & Herz.","Bosnia-Herzegovina":"Bosnie & Herz.",
+  "Canada":"Canada","Qatar":"Qatar","Switzerland":"Zwitserland",
+  "Brazil":"Brazilie","Morocco":"Marokko","Haiti":"Haiti","Scotland":"Schotland",
+  "United States":"Verenigde Staten","USA":"Verenigde Staten",
+  "Paraguay":"Paraguay","Australia":"Australie","Turkey":"Turkije",
+  "Germany":"Duitsland","Curacao":"Curacao","Curaçao":"Curacao",
+  "Ivory Coast":"Ivoorkust","Cote D'Ivoire":"Ivoorkust","Côte d'Ivoire":"Ivoorkust",
+  "Ecuador":"Ecuador","Netherlands":"Nederland","Sweden":"Zweden",
+  "Tunisia":"Tunisie","Belgium":"Belgie","Egypt":"Egypte","Iran":"Iran",
+  "New Zealand":"Nieuw-Zeeland","Spain":"Spanje","Cape Verde":"Kaapverdie",
+  "Saudi Arabia":"Saoedi-Arabie","Uruguay":"Uruguay",
+  "France":"Frankrijk","Senegal":"Senegal","Iraq":"Irak","Norway":"Noorwegen",
+  "Argentina":"Argentinie","Algeria":"Algerije","Austria":"Oostenrijk",
+  "Jordan":"Jordanie","Portugal":"Portugal",
+  "DR Congo":"Congo","Congo, DR":"Congo","Democratic Republic of Congo":"Congo",
+  "Uzbekistan":"Oezbekistan","Colombia":"Colombia",
+  "England":"Engeland","Croatia":"Kroatie","Ghana":"Ghana","Panama":"Panama",
+  "Japan":"Japan"
+};
+
+async function fetchESPN(dateStr){
+  try{
+    const r=await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${dateStr}`);
+    if(!r.ok)return;
+    const json=await r.json();
+    for(const ev of (json.events||[])){
+      for(const comp of (ev.competitions||[])){
+        const teams=comp.competitors||[];if(teams.length<2)continue;
+        const hm=teams.find(t=>t.homeAway==='home'),aw=teams.find(t=>t.homeAway==='away');
+        if(!hm||!aw)continue;
+        const hnl=ESPN_NL[hm.team.displayName]||hm.team.displayName;
+        const anl=ESPN_NL[aw.team.displayName]||aw.team.displayName;
+        const w=W.find(x=>(x.th===hnl&&x.ui===anl)||(x.th===anl&&x.ui===hnl));
+        if(!w)continue;
+        const st=comp.status?.type?.state||'pre';
+        const hs=parseInt(hm.score)||0,as_=parseInt(aw.score)||0;
+        const thSc=(w.th===hnl)?hs:as_,uiSc=(w.ui===anl)?as_:hs;
+        espnScores[`w${w.id}`]={th:thSc,ui:uiSc,status:st,clock:comp.status?.displayClock||''};
+      }
+    }
+  }catch(e){console.warn('[ESPN]',e);}
+}
+
+async function laadESPN(){
+  const nu=new Date();
+  const days=[-1,0,1].map(d=>{const dt=new Date(nu);dt.setDate(dt.getDate()+d);return dt.toISOString().slice(0,10).replace(/-/g,'');});
+  await Promise.all(days.map(fetchESPN));
+  if(fbK){
+    const ups={};
+    for(const [k,sc] of Object.entries(espnScores)){
+      if(sc.status==='post')ups[`v/_r/${k}`]={t:sc.th,u:sc.ui};
+    }
+    if(Object.keys(ups).length)try{await _update(_ref(_db),ups);}catch(e){}
+  }
+  if(sp)renW(userSd);
+  renRes();
+  clearTimeout(espnPollT);
+  if(Object.values(espnScores).some(s=>s.status==='in'))espnPollT=setTimeout(laadESPN,60000);
+}
 
 // ── Firebase laden ──
 async function initFirebase(){
@@ -423,7 +520,7 @@ async function start(){
   }
   fbK=true;
   document.getElementById('sbar').innerHTML='<span style="color:var(--groen)">●</span><span style="color:var(--groen);font-size:.68rem;font-weight:700">Verbonden · Live actief</span>';
-  laadN();startLive();
+  laadN();startLive();laadESPN();
 }
 
 start();
@@ -468,79 +565,76 @@ async function laadR(){
   if(fbK){
     try{const s=await _get(_ref(_db,`v/${sp}`));if(s.exists())sd=s.val();}catch(e){}
   }
-  renW(sd);
+  userSd=sd;renW(sd);
 }
 
-// ── Wedstrijden renderen ──
+// ── Wedstrijden renderen (chronologisch) ──
 function renW(sd){
-  const gr={};W.forEach(w=>{if(!gr[w.g])gr[w.g]=[];gr[w.g].push(w);});
-  let h='';
-  VLG.forEach(g=>{
-    if(!gr[g])return;
-    const ws=gr[g];
-    const inv=ws.filter(w=>{const k=sd[`w${w.id}`];return k&&k.t!==undefined&&k.u!==undefined;}).length;
-    h+=`<div class="gsec" data-g="${g}">`;
-    h+=`<div class="rt">${LBL[g]||g}<span class="rc">${inv}/${ws.length}</span></div>`;
-    ws.forEach(w=>{
-      const key=`w${w.id}`;const sv=sd[key]||{};
-      const tv=sv.t!==undefined?sv.t:'',uv=sv.u!==undefined?sv.u:'';
-      const hi=tv!==''&&uv!=='',ai=sv.ai===true,lk=new Date(w.iso)<new Date();
-      h+=`<div class="wc ${hi?'hi':''} ${w.o?'om':''} ${lk?'lk':''}" id="c${w.id}">
-        <div class="wm"><span class="mc">📅 ${w.d}</span><span class="mc">⏰ ${w.t}</span>${w.o?'<span class="oc">🇳🇱 ORANJE!</span>':''}${ai?'<span class="ab">🤖 AI</span>':''}</div>
-        <div id="cd${w.id}"></div>
-        <div class="tg"><div class="tn ho">${w.th}</div><div class="vs">VS</div><div class="tn">${w.ui}</div></div>
-        <div class="si">
-          <input type="number" class="sin" id="t${w.id}" min="0" max="20" placeholder="?" value="${tv}" ${lk?'disabled':''} oninput="sgw(${w.id})">
-          <div class="ss">-</div>
-          <input type="number" class="sin" id="u${w.id}" min="0" max="20" placeholder="?" value="${uv}" ${lk?'disabled':''} oninput="sgw(${w.id})">
-        </div></div>`;
-    });
+  userSd=sd;
+  const sorted=[...W].sort((a,b)=>new Date(a.iso)-new Date(b.iso));
+  let h='',lastDay='';
+  sorted.forEach(w=>{
+    const key=`w${w.id}`;
+    const sv=sd[key]||{};
+    const tv=sv.t!==undefined?sv.t:'',uv=sv.u!==undefined?sv.u:'';
+    const hi=tv!==''&&uv!=='',ai=sv.ai===true,lk=new Date(w.iso)<new Date();
+    const espn=espnScores[key];
+    const isLive=espn?.status==='in';
+    const isDone=espn?.status==='post'||(lk&&!espn);
+    const statusCls=isLive?'live':isDone?'done':'';
+    if(w.d!==lastDay){if(lastDay)h+='</div>';h+=`<div class="daysec" data-d="${w.d}"><div class="daghdr">📅 ${w.d}</div>`;lastDay=w.d;}
+    h+=`<div class="wc ${hi?'hi':''} ${w.o?'om':''} ${lk?'lk':''} ${statusCls}" id="c${w.id}" data-g="${w.g}">`;
+    h+=`<div class="wm"><span class="mc">⏰ ${w.t}</span><span class="mc">${LBL[w.g]||w.g}</span>`;
+    if(w.o)h+=`<span class="oc">🇳🇱 ORANJE!</span>`;
+    if(ai)h+=`<span class="ab">🤖 AI</span>`;
+    if(isLive)h+=`<span class="lvbadge">LIVE ${espn.clock}</span>`;
+    else if(isDone&&espn)h+=`<span class="dnbadge">✓ Eindstand</span>`;
+    h+=`</div><div id="cd${w.id}"></div>`;
+    if(espn&&(isLive||isDone)){
+      h+=`<div class="liveS ${isLive?'bz':'cl'}"><span class="sc">${espn.th} - ${espn.ui}</span>${isLive?`<span class="mn">${espn.clock}</span>`:''}</div>`;
+    }
+    h+=`<div class="tg"><div class="tn ho">${w.th}</div><div class="vs">VS</div><div class="tn">${w.ui}</div></div>`;
+    h+=`<div class="si"><input type="number" class="sin" id="t${w.id}" min="0" max="20" placeholder="?" value="${tv}" ${lk?'disabled':''} oninput="sgw(${w.id})"><div class="ss">-</div><input type="number" class="sin" id="u${w.id}" min="0" max="20" placeholder="?" value="${uv}" ${lk?'disabled':''} oninput="sgw(${w.id})"></div>`;
+    if((isLive||isDone)&&tv!==''&&uv!==''){
+      const e=liveRes[key]||(espn&&espn.status!=='pre'?{t:espn.th,u:espn.ui}:null);
+      if(e&&e.t!==undefined){
+        const tv2=parseInt(tv),uv2=parseInt(uv);
+        let cls='g0',txt='❌ Fout';
+        if(tv2===e.t&&uv2===e.u){cls='g5';txt='🎯 Exact! +5';}
+        else if((tv2>uv2&&e.t>e.u)||(tv2<uv2&&e.t<e.u)||(tv2===uv2&&e.t===e.u)){cls='g2';txt='✅ Winnaar goed +2';}
+        h+=`<div class="jecheck ${cls}">${txt}</div>`;
+      }
+    }
     h+=`</div>`;
   });
+  if(lastDay)h+='</div>';
   document.getElementById('wcon').innerHTML=h;
   W.forEach(w=>sCD(w));upVG(sd);
-  bouwChips();pasFilterToe();
+  bouwSelect();pasFilterToe();
 }
 
 // ── Filteren op poule / vandaag ──
-const KORT={A:'A',B:'B',C:'C',D:'D',E:'E',F:'F 🇳🇱',G:'G',H:'H',I:'I',J:'J',K:'K',L:'L',X:'1/16',R:'1/8',KF:'KF',HF:'HF','3P':'3e pl.',FIN:'🏆 Finale'};
+const KORT={A:'Groep A',B:'Groep B',C:'Groep C',D:'Groep D',E:'Groep E','F':'Groep F 🇳🇱',G:'Groep G',H:'Groep H',I:'Groep I',J:'Groep J',K:'Groep K',L:'Groep L',X:'1/16 Finales',R:'1/8 Finales',KF:'Kwartfinales',HF:'Halve Finales','3P':'3e Plaats',FIN:'🏆 Finale'};
 let filt='all';
-function bouwChips(){
-  const el=document.getElementById('fchips');if(!el||el.children.length)return;
-  const items=[['all','Alles'],['today','📅 Vandaag'],...VLG.map(g=>[g,KORT[g]||g])];
-  el.innerHTML=items.map(([k,l])=>`<button class="fc2 ${k===filt?'act':''}" data-f="${k}" onclick="zetFilter('${k}',this)">${l}</button>`).join('');
+function bouwSelect(){
+  const el=document.getElementById('fsel');if(!el||el.children.length>0)return;
+  const items=[['all','📋 Alle wedstrijden'],['today','📅 Vandaag'],...VLG.map(g=>[g,KORT[g]||g])];
+  el.innerHTML=items.map(([k,l])=>`<option value="${k}">${l}</option>`).join('');
 }
-function zetFilter(f,el){
-  filt=f;
-  document.querySelectorAll('.fc2').forEach(c=>c.classList.remove('act'));
-  el.classList.add('act');
-  pasFilterToe();
-}
+function zetFilter(f){filt=f;pasFilterToe();}
 window.zetFilter=zetFilter;
 function pasFilterToe(){
-  const vandaag=new Date();
-  document.querySelectorAll('#wcon .gsec').forEach(sec=>{
-    const g=sec.dataset.g;
-    if(filt==='all'){
-      sec.style.display='';
-      sec.querySelectorAll('.wc').forEach(c=>c.style.display='');
-      return;
-    }
-    if(filt==='today'){
-      let zicht=0;
-      sec.querySelectorAll('.wc').forEach(c=>{
-        const id=parseInt(c.id.slice(1));
-        const w=W.find(x=>x.id===id);
-        const dt=new Date(w.iso);
-        const zelfde=dt.getDate()===vandaag.getDate()&&dt.getMonth()===vandaag.getMonth();
-        c.style.display=zelfde?'':'none';
-        if(zelfde)zicht++;
-      });
-      sec.style.display=zicht?'':'none';
-      return;
-    }
-    sec.style.display=(g===filt)?'':'none';
-    sec.querySelectorAll('.wc').forEach(c=>c.style.display='');
+  const vandaagStr=new Date().toISOString().slice(0,10);
+  document.querySelectorAll('#wcon .daysec').forEach(sec=>{
+    let zicht=0;
+    sec.querySelectorAll('.wc').forEach(c=>{
+      const id=parseInt(c.id.slice(1));
+      const w=W.find(x=>x.id===id);
+      const show=filt==='all'||(filt==='today'&&w.iso.slice(0,10)===vandaagStr)||(filt===w.g);
+      c.style.display=show?'':'none';
+      if(show)zicht++;
+    });
+    sec.style.display=zicht?'':'none';
   });
 }
 
@@ -651,36 +745,41 @@ function startLive(){
   });
 }
 
-// ── Uitslagen tab: gespeelde wedstrijden per dag + wie had het goed ──
+// ── Uitslagen tab: gespeelde/live wedstrijden met ESPN data ──
 function renRes(){
   const el=document.getElementById('rescon');if(!el)return;
   const now=new Date();
-  const past=W.filter(w=>new Date(w.iso)<now).sort((a,b)=>new Date(b.iso)-new Date(a.iso));
+  const past=W.filter(w=>{
+    const espn=espnScores[`w${w.id}`];
+    return new Date(w.iso)<now||espn?.status==='in'||espn?.status==='post';
+  }).sort((a,b)=>new Date(b.iso)-new Date(a.iso));
   if(!past.length){el.innerHTML='<div class="leeg"><span class="li">📭</span><p>Nog geen wedstrijden gespeeld</p></div>';return;}
   const spelers=Object.entries(liveAll).filter(([k])=>k!=='_r');
   let h='',lastDay='';
   past.forEach(w=>{
+    const key=`w${w.id}`;
+    const espn=espnScores[key];
+    const isLive=espn?.status==='in',isDone=espn?.status==='post';
+    const e=liveRes[key]||(espn&&espn.status!=='pre'?{t:espn.th,u:espn.ui}:null);
+    const statusCls=isLive?'live':isDone?'done':'';
     if(w.d!==lastDay){h+=`<div class="daghdr">📅 ${w.d}</div>`;lastDay=w.d;}
-    const e=liveRes[`w${w.id}`];
-    h+=`<div class="resc ${w.o?'om':''}">
-      <div class="wm"><span class="mc">⏰ ${w.t}</span><span class="mc">${LBL[w.g]||w.g}</span>${w.o?'<span class="oc">🇳🇱 ORANJE!</span>':''}</div>
-      <div class="tg"><div class="tn ho">${w.th}</div><div class="vs">VS</div><div class="tn">${w.ui}</div></div>`;
+    h+=`<div class="resc ${w.o?'om':''} ${statusCls}">`;
+    h+=`<div class="wm"><span class="mc">⏰ ${w.t}</span><span class="mc">${LBL[w.g]||w.g}</span>`;
+    if(w.o)h+=`<span class="oc">🇳🇱 ORANJE!</span>`;
+    if(isLive)h+=`<span class="lvbadge">LIVE ${espn.clock}</span>`;
+    else if(isDone)h+=`<span class="dnbadge">✓ Eindstand</span>`;
+    h+=`</div><div class="tg"><div class="tn ho">${w.th}</div><div class="vs">VS</div><div class="tn">${w.ui}</div></div>`;
     if(e&&e.t!==undefined){
-      h+=`<div class="res-score">${e.t} - ${e.u}</div>`;
+      h+=`<div class="res-score ${isLive?'bz':isDone?'cl':''}">${e.t} - ${e.u}</div>`;
       const ex=[],gd=[];
       spelers.forEach(([naam,sd])=>{
-        const v=sd[`w${w.id}`];if(!v||v.t===undefined)return;
+        const v=sd[key];if(!v||v.t===undefined)return;
         if(v.t===e.t&&v.u===e.u)ex.push(naam);
         else if((v.t>v.u&&e.t>e.u)||(v.t<v.u&&e.t<e.u)||(v.t===v.u&&e.t===e.u))gd.push(naam);
       });
-      if(ex.length||gd.length){
-        h+=`<div class="wkchips">${ex.map(n=>`<span class="wk5">🎯 ${n} +5</span>`).join('')}${gd.map(n=>`<span class="wk2">✅ ${n} +2</span>`).join('')}</div>`;
-      }else{
-        h+=`<div class="wachten">Niemand had het goed 😅</div>`;
-      }
-    }else{
-      h+=`<div class="wachten">⏳ Wacht op uitslag…</div>`;
-    }
+      if(ex.length||gd.length)h+=`<div class="wkchips">${ex.map(n=>`<span class="wk5">🎯 ${n} +5</span>`).join('')}${gd.map(n=>`<span class="wk2">✅ ${n} +2</span>`).join('')}</div>`;
+      else h+=`<div class="wachten">Niemand had het goed 😅</div>`;
+    }else h+=`<div class="wachten">${isLive?'⏳ Bezig...':'⏳ Wacht op uitslag…'}</div>`;
     h+=`</div>`;
   });
   el.innerHTML=h;
