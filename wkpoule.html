@@ -994,64 +994,6 @@ function renGoals(goals,w){
   return h;
 }
 
-// ── Laatste wedstrijd kaart: winnaar + standen beweging ──
-function renLastMatchCard(spelers){
-  const gedaan=W.filter(w=>liveRes[`w${w.id}`]).sort((a,b)=>new Date(b.iso)-new Date(a.iso));
-  if(!gedaan.length)return'';
-  const last=gedaan[0],key=`w${last.id}`,res=liveRes[key];
-  // Punten per speler voor deze wedstrijd
-  const mpt=spelers.map(([naam,sd])=>{
-    const v=sd[key];if(!v||v.t===undefined)return{naam,pt:0,vt:null,vu:null};
-    let pt=0;
-    if(v.t===res.t&&v.u===res.u)pt=5;
-    else if((v.t>v.u&&res.t>res.u)||(v.t<v.u&&res.t<res.u)||(v.t===v.u&&res.t===res.u))pt=2;
-    return{naam,pt,vt:v.t,vu:v.u};
-  }).sort((a,b)=>b.pt-a.pt||a.naam.localeCompare(b.naam));
-  // Rang voor en na
-  const calcRang=(excl)=>spelers.map(([naam,sd])=>{
-    let pt=0;
-    W.forEach(w=>{
-      if(excl&&w.id===last.id)return;
-      const v=sd[`w${w.id}`],r=liveRes[`w${w.id}`];if(!v||v.t===undefined||!r)return;
-      if(v.t===r.t&&v.u===r.u)pt+=5;
-      else if((v.t>v.u&&r.t>r.u)||(v.t<v.u&&r.t<r.u)||(v.t===v.u&&r.t===r.u))pt+=2;
-    });
-    return{naam,pt};
-  }).sort((a,b)=>b.pt-a.pt||a.naam.localeCompare(b.naam));
-  const voor=calcRang(true),na=calcRang(false);
-  const posVoor={};voor.forEach((s,i)=>posVoor[s.naam]=i+1);
-  let h='';
-  // Winnaar kaart
-  const top=mpt[0];
-  const winnaars=mpt.filter(p=>p.pt===top.pt&&top.pt>0);
-  h+=`<div class="bigcd" style="margin-bottom:14px;border-color:rgba(255,215,0,.35)">`;
-  h+=`<div class="bigcd-label">✅ LAATSTE UITSLAG · ${LBL[last.g]||last.g}</div>`;
-  h+=`<div class="bigcd-match">${last.th} vs ${last.ui}</div>`;
-  h+=`<div class="bigcd-timer" style="font-size:2.6rem">${res.t} – ${res.u}</div>`;
-  if(winnaars.length){
-    const badge=top.pt===5?'🎯 EXACT RAAK!':'✅ Juiste winnaar';
-    h+=`<div style="margin-top:8px;font-size:.78rem;color:var(--dim)">${badge}</div>`;
-    h+=`<div style="font-size:1rem;font-weight:900;color:var(--goud);margin:4px 0">${winnaars.map(p=>`👑 ${p.naam}`).join(' & ')}</div>`;
-    if(winnaars.length===1&&winnaars[0].vt!==null)h+=`<div style="font-size:.72rem;color:var(--dim)">voorspelde ${winnaars[0].vt}-${winnaars[0].vu} · +${top.pt} pt</div>`;
-  }else{
-    h+=`<div style="margin-top:8px;font-size:.78rem;color:var(--dim)">😅 Niemand had het goed</div>`;
-  }
-  h+=`</div>`;
-  // Standen beweging
-  h+=`<div class="liveban" style="margin:0 0 7px"><span class="liveban-t">📈 Standen na deze wedstrijd</span></div>`;
-  h+=`<div class="lvlist" style="margin-bottom:16px">`;
-  na.forEach((s,i)=>{
-    const pb=posVoor[s.naam]||na.length,pa=i+1,d=pb-pa;
-    const arrow=d>0?`<span style="color:#4ade80;font-weight:900">↑${d}</span>`:d<0?`<span style="color:#f87171;font-weight:900">↓${Math.abs(d)}</span>`:`<span style="color:var(--dim)">→</span>`;
-    const mp=mpt.find(p=>p.naam===s.naam);
-    const badge=mp?.pt===5?'🎯':mp?.pt===2?'✅':'';
-    const rnr=i===0?'👑':i===1?'🥈':i===2?'🥉':i+1;
-    h+=`<div class="lvrow ${i===0?'g5':i===1||i===2?'g2':''}"><span class="lvnaam">${rnr} ${s.naam} ${badge}</span><span class="lvvoor">${arrow}</span><span class="lvpt">${s.pt} pt</span></div>`;
-  });
-  h+=`</div>`;
-  return h;
-}
-
 // ── Live tab: countdown + live wedstrijden + ranglijst + meedoen ──
 let _bigCdI=null;
 window._showNext=false;
@@ -1159,7 +1101,6 @@ function renLive(){
     bouwLiveTab(false);
     window._showNext=false;
     const vnbtn2=document.getElementById('vnbtn');if(vnbtn2)vnbtn2.style.display='none';
-    h+=renLastMatchCard(spelers);
     const res=_renNextMatch(h,spelers,new Date());
     h=res.h;
     if(res.volg)needCdTicker=true;
