@@ -1,8 +1,8 @@
 {
-  "name": "Familie Club 2000",
-  "short_name": "Club 2000",
-  "description": "Familie arcade party machine in de stijl van de klassieke Club 2000. Geen echt geld, alleen punten en familieplezier.",
-  "start_url": "./",
+  "name": "Jaikaran Family WK Poule 2026",
+  "short_name": "WK Poule",
+  "description": "WK 2026 poule voor de Jaikaran familie met voorspellingen, live uitslagen en ranglijst.",
+  "start_url": "./wkpoule.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",

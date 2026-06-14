@@ -3,7 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#060610">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="WK Poule">
 <title>Jaikaran Family WK Poule 2026</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16.png">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;700;800;900&display=swap');
 :root{--rood:#E8003D;--goud:#FFD700;--groen:#00C853;--donker:#060610;--card:#0f0f1e;--card2:#161628;--border:#1e1e35;--tekst:#f0f0ff;--dim:#6b6b8a;--oranje:#FF6D00;--cyan:#00C8FF;}
@@ -906,6 +914,13 @@ function tt(msg,err){
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('ni').addEventListener('keypress',e=>{if(e.key==='Enter')setN();});
 });
+
+// Registreer de service worker ook als bezoekers direct op wkpoule.html openen.
+if('serviceWorker'in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./sw.js').catch(err=>console.error('SW failed:',err));
+  });
+}
 </script>
 </body>
 </html>
