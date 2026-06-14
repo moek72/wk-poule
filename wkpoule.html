@@ -229,7 +229,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
     <div id="ssec" style="display:none">
       <div class="wban">
         <div><div class="wnm" id="wnm">Hey!</div><div class="wsb">Invullen vóór aftrap ⬇️</div></div>
-        <button class="wb" onclick="wisN()">↩ Wisselen</button>
+        <button class="wb" onclick="verwijderN()" style="color:var(--rood);border-color:rgba(232,0,61,.3)">🗑 Verwijder deelname</button>
       </div>
       <div class="vgw">
         <div class="vgr"><span class="vgl">📊 Voortgang</span><span class="vgn" id="vgn">0/104</span></div>
@@ -585,6 +585,17 @@ function wisN(){
   laadN();
 }
 window.wisN=wisN;
+
+async function verwijderN(){
+  if(!confirm(`Weet je zeker dat je de deelname van ${sp} wilt verwijderen?\nAlle ingevulde voorspellingen worden gewist.`))return;
+  if(!fbK){tt('Firebase niet verbonden',true);return;}
+  try{
+    await _set(_ref(_db,`v/${sp}`),null);
+    tt('✅ Deelname verwijderd');
+    wisN();
+  }catch(e){tt('Fout bij verwijderen',true);}
+}
+window.verwijderN=verwijderN;
 
 async function laadN(){
   if(!fbK)return;
