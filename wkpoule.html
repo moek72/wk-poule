@@ -201,6 +201,11 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 .lvrow.g2{background:rgba(0,200,83,.1);border:1px solid rgba(0,200,83,.3);}
 .lvrow.g2 .lvvoor{color:var(--groen);}.lvrow.g2 .lvpt{background:var(--groen);color:#000;}
 .lvrow.g0 .lvpt{background:var(--border);color:var(--dim);}
+/* ── Goalscorers ── */
+.goals{display:flex;flex-direction:column;gap:3px;margin:6px 0 10px;padding:8px 10px;background:rgba(255,215,0,.05);border-radius:10px;}
+.goal-item{font-size:.73rem;font-weight:700;color:var(--tekst);display:flex;align-items:center;gap:5px;}
+.goal-item .gmin{color:var(--dim);font-size:.66rem;font-weight:700;min-width:26px;}
+.goal-item .gteam{font-size:.64rem;color:var(--dim);}
 /* ── Groepsstanden ── */
 .stgrp{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:10px 12px;margin-bottom:12px;}
 .stgrp .daghdr{margin:0 0 8px;}
@@ -581,7 +586,17 @@ async function fetchESPN(dateStr){
         const st=comp.status?.type?.state||'pre';
         const hs=parseInt(hm.score)||0,as_=parseInt(aw.score)||0;
         const thSc=(w.th===hnl)?hs:as_,uiSc=(w.ui===anl)?as_:hs;
-        espnScores[`w${w.id}`]={th:thSc,ui:uiSc,status:st,clock:comp.status?.displayClock||''};
+        const goals=(comp.details||[])
+          .filter(d=>d.scoringPlay&&d.athletesInvolved?.length)
+          .map(d=>{
+            const teamNl=ESPN_NL[d.team?.displayName]||d.team?.displayName||'';
+            return{
+              naam:d.athletesInvolved[0].shortName||d.athletesInvolved[0].displayName||'?',
+              team:teamNl,
+              min:d.clock?.displayValue||''
+            };
+          });
+        espnScores[`w${w.id}`]={th:thSc,ui:uiSc,status:st,clock:comp.status?.displayClock||'',goals};
       }
     }
   }catch(e){console.warn('[ESPN]',e);}
@@ -937,6 +952,7 @@ function renRes(){
     h+=`</div><div class="tg"><div class="tn ho">${w.th}</div><div class="vs">VS</div><div class="tn">${w.ui}</div></div>`;
     if(e&&e.t!==undefined){
       h+=`<div class="res-score ${isLive?'bz':isDone?'cl':''}">${e.t} - ${e.u}</div>`;
+      if(espn?.goals?.length){h+=`<div class="goals">${espn.goals.map(g=>`<div class="goal-item"><span class="gmin">${g.min}</span>⚽ ${g.naam} <span class="gteam">(${g.team})</span></div>`).join('')}</div>`;}
       const ex=[],gd=[];
       spelers.forEach(([naam,sd])=>{
         const v=sd[key];if(!v||v.t===undefined)return;
@@ -969,7 +985,15 @@ function renLive(){
       h+=`<div class="bigcd-label">🔴 LIVE NU · ${LBL[w.g]||w.g}${w.o?' · 🇳🇱 ORANJE!':''}</div>`;
       h+=`<div class="bigcd-match">${w.th} vs ${w.ui}</div>`;
       h+=`<div class="bigcd-timer">${e.t} – ${e.u}</div>`;
-      h+=`<div class="bigcd-info">⏱️ ${espn.clock||'LIVE'}</div></div>`;
+      h+=`<div class="bigcd-info">⏱️ ${espn.clock||'LIVE'}</div>`;
+      if(espn.goals&&espn.goals.length){
+        h+=`<div class="goals">`;
+        espn.goals.forEach(g=>{
+          h+=`<div class="goal-item"><span class="gmin">${g.min}</span>⚽ ${g.naam} <span class="gteam">(${g.team})</span></div>`;
+        });
+        h+=`</div>`;
+      }
+      h+=`</div>`;
       const rows=spelers.map(([naam,sd])=>{
         const v=sd[key];if(!v||v.t===undefined)return null;
         let pt=0;
