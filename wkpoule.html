@@ -180,6 +180,22 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 .jecheck.g5{background:rgba(255,215,0,.12);color:var(--goud);}
 .jecheck.g2{background:rgba(0,200,83,.1);color:var(--groen);}
 .jecheck.g0{background:rgba(232,0,61,.08);color:var(--rood);}
+/* ── Groepsstanden ── */
+.stgrp{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:10px 12px;margin-bottom:12px;}
+.stgrp .daghdr{margin:0 0 8px;}
+.stbl{width:100%;border-collapse:collapse;font-size:.77rem;}
+.stbl th{color:var(--dim);font-weight:700;font-size:.6rem;text-transform:uppercase;letter-spacing:.5px;padding:3px 5px;text-align:center;border-bottom:1px solid var(--border);}
+.stbl th:first-child{text-align:left;}
+.stbl td{padding:6px 5px;text-align:center;border-bottom:1px solid rgba(255,255,255,.04);}
+.stbl td:first-child{text-align:left;}
+.stbl tr:last-child td{border-bottom:none;}
+.str{color:var(--dim);font-size:.68rem;display:inline-block;width:16px;text-align:right;margin-right:4px;}
+.stn{font-weight:800;font-size:.79rem;}
+.stp{font-weight:900;color:var(--goud);}
+.stq td{background:rgba(0,200,83,.05);}
+.stq .stn{color:var(--groen);}
+.stq3 td{background:rgba(0,200,255,.04);}
+.stq3 .stn{color:var(--cyan);}
 /* ── Uitslagen ── */
 .resc{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:12px;margin-bottom:8px;}
 .resc.om{border-color:rgba(255,109,0,.4);}
@@ -217,6 +233,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 <div class="tabs">
   <div class="tab active" onclick="showTab('inv',this)"><span class="ti">✏️</span>Invullen</div>
   <div class="tab" onclick="showTab('res',this)"><span class="ti">📊</span>Uitslagen</div>
+  <div class="tab" onclick="showTab('stan',this)"><span class="ti">📈</span>Standen</div>
   <div class="tab" onclick="showTab('rang',this)"><span class="ti">🏆</span>Ranglijst</div>
   <div class="tab" onclick="showTab('deel',this)"><span class="ti">👥</span>Wie mee?</div>
   <div class="tab" onclick="showTab('uit',this)"><span class="ti">📋</span>Regels</div>
@@ -263,6 +280,12 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
     <div class="rh"><h2>📊 Uitslagen</h2><span class="ld">LIVE</span></div>
     <p style="font-size:.72rem;color:var(--dim);margin-bottom:10px">🎯 = exacte score (+5 pt) · ✅ = juiste winnaar (+2 pt)</p>
     <div id="rescon"><div class="leeg"><span class="li">📭</span><p>Nog geen wedstrijden gespeeld</p></div></div>
+  </div>
+
+  <div class="panel" id="panel-stan">
+    <div class="rh"><h2>📈 Groepsstanden</h2><span class="ld">LIVE</span></div>
+    <p style="font-size:.72rem;color:var(--dim);margin-bottom:12px">🟢 Top 2 per groep gaan door · 🔵 Beste 3e plaatsen gaan ook door</p>
+    <div id="stancon"><div class="leeg"><span class="li">⏳</span><p>Laden...</p></div></div>
   </div>
 
   <div class="panel" id="panel-rang">
@@ -539,6 +562,46 @@ async function laadESPN(){
   if(Object.values(espnScores).some(s=>s.status==='in'))espnPollT=setTimeout(laadESPN,60000);
 }
 
+// ── Groepsstanden van ESPN ──
+let standenPollT=null;
+async function laadStanden(){
+  try{
+    const r=await fetch('https://site.api.espn.com/apis/v2/sports/soccer/fifa.world/standings');
+    if(!r.ok)return;
+    const json=await r.json();
+    renStanden(json);
+  }catch(e){console.warn('[Standen]',e);}
+  clearTimeout(standenPollT);
+  standenPollT=setTimeout(laadStanden,300000);
+}
+
+function renStanden(json){
+  const el=document.getElementById('stancon');if(!el)return;
+  const groups=(json.children||[]).flatMap(c=>c.children?.length?c.children:[c]);
+  if(!groups.length){el.innerHTML='<div class="leeg"><span class="li">⏳</span><p>Nog geen standen</p></div>';return;}
+  let h='';
+  groups.forEach(grp=>{
+    const entries=grp.standings?.entries||[];if(!entries.length)return;
+    h+=`<div class="stgrp"><div class="daghdr">${grp.name||grp.abbreviation||''}</div>`;
+    h+=`<table class="stbl"><thead><tr><th>Team</th><th>P</th><th>W</th><th>G</th><th>V</th><th>Doel</th><th>Pts</th></tr></thead><tbody>`;
+    entries.forEach((en,i)=>{
+      const tnl=ESPN_NL[en.team?.displayName]||en.team?.displayName||'?';
+      const st={};(en.stats||[]).forEach(s=>{st[s.name]=s.value;});
+      const pts=st.points??0,gp=st.gamesPlayed??0,w=st.wins??0,d=st.ties??0,l=st.losses??0;
+      const gf=st.pointsFor??0,ga=st.pointsAgainst??0,diff=gf-ga;
+      const note=en.note?.description||'';
+      const isQ=i<2||note.toLowerCase().includes('advance');
+      const is3=!isQ&&i===2;
+      h+=`<tr class="${isQ?'stq':is3?'stq3':''}">`;
+      h+=`<td class="stn"><span class="str">${i+1}</span>${tnl}</td>`;
+      h+=`<td>${gp}</td><td>${w}</td><td>${d}</td><td>${l}</td>`;
+      h+=`<td>${gf}-${ga}</td><td class="stp">${pts}</td></tr>`;
+    });
+    h+=`</tbody></table></div>`;
+  });
+  el.innerHTML=h||'<div class="leeg"><span class="li">⏳</span><p>Nog geen standen</p></div>';
+}
+
 // ── Firebase laden ──
 async function initFirebase(){
   try{
@@ -561,7 +624,7 @@ async function start(){
   }
   fbK=true;
   document.getElementById('sbar').innerHTML='<span style="color:var(--groen)">●</span><span style="color:var(--groen);font-size:.68rem;font-weight:700">Verbonden · Live actief</span>';
-  laadN();startLive();laadESPN();
+  laadN();startLive();laadESPN();laadStanden();
 }
 
 start();
@@ -916,6 +979,7 @@ function showTab(naam,el){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById(`panel-${naam}`).classList.add('active');
+  if(naam==='stan')laadStanden();
   el.classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
 }
