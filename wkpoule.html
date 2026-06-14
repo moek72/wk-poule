@@ -1002,6 +1002,19 @@ function renLive(){
       h+=`<div class="bigcd-timer" id="bigcdtimer">${fmt}</div>`;
       h+=`<div class="bigcd-info">📅 ${volg.d} · ${volg.t} · ${LBL[volg.g]||volg.g}${volg.o?' 🇳🇱':''}</div>`;
       h+=`</div>`;
+      // Voorspellingen voor volgende wedstrijd
+      if(spelers.length){
+        h+=`<div class="liveban" style="margin:12px 0 7px"><span class="liveban-t">Voorspellingen voor deze wedstrijd</span></div><div class="lvlist">`;
+        spelers.sort((a,b)=>a[0].localeCompare(b[0])).forEach(([naam,sd])=>{
+          const v=sd[`w${volg.id}`];
+          if(!v||v.t===undefined){
+            h+=`<div class="lvrow g0"><span class="lvnaam">${naam}</span><span class="lvvoor" style="font-size:.72rem;color:var(--dim)">nog niet ingevuld</span><span class="lvpt">?</span></div>`;
+          }else{
+            h+=`<div class="lvrow"><span class="lvnaam">${naam}</span><span class="lvvoor">${v.t}-${v.u}</span><span class="lvpt" style="background:var(--border);color:var(--dim)">🤫</span></div>`;
+          }
+        });
+        h+=`</div>`;
+      }
     }
   }
 
