@@ -1183,7 +1183,7 @@ function showTab(naam,el){
   document.getElementById(`panel-${naam}`).classList.add('active');
   if(naam==='stan')laadStanden();
   el.classList.add('active');
-  window.location.hash=naam;
+  history.replaceState(null,'','#'+naam);
   window.scrollTo({top:0,behavior:'smooth'});
 }
 window.showTab=showTab;
@@ -1205,10 +1205,8 @@ function tt(msg,err){
   t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);
 }
 
-document.addEventListener('DOMContentLoaded',()=>{
-  document.getElementById('ni').addEventListener('keypress',e=>{if(e.key==='Enter')setN();});
-  openHashTab();
-});
+document.getElementById('ni').addEventListener('keypress',e=>{if(e.key==='Enter')setN();});
+openHashTab();
 
 // Registreer de service worker ook als bezoekers direct op wkpoule.html openen.
 if('serviceWorker'in navigator){
