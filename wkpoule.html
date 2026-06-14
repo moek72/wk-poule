@@ -996,6 +996,38 @@ function renGoals(goals,w){
 
 // ── Live tab: countdown + live wedstrijden + ranglijst + meedoen ──
 let _bigCdI=null;
+window._showNext=false;
+
+function _renNextMatch(h,spelers,nu){
+  const volg=W.filter(w=>{const e=espnScores[`w${w.id}`];return(!e||e.status==='pre')&&new Date(w.iso)>nu;})
+               .sort((a,b)=>new Date(a.iso)-new Date(b.iso))[0];
+  if(!volg)return{h,volg:null};
+  window._volgW=volg;
+  const diff=new Date(volg.iso)-nu;
+  const da=Math.floor(diff/86400000),uu=Math.floor((diff%86400000)/3600000),mm=Math.floor((diff%3600000)/60000),ss=Math.floor((diff%60000)/1000);
+  const fmt=da>0?`${da}d ${String(uu%24).padStart(2,'0')}:${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`:
+                `${String(uu).padStart(2,'0')}:${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
+  h+=`<div class="bigcd">`;
+  h+=`<div class="bigcd-label">⏱️ VOLGENDE WEDSTRIJD</div>`;
+  h+=`<div class="bigcd-match">${volg.th} vs ${volg.ui}</div>`;
+  h+=`<div class="bigcd-timer" id="bigcdtimer">${fmt}</div>`;
+  h+=`<div class="bigcd-info">📅 ${volg.d} · ${volg.t} · ${LBL[volg.g]||volg.g}${volg.o?' 🇳🇱':''}</div>`;
+  h+=`</div>`;
+  if(spelers.length){
+    h+=`<div class="liveban" style="margin:12px 0 7px"><span class="liveban-t">Voorspellingen voor deze wedstrijd</span></div><div class="lvlist">`;
+    [...spelers].sort((a,b)=>a[0].localeCompare(b[0])).forEach(([naam,sd])=>{
+      const v=sd[`w${volg.id}`];
+      if(!v||v.t===undefined){
+        h+=`<div class="lvrow g0"><span class="lvnaam">${naam}</span><span class="lvvoor" style="font-size:.72rem;color:var(--dim)">nog niet ingevuld</span><span class="lvpt">?</span></div>`;
+      }else{
+        h+=`<div class="lvrow"><span class="lvnaam">${naam}</span><span class="lvvoor">${v.t}-${v.u}</span><span class="lvpt" style="background:var(--border);color:var(--dim)">🤫</span></div>`;
+      }
+    });
+    h+=`</div>`;
+  }
+  return{h,volg};
+}
+
 function renLive(){
   const el=document.getElementById('livecon');if(!el)return;
   const spelers=Object.entries(liveAll).filter(([k])=>k!=='_r');
@@ -1003,68 +1035,59 @@ function renLive(){
                      .sort((a,b)=>new Date(a.iso)-new Date(b.iso));
   clearInterval(_bigCdI);
   let h='';
+  let needCdTicker=false;
 
   if(liveMatches.length){
     bouwLiveTab(true);
-    liveMatches.forEach(w=>{
-      const key=`w${w.id}`,espn=espnScores[key],e={t:espn.th,u:espn.ui};
-      h+=`<div class="bigcd-live">`;
-      h+=`<div class="bigcd-label">🔴 LIVE NU · ${LBL[w.g]||w.g}${w.o?' · 🇳🇱 ORANJE!':''}</div>`;
-      h+=`<div class="bigcd-match">${w.th} vs ${w.ui}</div>`;
-      h+=`<div class="bigcd-timer">${e.t} – ${e.u}</div>`;
-      h+=`<div class="bigcd-info">⏱️ ${espn.clock||'LIVE'}</div>`;
-      if(espn.goals&&espn.goals.length){h+=renGoals(espn.goals,w);}
-      h+=`</div>`;
-      const rows=spelers.map(([naam,sd])=>{
-        const v=sd[key];if(!v||v.t===undefined)return null;
-        let pt=0;
-        if(v.t===e.t&&v.u===e.u)pt=5;
-        else if((v.t>v.u&&e.t>e.u)||(v.t<v.u&&e.t<e.u)||(v.t===v.u&&e.t===e.u))pt=2;
-        return{naam,vt:v.t,vu:v.u,pt};
-      }).filter(Boolean).sort((a,b)=>b.pt-a.pt||a.naam.localeCompare(b.naam));
-      if(rows.length){
-        h+=`<div class="liveban" style="margin-bottom:4px"><span class="liveban-t">Voorspellingen</span></div>`;
-        h+=`<p style="font-size:.65rem;color:var(--dim);margin-bottom:7px">📊 Live projectie · juiste winnaar/gelijkspel = +2 · exacte score = +5</p>`;
-        h+=`<div class="lvlist">`;
-        rows.forEach(r=>{
-          const cls=r.pt===5?'g5':r.pt===2?'g2':'g0';
-          const badge=r.pt===5?'🎯 +5':r.pt===2?'✅ +2':'+0';
-          h+=`<div class="lvrow ${cls}"><span class="lvnaam">${r.naam}</span><span class="lvvoor">${r.vt}-${r.vu}</span><span class="lvpt">${badge}</span></div>`;
-        });
-        h+='</div>';
-      }else{h+='<div class="wachten" style="margin-top:8px">Niemand heeft deze wedstrijd voorspeld</div>';}
-    });
-  } else {
-    bouwLiveTab(false);
-    const nu=new Date();
-    const volg=W.filter(w=>{const e=espnScores[`w${w.id}`];return(!e||e.status==='pre')&&new Date(w.iso)>nu;})
-               .sort((a,b)=>new Date(a.iso)-new Date(b.iso))[0];
-    if(volg){
-      window._volgW=volg;
-      const diff=new Date(volg.iso)-nu;
-      const da=Math.floor(diff/86400000),uu=Math.floor((diff%86400000)/3600000),mm=Math.floor((diff%3600000)/60000),ss=Math.floor((diff%60000)/1000);
-      const fmt=da>0?`${da}d ${String(uu%24).padStart(2,'0')}:${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`:
-                    `${String(uu).padStart(2,'0')}:${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
-      h+=`<div class="bigcd">`;
-      h+=`<div class="bigcd-label">⏱️ VOLGENDE WEDSTRIJD</div>`;
-      h+=`<div class="bigcd-match">${volg.th} vs ${volg.ui}</div>`;
-      h+=`<div class="bigcd-timer" id="bigcdtimer">${fmt}</div>`;
-      h+=`<div class="bigcd-info">📅 ${volg.d} · ${volg.t} · ${LBL[volg.g]||volg.g}${volg.o?' 🇳🇱':''}</div>`;
-      h+=`</div>`;
-      // Voorspellingen voor volgende wedstrijd
-      if(spelers.length){
-        h+=`<div class="liveban" style="margin:12px 0 7px"><span class="liveban-t">Voorspellingen voor deze wedstrijd</span></div><div class="lvlist">`;
-        spelers.sort((a,b)=>a[0].localeCompare(b[0])).forEach(([naam,sd])=>{
-          const v=sd[`w${volg.id}`];
-          if(!v||v.t===undefined){
-            h+=`<div class="lvrow g0"><span class="lvnaam">${naam}</span><span class="lvvoor" style="font-size:.72rem;color:var(--dim)">nog niet ingevuld</span><span class="lvpt">?</span></div>`;
-          }else{
-            h+=`<div class="lvrow"><span class="lvnaam">${naam}</span><span class="lvvoor">${v.t}-${v.u}</span><span class="lvpt" style="background:var(--border);color:var(--dim)">🤫</span></div>`;
-          }
-        });
+
+    if(window._showNext){
+      // ← Terug knop bovenaan
+      h+=`<button onclick="window._showNext=false;renLive()" style="background:none;border:1px solid var(--border);border-radius:20px;color:var(--goud);font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:800;padding:7px 16px;cursor:pointer;margin-bottom:14px;display:flex;align-items:center;gap:6px">← Terug naar live</button>`;
+      const res=_renNextMatch(h,spelers,new Date());
+      h=res.h;
+      if(res.volg)needCdTicker=true;
+    } else {
+      liveMatches.forEach(w=>{
+        const key=`w${w.id}`,espn=espnScores[key],e={t:espn.th,u:espn.ui};
+        h+=`<div class="bigcd-live">`;
+        h+=`<div class="bigcd-label">🔴 LIVE NU · ${LBL[w.g]||w.g}${w.o?' · 🇳🇱 ORANJE!':''}</div>`;
+        h+=`<div class="bigcd-match">${w.th} vs ${w.ui}</div>`;
+        h+=`<div class="bigcd-timer">${e.t} – ${e.u}</div>`;
+        h+=`<div class="bigcd-info">⏱️ ${espn.clock||'LIVE'}</div>`;
+        if(espn.goals&&espn.goals.length){h+=renGoals(espn.goals,w);}
         h+=`</div>`;
+        const rows=spelers.map(([naam,sd])=>{
+          const v=sd[key];if(!v||v.t===undefined)return null;
+          let pt=0;
+          if(v.t===e.t&&v.u===e.u)pt=5;
+          else if((v.t>v.u&&e.t>e.u)||(v.t<v.u&&e.t<e.u)||(v.t===v.u&&e.t===e.u))pt=2;
+          return{naam,vt:v.t,vu:v.u,pt};
+        }).filter(Boolean).sort((a,b)=>b.pt-a.pt||a.naam.localeCompare(b.naam));
+        if(rows.length){
+          h+=`<div class="liveban" style="margin-bottom:4px"><span class="liveban-t">Voorspellingen</span></div>`;
+          h+=`<p style="font-size:.65rem;color:var(--dim);margin-bottom:7px">📊 Live projectie · juiste winnaar/gelijkspel = +2 · exacte score = +5</p>`;
+          h+=`<div class="lvlist">`;
+          rows.forEach(r=>{
+            const cls=r.pt===5?'g5':r.pt===2?'g2':'g0';
+            const badge=r.pt===5?'🎯 +5':r.pt===2?'✅ +2':'+0';
+            h+=`<div class="lvrow ${cls}"><span class="lvnaam">${r.naam}</span><span class="lvvoor">${r.vt}-${r.vu}</span><span class="lvpt">${badge}</span></div>`;
+          });
+          h+='</div>';
+        }else{h+='<div class="wachten" style="margin-top:8px">Niemand heeft deze wedstrijd voorspeld</div>';}
+      });
+      // Knop om volgende wedstrijd te bekijken
+      const nu=new Date();
+      const heeftVolg=W.some(w=>{const e=espnScores[`w${w.id}`];return(!e||e.status==='pre')&&new Date(w.iso)>nu;});
+      if(heeftVolg){
+        h+=`<button onclick="window._showNext=true;renLive()" style="background:linear-gradient(135deg,rgba(255,215,0,.12),rgba(255,215,0,.06));border:1px solid rgba(255,215,0,.35);border-radius:20px;color:var(--goud);font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:800;padding:9px 18px;cursor:pointer;margin:14px 0 6px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px">⏭️ Volgende wedstrijd →</button>`;
       }
     }
+  } else {
+    bouwLiveTab(false);
+    window._showNext=false;
+    const res=_renNextMatch(h,spelers,new Date());
+    h=res.h;
+    if(res.volg)needCdTicker=true;
   }
 
   // Altijd: huidige stand
@@ -1096,7 +1119,7 @@ function renLive(){
   el.innerHTML=h;
 
   // Ticker voor grote countdown
-  if(!liveMatches.length&&window._volgW){
+  if(needCdTicker&&window._volgW){
     _bigCdI=setInterval(()=>{
       const t=document.getElementById('bigcdtimer');if(!t){clearInterval(_bigCdI);return;}
       const diff=new Date(window._volgW.iso)-new Date();
@@ -1110,6 +1133,7 @@ function renLive(){
 
 function gaNaar(tab){const el=document.querySelector(`.tab[onclick*="'${tab}'"]`);if(el)showTab(tab,el);}
 window.gaNaar=gaNaar;
+window.renLive=renLive;
 
 async function manRefresh(){
   const btn=document.getElementById('rfbtn');
