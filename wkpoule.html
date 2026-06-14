@@ -976,7 +976,9 @@ function renLive(){
         return{naam,vt:v.t,vu:v.u,pt};
       }).filter(Boolean).sort((a,b)=>b.pt-a.pt||a.naam.localeCompare(b.naam));
       if(rows.length){
-        h+=`<div class="liveban" style="margin-bottom:7px"><span class="liveban-t">Voorspellingen</span></div><div class="lvlist">`;
+        h+=`<div class="liveban" style="margin-bottom:4px"><span class="liveban-t">Voorspellingen</span></div>`;
+        h+=`<p style="font-size:.65rem;color:var(--dim);margin-bottom:7px">📊 Live projectie · juiste winnaar/gelijkspel = +2 · exacte score = +5</p>`;
+        h+=`<div class="lvlist">`;
         rows.forEach(r=>{
           const cls=r.pt===5?'g5':r.pt===2?'g2':'g0';
           const badge=r.pt===5?'🎯 +5':r.pt===2?'✅ +2':'+0';
