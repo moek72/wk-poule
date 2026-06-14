@@ -340,7 +340,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
   </div>
 
   <div class="panel" id="panel-live">
-    <div class="rh"><h2>🔴 Live Wedstrijden</h2><button id="rfbtn" onclick="manRefresh()" style="background:none;border:1px solid var(--border);border-radius:20px;color:var(--dim);font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;padding:5px 12px;cursor:pointer;transition:all .2s" title="Ververs scores">🔄 Ververs</button></div>
+    <div class="rh"><h2>🔴 Live Wedstrijden</h2><div style="display:flex;gap:6px;align-items:center"><button id="vnbtn" onclick="window._showNext=!window._showNext;renLive()" style="display:none;background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,215,0,.07));border:1px solid rgba(255,215,0,.4);border-radius:20px;color:var(--goud);font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;padding:5px 12px;cursor:pointer;transition:all .2s">⏭️ Volgende</button><button id="rfbtn" onclick="manRefresh()" style="background:none;border:1px solid var(--border);border-radius:20px;color:var(--dim);font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;padding:5px 12px;cursor:pointer;transition:all .2s" title="Ververs scores">🔄 Ververs</button></div></div>
     <div id="livecon"><div class="leeg"><span class="li">😴</span><p>Geen live wedstrijden op dit moment</p></div></div>
   </div>
 
@@ -1039,10 +1039,20 @@ function renLive(){
 
   if(liveMatches.length){
     bouwLiveTab(true);
+    // Header knop tonen
+    const nu=new Date();
+    const heeftVolg=W.some(w=>{const e=espnScores[`w${w.id}`];return(!e||e.status==='pre')&&new Date(w.iso)>nu;});
+    const vnbtn=document.getElementById('vnbtn');
+    if(vnbtn){
+      if(heeftVolg){
+        vnbtn.style.display='';
+        vnbtn.textContent=window._showNext?'🔴 Terug naar live':'⏭️ Volgende';
+      } else {
+        vnbtn.style.display='none';
+      }
+    }
 
     if(window._showNext){
-      // ← Terug knop bovenaan
-      h+=`<button onclick="window._showNext=false;renLive()" style="background:none;border:1px solid var(--border);border-radius:20px;color:var(--goud);font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:800;padding:7px 16px;cursor:pointer;margin-bottom:14px;display:flex;align-items:center;gap:6px">← Terug naar live</button>`;
       const res=_renNextMatch(h,spelers,new Date());
       h=res.h;
       if(res.volg)needCdTicker=true;
@@ -1075,16 +1085,11 @@ function renLive(){
           h+='</div>';
         }else{h+='<div class="wachten" style="margin-top:8px">Niemand heeft deze wedstrijd voorspeld</div>';}
       });
-      // Knop om volgende wedstrijd te bekijken
-      const nu=new Date();
-      const heeftVolg=W.some(w=>{const e=espnScores[`w${w.id}`];return(!e||e.status==='pre')&&new Date(w.iso)>nu;});
-      if(heeftVolg){
-        h+=`<button onclick="window._showNext=true;renLive()" style="background:linear-gradient(135deg,rgba(255,215,0,.12),rgba(255,215,0,.06));border:1px solid rgba(255,215,0,.35);border-radius:20px;color:var(--goud);font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:800;padding:9px 18px;cursor:pointer;margin:14px 0 6px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px">⏭️ Volgende wedstrijd →</button>`;
-      }
     }
   } else {
     bouwLiveTab(false);
     window._showNext=false;
+    const vnbtn2=document.getElementById('vnbtn');if(vnbtn2)vnbtn2.style.display='none';
     const res=_renNextMatch(h,spelers,new Date());
     h=res.h;
     if(res.volg)needCdTicker=true;
