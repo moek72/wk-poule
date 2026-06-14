@@ -607,7 +607,8 @@ async function laadESPN(){
   if(sp)renW(userSd);
   renRes();renLive();
   clearTimeout(espnPollT);
-  if(Object.values(espnScores).some(s=>s.status==='in'))espnPollT=setTimeout(laadESPN,60000);
+  const hasLive=Object.values(espnScores).some(s=>s.status==='in');
+  espnPollT=setTimeout(laadESPN,hasLive?30000:60000);
 }
 
 // ── Groepsstanden van ESPN ──
