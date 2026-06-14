@@ -231,6 +231,13 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 .wachten{text-align:center;color:var(--dim);font-size:.75rem;padding:6px;background:var(--card2);border-radius:8px;margin-top:6px;}
 .daghdr{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--tekst);letter-spacing:1.5px;margin:16px 0 8px;display:flex;align-items:center;gap:8px;}
 .daghdr::after{content:'';flex:1;height:1px;background:var(--border);}
+/* ── Countdown banner ── */
+.cdban-live{display:inline-flex;align-items:center;gap:7px;background:rgba(255,109,0,.18);border:1px solid rgba(255,109,0,.5);border-radius:24px;padding:6px 16px;font-size:.78rem;font-weight:800;color:var(--oranje);}
+.cdban-live::before{content:'';width:8px;height:8px;background:var(--oranje);border-radius:50%;animation:lp 1s ease-in-out infinite;flex-shrink:0;}
+.cdban-next{display:inline-flex;align-items:center;gap:7px;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.25);border-radius:24px;padding:6px 16px;font-size:.78rem;font-weight:800;color:var(--goud);}
+.cdban-time{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:1px;color:var(--goud);}
+.cdban-next .cdban-time{color:var(--goud);}
+.cdban-live .cdban-time{color:var(--oranje);}
 
 /* ── Modal (uitslagen invoeren) ── */
 .mo{position:fixed;inset:0;background:rgba(6,6,16,.97);z-index:500;display:none;align-items:center;justify-content:center;padding:15px;overflow-y:auto;}
@@ -249,6 +256,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
   <h1>Jaikaran WK Poule 2026</h1>
   <div class="sub">11 JUN – 19 JUL · VS · CANADA · MEXICO · 104 WEDSTRIJDEN</div>
   <div class="prijs">🍖 Hoofdprijs: Geheel verzorgde BBQ door Kawita</div>
+  <div id="cdban" style="margin-top:10px;min-height:28px;"></div>
 </div>
 
 <div class="tabs">
@@ -1043,6 +1051,28 @@ function renD(data){
     return`<div class="dc ${s.inv>0?'a':''}"><span class="da">${AVT[i%AVT.length]}</span><div class="dn">${s.naam}</div><div class="dv">${s.inv}/${TOT} · ${p}%</div><div class="db"><div class="df" style="width:${p}%"></div></div></div>`;
   }).join('');
 }
+
+// ── Header countdown: volgende wedstrijd / live nu ──
+function tickCdBan(){
+  const el=document.getElementById('cdban');if(!el)return;
+  const nu=new Date();
+  // Check of er live wedstrijden zijn
+  const liveW=W.filter(w=>espnScores[`w${w.id}`]?.status==='in');
+  if(liveW.length){
+    const w=liveW[0],espn=espnScores[`w${w.id}`];
+    el.innerHTML=`<span class="cdban-live">🔴 LIVE: ${w.th} <span class="cdban-time">${espn.th??0}–${espn.ui??0}</span> ${w.ui} · ${espn.clock||'LIVE'}</span>`;
+    return;
+  }
+  // Volgende nog niet gestarte wedstrijd
+  const volg=W.filter(w=>{const e=espnScores[`w${w.id}`];return(!e||e.status==='pre')&&new Date(w.iso)>nu;}).sort((a,b)=>new Date(a.iso)-new Date(b.iso))[0];
+  if(!volg){el.innerHTML='';return;}
+  const diff=new Date(volg.iso)-nu;
+  const da=Math.floor(diff/86400000),uu=Math.floor((diff%86400000)/3600000),mm=Math.floor((diff%3600000)/60000),ss=Math.floor((diff%60000)/1000);
+  const timer=da>0?`${da}d ${String(uu).padStart(2,'0')}:${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`:da===0&&uu>0?`${String(uu).padStart(2,'0')}:${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`:`${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
+  el.innerHTML=`<span class="cdban-next">⏱️ ${volg.th} vs ${volg.ui} · over <span class="cdban-time">${timer}</span></span>`;
+}
+tickCdBan();
+setInterval(tickCdBan,1000);
 
 // ── Tabs ──
 function showTab(naam,el){
