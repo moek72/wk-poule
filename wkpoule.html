@@ -444,31 +444,44 @@ const FIREBASE_CONFIG = {
 
 // ── ESPN naam mapping (Engels → Nederlands) ──
 const ESPN_NL={
+  // A
   "Mexico":"Mexico","South Africa":"Zuid-Afrika","South Korea":"Zuid-Korea",
+  "Korea Republic":"Zuid-Korea",
   "Czech Republic":"Tsjechie","Czechia":"Tsjechie",
+  // B
+  "Canada":"Canada",
   "Bosnia and Herzegovina":"Bosnie & Herz.","Bosnia-Herzegovina":"Bosnie & Herz.",
-  "Canada":"Canada","Qatar":"Qatar","Switzerland":"Zwitserland",
+  "Qatar":"Qatar","Switzerland":"Zwitserland",
+  // C
   "Brazil":"Brazilie","Morocco":"Marokko","Haiti":"Haiti","Scotland":"Schotland",
+  // D
   "United States":"Verenigde Staten","USA":"Verenigde Staten",
-  "Paraguay":"Paraguay","Australia":"Australie","Turkey":"Turkije",
+  "United States of America":"Verenigde Staten",
+  "Paraguay":"Paraguay","Australia":"Australie",
+  "Turkey":"Turkije","Türkiye":"Turkije",
+  // E
   "Germany":"Duitsland","Curacao":"Curacao","Curaçao":"Curacao",
-  "Ivory Coast":"Ivoorkust","Cote D'Ivoire":"Ivoorkust","Côte d'Ivoire":"Ivoorkust",
-  "Ecuador":"Ecuador","Netherlands":"Nederland","Sweden":"Zweden",
-  "Tunisia":"Tunisie","Belgium":"Belgie","Egypt":"Egypte","Iran":"Iran",
-  "New Zealand":"Nieuw-Zeeland","Spain":"Spanje","Cape Verde":"Kaapverdie",
+  "Ivory Coast":"Ivoorkust","Cote D'Ivoire":"Ivoorkust",
+  "Côte d'Ivoire":"Ivoorkust","Côte D'Ivoire":"Ivoorkust",
+  "Ecuador":"Ecuador",
+  // F
+  "Netherlands":"Nederland","Sweden":"Zweden","Tunisia":"Tunisie","Japan":"Japan",
+  // G
+  "Belgium":"Belgie","Egypt":"Egypte","Iran":"Iran","New Zealand":"Nieuw-Zeeland",
+  // H
+  "Spain":"Spanje","Cape Verde":"Kaapverdie",
   "Saudi Arabia":"Saoedi-Arabie","Uruguay":"Uruguay",
+  // I
   "France":"Frankrijk","Senegal":"Senegal","Iraq":"Irak","Norway":"Noorwegen",
+  // J
   "Argentina":"Argentinie","Algeria":"Algerije","Austria":"Oostenrijk",
-  "Jordan":"Jordanie","Portugal":"Portugal",
+  "Jordan":"Jordanie",
+  // K
+  "Portugal":"Portugal",
   "DR Congo":"Congo","Congo, DR":"Congo","Democratic Republic of Congo":"Congo",
   "Uzbekistan":"Oezbekistan","Colombia":"Colombia",
-  "England":"Engeland","Croatia":"Kroatie","Ghana":"Ghana","Panama":"Panama",
-  "Japan":"Japan",
-  "Korea Republic":"Zuid-Korea","Korea DPR":"Noord-Korea",
-  "United States of America":"Verenigde Staten",
-  "Republic of Ireland":"Ierland","Northern Ireland":"Noord-Ierland",
-  "Côte D'Ivoire":"Ivoorkust","Cote d'Ivoire":"Ivoorkust",
-  "DR Congo":"Congo","Republic of Congo":"Congo"
+  // L
+  "England":"Engeland","Croatia":"Kroatie","Ghana":"Ghana","Panama":"Panama"
 };
 
 async function fetchESPN(dateStr){
@@ -498,12 +511,15 @@ async function fetchESPN(dateStr){
 async function laadESPN(){
   const nu=new Date();
   const nuStr=nu.toISOString().slice(0,10);
-  // Haal ALLE speeldagen op die al voorbij zijn (vanaf start toernooi) + morgen
-  const dateSet=new Set();
-  W.forEach(w=>{if(w.iso.slice(0,10)<=nuStr)dateSet.add(w.iso.slice(0,10).replace(/-/g,''));});
+  // Haal alle dagen op van toernooistart t/m morgen (aaneengesloten range)
+  // ESPN gebruikt Eastern Time datums, dus we halen ook naburige dagen op
   const morgen=new Date(nu);morgen.setDate(morgen.getDate()+1);
-  dateSet.add(morgen.toISOString().slice(0,10).replace(/-/g,''));
-  await Promise.all([...dateSet].map(fetchESPN));
+  const start=new Date('2026-06-11T00:00:00Z');
+  const days=[];
+  for(let d=new Date(start);d<=morgen;d.setDate(d.getDate()+1)){
+    days.push(d.toISOString().slice(0,10).replace(/-/g,''));
+  }
+  await Promise.all(days.map(fetchESPN));
   if(fbK){
     const ups={};
     for(const [k,sc] of Object.entries(espnScores)){
