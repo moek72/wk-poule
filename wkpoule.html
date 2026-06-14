@@ -1183,9 +1183,20 @@ function showTab(naam,el){
   document.getElementById(`panel-${naam}`).classList.add('active');
   if(naam==='stan')laadStanden();
   el.classList.add('active');
+  window.location.hash=naam;
   window.scrollTo({top:0,behavior:'smooth'});
 }
 window.showTab=showTab;
+
+// Open tab op basis van URL hash bij laden
+function openHashTab(){
+  const hash=window.location.hash.slice(1);
+  const tabs=['inv','res','stan','live','rang','deel','uit'];
+  if(hash&&tabs.includes(hash)){
+    const el=document.querySelector(`.tab[onclick*="'${hash}'"]`);
+    if(el)showTab(hash,el);
+  }
+}
 
 // ── Toast ──
 function tt(msg,err){
@@ -1196,6 +1207,7 @@ function tt(msg,err){
 
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('ni').addEventListener('keypress',e=>{if(e.key==='Enter')setN();});
+  openHashTab();
 });
 
 // Registreer de service worker ook als bezoekers direct op wkpoule.html openen.
