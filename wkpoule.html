@@ -601,7 +601,7 @@ async function laadN(){
   if(!fbK)return;
   try{
     const s=await _get(_ref(_db,'v'));
-    const nn=s.exists()?Object.keys(s.val()):[];
+    const nn=s.exists()?Object.keys(s.val()).filter(k=>k!=='_r'):[];
     document.getElementById('bnn').innerHTML=nn.map(n=>`<button class="nc" onclick="activ('${n.replace(/'/g,"\\'")}')">${n}</button>`).join('');
   }catch(e){}
 }
