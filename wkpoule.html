@@ -331,7 +331,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
   </div>
 
   <div class="panel" id="panel-live">
-    <div class="rh"><h2>🔴 Live Wedstrijden</h2><span class="ld">LIVE</span></div>
+    <div class="rh"><h2>🔴 Live Wedstrijden</h2><button id="rfbtn" onclick="manRefresh()" style="background:none;border:1px solid var(--border);border-radius:20px;color:var(--dim);font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;padding:5px 12px;cursor:pointer;transition:all .2s" title="Ververs scores">🔄 Ververs</button></div>
     <div id="livecon"><div class="leeg"><span class="li">😴</span><p>Geen live wedstrijden op dit moment</p></div></div>
   </div>
 
@@ -1048,6 +1048,14 @@ function renLive(){
 
 function gaNaar(tab){const el=document.querySelector(`.tab[onclick*="'${tab}'"]`);if(el)showTab(tab,el);}
 window.gaNaar=gaNaar;
+
+async function manRefresh(){
+  const btn=document.getElementById('rfbtn');
+  if(btn){btn.textContent='⏳ Laden...';btn.disabled=true;}
+  await laadESPN();
+  if(btn){btn.textContent='✅ Klaar!';setTimeout(()=>{btn.textContent='🔄 Ververs';btn.disabled=false;},1500);}
+}
+window.manRefresh=manRefresh;
 
 // Toon 🔴 indicator op Live tab als er live wedstrijden zijn
 function bouwLiveTab(actief){
