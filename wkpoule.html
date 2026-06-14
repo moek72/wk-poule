@@ -255,6 +255,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
   <div class="tab active" onclick="showTab('inv',this)"><span class="ti">✏️</span>Invullen</div>
   <div class="tab" onclick="showTab('res',this)"><span class="ti">📊</span>Uitslagen</div>
   <div class="tab" onclick="showTab('stan',this)"><span class="ti">📈</span>Standen</div>
+  <div class="tab" onclick="showTab('live',this)"><span class="ti" id="livetabti">📺</span>Live</div>
   <div class="tab" onclick="showTab('rang',this)"><span class="ti">🏆</span>Ranglijst</div>
   <div class="tab" onclick="showTab('deel',this)"><span class="ti">👥</span>Wie mee?</div>
   <div class="tab" onclick="showTab('uit',this)"><span class="ti">📋</span>Regels</div>
@@ -309,9 +310,13 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
     <div id="stancon"><div class="leeg"><span class="li">⏳</span><p>Laden...</p></div></div>
   </div>
 
+  <div class="panel" id="panel-live">
+    <div class="rh"><h2>🔴 Live Wedstrijden</h2><span class="ld">LIVE</span></div>
+    <div id="livecon"><div class="leeg"><span class="li">😴</span><p>Geen live wedstrijden op dit moment</p></div></div>
+  </div>
+
   <div class="panel" id="panel-rang">
     <div class="rh"><h2>🏆 Ranglijst</h2><span class="ld">LIVE</span></div>
-    <div id="livecon" style="display:none"></div>
     <p id="rcnt" style="font-size:.72rem;color:var(--dim);margin-bottom:10px"></p>
     <div id="rcon"><div class="leeg"><span class="li">⏳</span><p>Nog geen deelnemers</p></div></div>
   </div>
@@ -928,7 +933,7 @@ function renLive(){
   const spelers=Object.entries(liveAll).filter(([k])=>k!=='_r');
   const liveMatches=W.filter(w=>espnScores[`w${w.id}`]?.status==='in')
                      .sort((a,b)=>new Date(a.iso)-new Date(b.iso));
-  if(!liveMatches.length){el.style.display='none';el.innerHTML='';bouwLiveTab(false);return;}
+  if(!liveMatches.length){el.innerHTML='<div class="leeg"><span class="li">😴</span><p>Geen live wedstrijden op dit moment</p></div>';bouwLiveTab(false);return;}
   bouwLiveTab(true);
   let h='<div class="liveban"><span class="liveban-t">LIVE NU</span></div>';
   liveMatches.forEach(w=>{
@@ -955,13 +960,13 @@ function renLive(){
     }
     h+='</div>';
   });
-  el.innerHTML=h;el.style.display='block';
+  el.innerHTML=h;
 }
 
-// Toon 🔴 indicator op Ranglijst tab als er live wedstrijden zijn
+// Toon 🔴 indicator op Live tab als er live wedstrijden zijn
 function bouwLiveTab(actief){
-  const tab=document.querySelector(".tab[onclick*=\"'rang'\"] .ti");
-  if(tab)tab.textContent=actief?'🔴':'🏆';
+  const ti=document.getElementById('livetabti');
+  if(ti)ti.textContent=actief?'🔴':'📺';
 }
 
 // ── Beheerder: uitslagen invoeren ──
