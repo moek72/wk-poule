@@ -269,6 +269,12 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 .md{background:var(--card);border:1px solid var(--border);border-radius:17px;padding:22px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;}
 .md h2{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--goud);letter-spacing:2px;margin-bottom:6px;}
 .md p{font-size:.8rem;color:var(--dim);margin-bottom:14px;line-height:1.5;}
+.smo-loc-wrap{position:relative;flex:1;}
+.smo-drop{position:absolute;left:0;right:0;top:calc(100% + 4px);background:#12121e;border:1px solid var(--border);border-radius:10px;overflow:hidden;z-index:600;display:none;box-shadow:0 8px 24px rgba(0,0,0,.7);}
+.smo-drop.open{display:block;}
+.smo-drop-item{padding:10px 12px;font-family:'Nunito',sans-serif;font-size:.8rem;color:var(--tekst);cursor:pointer;border-bottom:1px solid rgba(255,255,255,.05);line-height:1.35;}
+.smo-drop-item:last-child{border-bottom:none;}
+.smo-drop-item:hover,.smo-drop-item:active{background:rgba(255,255,255,.08);}
 </style>
 </head>
 <body>
@@ -402,7 +408,10 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
     <select id="smo-w" style="width:100%;background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--tekst);font-family:'Nunito',sans-serif;font-size:.85rem;margin-bottom:16px;outline:none;appearance:none;-webkit-appearance:none"></select>
     <label style="display:block;font-size:.72rem;font-weight:900;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">📍 Locatie <span style="font-weight:400;text-transform:none">(adres, naam of omschrijving)</span></label>
     <div style="display:flex;gap:8px;margin-bottom:16px">
-      <input id="smo-loc" type="text" placeholder="Bijv. Bij Kawita thuis, Sportcafé..." style="flex:1;background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--tekst);font-family:'Nunito',sans-serif;font-size:.88rem;outline:none">
+      <div class="smo-loc-wrap">
+        <input id="smo-loc" type="text" autocomplete="off" placeholder="Bijv. Bij Kawita thuis, Sportcafé..." style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--tekst);font-family:'Nunito',sans-serif;font-size:.88rem;outline:none" oninput="smoLocInput(this.value)" onblur="setTimeout(()=>{const d=document.getElementById('smo-drop');if(d){d.innerHTML='';d.classList.remove('open');}},200)">
+        <div id="smo-drop" class="smo-drop"></div>
+      </div>
       <button id="smo-gps" onclick="smoGps()" title="Gebruik mijn GPS locatie" style="background:rgba(37,211,102,.15);border:1px solid rgba(37,211,102,.3);border-radius:10px;padding:0 12px;cursor:pointer;font-size:1.1rem;flex-shrink:0;color:#25D366">📍</button>
     </div>
     <label style="display:block;font-size:.72rem;font-weight:900;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">💬 Extra berichtje <span style="font-weight:400;text-transform:none">(optioneel)</span></label>
@@ -1378,6 +1387,33 @@ function smoGps(){
   );
 }
 window.smoGps=smoGps;
+
+let _smoLocTimer=null,_smoSugg=[];
+function smoLocInput(q){
+  clearTimeout(_smoLocTimer);
+  const drop=document.getElementById('smo-drop');
+  if(!drop)return;
+  if(!q||q.length<2){drop.innerHTML='';drop.classList.remove('open');return;}
+  _smoLocTimer=setTimeout(async()=>{
+    try{
+      const r=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5&accept-language=nl`);
+      const d=await r.json();
+      _smoSugg=d;
+      if(!d.length){drop.innerHTML='';drop.classList.remove('open');return;}
+      drop.innerHTML=d.map((p,i)=>`<div class="smo-drop-item" onmousedown="smoLocKies(${i})">${p.display_name}</div>`).join('');
+      drop.classList.add('open');
+    }catch(e){drop.innerHTML='';drop.classList.remove('open');}
+  },400);
+}
+window.smoLocInput=smoLocInput;
+function smoLocKies(i){
+  const p=_smoSugg[i];if(!p)return;
+  const inp=document.getElementById('smo-loc');
+  const drop=document.getElementById('smo-drop');
+  if(inp)inp.value=p.display_name;
+  if(drop){drop.innerHTML='';drop.classList.remove('open');}
+}
+window.smoLocKies=smoLocKies;
 
 function smoStuur(){
   const wid=document.getElementById('smo-w')?.value;
