@@ -627,8 +627,12 @@ async function fetchESPN(dateStr){
         const hnl=ESPN_NL[hm.team.displayName]||hm.team.displayName;
         const anl=ESPN_NL[aw.team.displayName]||aw.team.displayName;
         // Match op teamnamen (probeer ook omgekeerd)
-        const w=W.find(x=>(x.th===hnl&&x.ui===anl)||(x.th===anl&&x.ui===hnl));
-        if(!w){console.warn('[ESPN] geen match:',hnl,'vs',anl);continue;}
+        let w=W.find(x=>(x.th===hnl&&x.ui===anl)||(x.th===anl&&x.ui===hnl));
+        if(!w){
+          const evMs=new Date(comp.startDate||ev.date||0).getTime();
+          if(evMs)w=W.find(x=>['X','R','KF','HF','FIN','3P'].includes(x.g)&&Math.abs(new Date(x.iso).getTime()-evMs)<90*60*1000);
+        }
+        if(!w)continue;
         const st=comp.status?.type?.state||'pre';
         const hs=parseInt(hm.score)||0,as_=parseInt(aw.score)||0;
         const thSc=(w.th===hnl)?hs:as_,uiSc=(w.ui===anl)?as_:hs;
@@ -649,7 +653,7 @@ async function fetchESPN(dateStr){
               isHome
             };
           });
-        espnScores[`w${w.id}`]={th:thSc,ui:uiSc,status:st,clock:comp.status?.displayClock||'',goals};
+        espnScores[`w${w.id}`]={th:thSc,ui:uiSc,status:st,clock:comp.status?.displayClock||'',goals,thn:hnl,uin:anl};
       }
     }
   }catch(e){console.warn('[ESPN]',e);}
@@ -671,6 +675,11 @@ async function laadESPN(){
     const ups={};
     for(const [k,sc] of Object.entries(espnScores)){
       if(sc.status==='post')ups[`v/_r/${k}`]={t:sc.th,u:sc.ui};
+    }
+    // Auto-detect kampioen uit finale (w104)
+    const fin=espnScores['w104'];
+    if(fin?.status==='post'&&fin.thn&&fin.uin&&!liveRes.kampioen){
+      ups['v/_r/kampioen']=fin.th>=fin.ui?fin.thn:fin.uin;
     }
     if(Object.keys(ups).length)try{await _update(_ref(_db),ups);}catch(e){}
   }
@@ -1284,16 +1293,8 @@ function renAdmin(){
   const now=new Date();
   const past=W.filter(w=>new Date(w.iso)<now).sort((a,b)=>new Date(a.iso)-new Date(b.iso));
   const el=document.getElementById('acon');
-  const kl=liveRes.kampioen||'';
-  const kamopts=LANDEN.map(l=>`<option value="${l}"${l===kl?' selected':''}>${l}</option>`).join('');
-  const kampHtml=`<div style="margin-bottom:16px;padding:12px;background:rgba(255,215,0,.07);border-radius:10px;border:1px solid rgba(255,215,0,.22)">
-    <label style="display:block;font-size:.72rem;font-weight:900;color:var(--goud);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">🏆 WK Kampioen (na finale)</label>
-    <select id="a-kampioen" style="width:100%;background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--tekst);font-family:'Nunito',sans-serif;font-size:.85rem;outline:none;appearance:none;-webkit-appearance:none">
-      <option value="">-- Nog niet bekend --</option>${kamopts}
-    </select>
-  </div>`;
-  if(!past.length){el.innerHTML=kampHtml+'<p style="color:var(--dim);font-size:.8rem">Nog geen gespeelde wedstrijden.</p>';return;}
-  el.innerHTML=kampHtml+past.map(w=>{
+  if(!past.length){el.innerHTML='<p style="color:var(--dim);font-size:.8rem">Nog geen gespeelde wedstrijden.</p>';return;}
+  el.innerHTML=past.map(w=>{
     const e=liveRes[`w${w.id}`]||{};
     return`<div class="resc"><div class="wm"><span class="mc">📅 ${w.d} ${w.t}</span><span class="mc">${LBL[w.g]||w.g}</span></div>
       <div class="tg"><div class="tn ho">${w.th}</div><div class="vs">VS</div><div class="tn">${w.ui}</div></div>
@@ -1312,8 +1313,6 @@ async function slaAdminOp(){
     if(!t||!u)return;
     if(t.value!==''&&u.value!==''){ups[`v/_r/w${w.id}`]={t:parseInt(t.value),u:parseInt(u.value)};n++;}
   });
-  const k=document.getElementById('a-kampioen')?.value;
-  if(k)ups['v/_r/kampioen']=k;
   if(!fbK){tt('Firebase niet verbonden',true);return;}
   try{
     await _update(_ref(_db),ups);
