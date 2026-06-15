@@ -348,7 +348,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
   </div>
 
   <div class="panel" id="panel-rang">
-    <div class="rh"><h2>🏆 Ranglijst</h2><span class="ld">LIVE</span></div>
+    <div class="rh"><h2>🏆 Ranglijst</h2><div style="display:flex;gap:6px;align-items:center"><span class="ld">LIVE</span><button onclick="deelRanglijst()" style="background:linear-gradient(135deg,#25D366,#128C7E);border:none;border-radius:20px;color:#fff;font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;padding:5px 12px;cursor:pointer">📤 Deel stand</button></div></div>
     <div id="livecon" style="display:none"></div>
     <p id="rcnt" style="font-size:.72rem;color:var(--dim);margin-bottom:10px"></p>
     <div id="rcon"><div class="leeg"><span class="li">⏳</span><p>Nog geen deelnemers</p></div></div>
@@ -1264,6 +1264,7 @@ function renR(sc){
     </div>`).join('');
   h+=`</div>`;
   h+=`<p style="font-size:.6rem;color:var(--dim);text-align:center;margin-top:4px">🎯 exact +5pt · ✅ goed +2pt · ❌ fout · ➖ niet ingevuld</p>`;
+  h+=`<button class="meedoen-btn" onclick="gaNaar('inv')" style="margin-top:14px">✋ Nog niet mee? Schrijf je in! →</button>`;
   document.getElementById('rcon').innerHTML=h;
 }
 
@@ -1394,6 +1395,23 @@ function smoStuur(){
   window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
 }
 window.smoStuur=smoStuur;
+
+function deelRanglijst(){
+  const url=window.location.href.split('#')[0]+'#rang';
+  const sc=Object.entries(liveAll).filter(([k])=>k!=='_r').map(([naam,sd])=>{
+    let pt=0,ex=0;
+    W.forEach(w=>{
+      const v=sd[`w${w.id}`],e=liveRes[`w${w.id}`];if(!v||v.t===undefined||!e)return;
+      if(v.t===e.t&&v.u===e.u){pt+=5;ex++;}
+      else if((v.t>v.u&&e.t>e.u)||(v.t<v.u&&e.t<e.u)||(v.t===v.u&&e.t===e.u))pt+=2;
+    });
+    return{naam,pt};
+  }).sort((a,b)=>b.pt-a.pt).slice(0,3);
+  const top=sc.map((s,i)=>`${i===0?'👑':i===1?'🥈':'🥉'} ${s.naam} (${s.pt}pt)`).join('\n');
+  const msg=`🏆 Jaikaran WK Poule 2026 — Huidige stand!\n\n${top||'Nog geen punten'}\n\n📲 Bekijk de volledige ranglijst:\n${url}\n\n✋ Nog niet mee? Schrijf je in via de link!`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
+}
+window.deelRanglijst=deelRanglijst;
 
 // Toon tooltip bij eerste bezoek
 setTimeout(()=>{
