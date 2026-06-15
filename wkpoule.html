@@ -394,6 +394,25 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 <button class="sab" id="sab" onclick="slaOp()">💾 Opslaan</button>
 <div class="toast" id="toast"></div>
 
+<div class="mo" id="smo">
+  <div class="md">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <h2 style="margin-bottom:0">🏠 Samen kijken</h2>
+      <button onclick="document.getElementById('smo').classList.remove('open')" style="background:none;border:none;color:var(--dim);font-size:1.4rem;cursor:pointer;line-height:1">✕</button>
+    </div>
+    <label style="display:block;font-size:.72rem;font-weight:900;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">⚽ Wedstrijd</label>
+    <select id="smo-w" style="width:100%;background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--tekst);font-family:'Nunito',sans-serif;font-size:.85rem;margin-bottom:16px;outline:none;appearance:none;-webkit-appearance:none"></select>
+    <label style="display:block;font-size:.72rem;font-weight:900;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">📍 Locatie <span style="font-weight:400;text-transform:none">(adres, naam of omschrijving)</span></label>
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <input id="smo-loc" type="text" placeholder="Bijv. Bij Kawita thuis, Sportcafé..." style="flex:1;background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--tekst);font-family:'Nunito',sans-serif;font-size:.88rem;outline:none">
+      <button id="smo-gps" onclick="smoGps()" title="Gebruik mijn GPS locatie" style="background:rgba(37,211,102,.15);border:1px solid rgba(37,211,102,.3);border-radius:10px;padding:0 12px;cursor:pointer;font-size:1.1rem;flex-shrink:0;color:#25D366">📍</button>
+    </div>
+    <label style="display:block;font-size:.72rem;font-weight:900;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">💬 Extra berichtje <span style="font-weight:400;text-transform:none">(optioneel)</span></label>
+    <input id="smo-msg" type="text" placeholder="Bijv. Pizza en drankjes aanwezig 🍕" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--tekst);font-family:'Nunito',sans-serif;font-size:.88rem;outline:none;margin-bottom:18px">
+    <button onclick="smoStuur()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,#25D366,#128C7E);border:none;color:#fff;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:900;cursor:pointer;letter-spacing:.5px">📲 Deel via WhatsApp →</button>
+  </div>
+</div>
+
 <div class="mo" id="amo">
   <div class="md">
     <h2>🔐 Uitslagen invoeren</h2>
@@ -1322,41 +1341,61 @@ if('serviceWorker'in navigator){
   });
 }
 
-// ── FAB: Nodig uit bij mij via WhatsApp + locatie ──
-function _fabBericht(locUrl){
-  const nu=new Date();
-  const liveW=W.filter(w=>espnScores[`w${w.id}`]?.status==='in');
-  const nextW=W.filter(w=>{const e=espnScores[`w${w.id}`];return(!e||e.status==='pre')&&new Date(w.iso)>nu;})
-               .sort((a,b)=>new Date(a.iso)-new Date(b.iso))[0];
-  const w=liveW[0]||nextW;
-  const wedstrijd=w?`${w.th} vs ${w.ui}`:'het WK 2026';
-  const wanneer=w&&liveW.length?'🔴 LIVE nu!':w?`vandaag om ${w.t}`:'binnenkort';
-  let msg=`🏠 Kom bij mij kijken!\n⚽ ${wedstrijd} — ${wanneer}\n🏆 Jaikaran WK Poule 2026`;
-  if(locUrl)msg+=`\n\n📍 Mijn locatie:\n${locUrl}`;
-  msg+=`\n\n📲 Check de poule:\n${window.location.href.split('#')[0]}`;
-  return msg;
-}
-
+// ── FAB: Samen kijken modal ──
 function deelLocatie(){
-  const tip=document.getElementById('fab-tip');
-  if(tip){tip.classList.add('show');setTimeout(()=>tip.classList.remove('show'),2000);}
-  if(!navigator.geolocation){
-    window.open(`https://wa.me/?text=${encodeURIComponent(_fabBericht(null))}`,'_blank');
-    return;
+  const nu=new Date();
+  const sel=document.getElementById('smo-w');
+  if(sel){
+    // Live wedstrijden bovenaan, dan komende wedstrijden
+    const liveW=W.filter(w=>espnScores[`w${w.id}`]?.status==='in').sort((a,b)=>new Date(a.iso)-new Date(b.iso));
+    const komend=W.filter(w=>{const e=espnScores[`w${w.id}`];return(!e||e.status==='pre')&&new Date(w.iso)>nu;}).sort((a,b)=>new Date(a.iso)-new Date(b.iso));
+    const opties=[...liveW,...komend];
+    sel.innerHTML=opties.map(w=>{
+      const live=espnScores[`w${w.id}`]?.status==='in';
+      return`<option value="${w.id}">${live?'🔴 LIVE: ':''}${w.th} vs ${w.ui} · ${w.d} ${w.t}${w.o?' 🇳🇱':''}</option>`;
+    }).join('');
+    if(!opties.length)sel.innerHTML='<option value="">Geen komende wedstrijden</option>';
   }
+  document.getElementById('smo').classList.add('open');
+}
+window.deelLocatie=deelLocatie;
+
+function smoGps(){
+  const btn=document.getElementById('smo-gps');
+  const inp=document.getElementById('smo-loc');
+  if(!navigator.geolocation){alert('GPS niet beschikbaar op dit apparaat.');return;}
+  if(btn){btn.textContent='⏳';btn.disabled=true;}
   navigator.geolocation.getCurrentPosition(
     pos=>{
       const {latitude:lat,longitude:lng}=pos.coords;
-      const locUrl=`https://maps.google.com/?q=${lat.toFixed(6)},${lng.toFixed(6)}`;
-      window.open(`https://wa.me/?text=${encodeURIComponent(_fabBericht(locUrl))}`,'_blank');
+      inp.value=`https://maps.google.com/?q=${lat.toFixed(6)},${lng.toFixed(6)}`;
+      if(btn){btn.textContent='✅';setTimeout(()=>{btn.textContent='📍';btn.disabled=false;},1500);}
     },
     ()=>{
-      window.open(`https://wa.me/?text=${encodeURIComponent(_fabBericht(null))}`,'_blank');
+      if(btn){btn.textContent='📍';btn.disabled=false;}
+      alert('Locatie niet beschikbaar. Vul handmatig in.');
     },
     {timeout:8000,maximumAge:60000}
   );
 }
-window.deelLocatie=deelLocatie;
+window.smoGps=smoGps;
+
+function smoStuur(){
+  const wid=document.getElementById('smo-w')?.value;
+  const w=W.find(x=>String(x.id)===String(wid));
+  const loc=(document.getElementById('smo-loc')?.value||'').trim();
+  const extra=(document.getElementById('smo-msg')?.value||'').trim();
+  const wedstrijd=w?`${w.th} vs ${w.ui}`:'het WK 2026';
+  const live=w&&espnScores[`w${w.id}`]?.status==='in';
+  const wanneer=live?'🔴 LIVE nu!':w?`${w.d} om ${w.t}`:'binnenkort';
+  let msg=`🏠 Kom bij mij kijken!\n⚽ ${wedstrijd} — ${wanneer}${w?.o?' 🇳🇱':''}\n🏆 Jaikaran WK Poule 2026`;
+  if(loc)msg+=`\n\n📍 Locatie:\n${loc}`;
+  if(extra)msg+=`\n\n💬 ${extra}`;
+  msg+=`\n\n📲 Check de poule:\n${window.location.href.split('#')[0]}`;
+  document.getElementById('smo').classList.remove('open');
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
+}
+window.smoStuur=smoStuur;
 
 // Toon tooltip bij eerste bezoek
 setTimeout(()=>{
