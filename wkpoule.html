@@ -269,6 +269,18 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 .md{background:var(--card);border:1px solid var(--border);border-radius:17px;padding:22px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;}
 .md h2{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--goud);letter-spacing:2px;margin-bottom:6px;}
 .md p{font-size:.8rem;color:var(--dim);margin-bottom:14px;line-height:1.5;}
+.smo-loc-wrap{position:relative;flex:1;}
+.smo-drop{position:absolute;left:0;right:0;top:calc(100% + 4px);background:#12121e;border:1px solid var(--border);border-radius:10px;overflow:hidden;z-index:600;display:none;box-shadow:0 8px 24px rgba(0,0,0,.7);}
+.smo-drop.open{display:block;}
+.smo-drop-item{padding:10px 12px;font-family:'Nunito',sans-serif;font-size:.8rem;color:var(--tekst);cursor:pointer;border-bottom:1px solid rgba(255,255,255,.05);line-height:1.35;}
+.smo-drop-item:last-child{border-bottom:none;}
+.smo-drop-item:hover,.smo-drop-item:active{background:rgba(255,255,255,.08);}
+.kvcard{background:linear-gradient(135deg,rgba(255,215,0,.08),rgba(255,215,0,.03));border:1px solid rgba(255,215,0,.22);border-radius:14px;padding:16px;margin-bottom:13px;}
+.kvcard h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--goud);letter-spacing:1.5px;margin-bottom:4px;}
+.kvcard p{font-size:.75rem;color:var(--dim);margin-bottom:10px;line-height:1.4;}
+.kvcard select{width:100%;background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--tekst);font-family:'Nunito',sans-serif;font-size:.88rem;margin-bottom:10px;outline:none;appearance:none;-webkit-appearance:none;}
+.kv-locked{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.04);border-radius:10px;padding:12px 14px;}
+.kv-locked-land{font-family:'Bebas Neue',sans-serif;font-size:1.25rem;color:var(--goud);letter-spacing:1px;}
 </style>
 </head>
 <body>
@@ -303,6 +315,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
       <div class="sd">of kies</div>
       <div class="bnn" id="bnn"></div>
     </div>
+    <div id="kvcard" style="display:none"></div>
     <div id="ssec" style="display:none">
       <div class="wban">
         <div><div class="wnm" id="wnm">Hey!</div><div class="wsb">Invullen vóór aftrap ⬇️</div></div>
@@ -402,7 +415,10 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
     <select id="smo-w" style="width:100%;background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--tekst);font-family:'Nunito',sans-serif;font-size:.85rem;margin-bottom:16px;outline:none;appearance:none;-webkit-appearance:none"></select>
     <label style="display:block;font-size:.72rem;font-weight:900;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">📍 Locatie <span style="font-weight:400;text-transform:none">(adres, naam of omschrijving)</span></label>
     <div style="display:flex;gap:8px;margin-bottom:16px">
-      <input id="smo-loc" type="text" placeholder="Bijv. Bij Kawita thuis, Sportcafé..." style="flex:1;background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--tekst);font-family:'Nunito',sans-serif;font-size:.88rem;outline:none">
+      <div class="smo-loc-wrap">
+        <input id="smo-loc" type="text" autocomplete="off" placeholder="Bijv. Bij Kawita thuis, Sportcafé..." style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--tekst);font-family:'Nunito',sans-serif;font-size:.88rem;outline:none" oninput="smoLocInput(this.value)" onblur="setTimeout(()=>{const d=document.getElementById('smo-drop');if(d){d.innerHTML='';d.classList.remove('open');}},200)">
+        <div id="smo-drop" class="smo-drop"></div>
+      </div>
       <button id="smo-gps" onclick="smoGps()" title="Gebruik mijn GPS locatie" style="background:rgba(37,211,102,.15);border:1px solid rgba(37,211,102,.3);border-radius:10px;padding:0 12px;cursor:pointer;font-size:1.1rem;flex-shrink:0;color:#25D366">📍</button>
     </div>
     <label style="display:block;font-size:.72rem;font-weight:900;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">💬 Extra berichtje <span style="font-weight:400;text-transform:none">(optioneel)</span></label>
@@ -538,6 +554,9 @@ const LBL={A:"Groep A",B:"Groep B",C:"Groep C",D:"Groep D",E:"Groep E","F":"Groe
 const VLG=["A","B","C","D","E","F","G","H","I","J","K","L","X","R","KF","HF","3P","FIN"];
 const AVT=["⚽","🏃","👑","🦁","🐯","🦅","🌟","🎯","💪","🔥","🎲","🌍","🦊","🐉","🎪","🚀"];
 const TOT=W.length;
+const KAMPIOEN_DEADLINE=new Date('2026-06-17T20:00:00Z');
+const KAMPIOEN_BONUS=10;
+const LANDEN=['Algerije','Argentinie','Australie','Belgie','Bosnie & Herz.','Brazilie','Canada','Colombia','Congo','Curacao','Duitsland','Ecuador','Egypte','Engeland','Frankrijk','Ghana','Haiti','Irak','Iran','Ivoorkust','Japan','Jordanie','Kaapverdie','Kroatie','Marokko','Mexico','Nederland','Nieuw-Zeeland','Noorwegen','Oezbekistan','Oostenrijk','Panama','Paraguay','Portugal','Qatar','Saoedi-Arabie','Schotland','Senegal','Spanje','Tsjechie','Tunisie','Turkije','Uruguay','Verenigde Staten','Zuid-Afrika','Zuid-Korea','Zweden','Zwitserland'];
 
 let sp=null, fbK=false, cdT={};
 let _db,_ref,_set,_get,_onValue,_update;
@@ -608,8 +627,12 @@ async function fetchESPN(dateStr){
         const hnl=ESPN_NL[hm.team.displayName]||hm.team.displayName;
         const anl=ESPN_NL[aw.team.displayName]||aw.team.displayName;
         // Match op teamnamen (probeer ook omgekeerd)
-        const w=W.find(x=>(x.th===hnl&&x.ui===anl)||(x.th===anl&&x.ui===hnl));
-        if(!w){console.warn('[ESPN] geen match:',hnl,'vs',anl);continue;}
+        let w=W.find(x=>(x.th===hnl&&x.ui===anl)||(x.th===anl&&x.ui===hnl));
+        if(!w){
+          const evMs=new Date(comp.startDate||ev.date||0).getTime();
+          if(evMs)w=W.find(x=>['X','R','KF','HF','FIN','3P'].includes(x.g)&&Math.abs(new Date(x.iso).getTime()-evMs)<90*60*1000);
+        }
+        if(!w)continue;
         const st=comp.status?.type?.state||'pre';
         const hs=parseInt(hm.score)||0,as_=parseInt(aw.score)||0;
         const thSc=(w.th===hnl)?hs:as_,uiSc=(w.ui===anl)?as_:hs;
@@ -630,7 +653,7 @@ async function fetchESPN(dateStr){
               isHome
             };
           });
-        espnScores[`w${w.id}`]={th:thSc,ui:uiSc,status:st,clock:comp.status?.displayClock||'',goals};
+        espnScores[`w${w.id}`]={th:thSc,ui:uiSc,status:st,clock:comp.status?.displayClock||'',goals,thn:hnl,uin:anl};
       }
     }
   }catch(e){console.warn('[ESPN]',e);}
@@ -652,6 +675,11 @@ async function laadESPN(){
     const ups={};
     for(const [k,sc] of Object.entries(espnScores)){
       if(sc.status==='post')ups[`v/_r/${k}`]={t:sc.th,u:sc.ui};
+    }
+    // Auto-detect kampioen uit finale (w104)
+    const fin=espnScores['w104'];
+    if(fin?.status==='post'&&fin.thn&&fin.uin&&!liveRes.kampioen){
+      ups['v/_r/kampioen']=fin.th>=fin.ui?fin.thn:fin.uin;
     }
     if(Object.keys(ups).length)try{await _update(_ref(_db),ups);}catch(e){}
   }
@@ -739,7 +767,7 @@ function activ(naam){
   document.getElementById('ssec').style.display='block';
   document.getElementById('wnm').textContent='Hey '+naam+'! 👋';
   document.getElementById('sab').classList.add('v');
-  laadR();
+  laadR();renKvCard();
 }
 window.activ=activ;
 
@@ -751,7 +779,7 @@ function wisN(){
   document.getElementById('sab').classList.remove('v');
   document.getElementById('ni').value='';
   Object.values(cdT).forEach(clearInterval);cdT={};
-  laadN();
+  laadN();renKvCard();
 }
 window.wisN=wisN;
 
@@ -770,7 +798,7 @@ async function laadN(){
   if(!fbK)return;
   try{
     const s=await _get(_ref(_db,'v'));
-    const nn=s.exists()?Object.keys(s.val()).filter(k=>k!=='_r'):[];
+    const nn=s.exists()?Object.keys(s.val()).filter(k=>k!=='_r'&&k!=='_k'):[];
     document.getElementById('bnn').innerHTML=nn.map(n=>`<button class="nc" onclick="activ('${n.replace(/'/g,"\\'")}')">${n}</button>`).join('');
   }catch(e){}
 }
@@ -945,7 +973,9 @@ function startLive(){
   if(!fbK)return;
   _onValue(_ref(_db,'v'),snap=>{
     liveAll=snap.exists()?snap.val():{};liveRes=liveAll._r||{};
-    const sc=Object.entries(liveAll).filter(([k])=>k!=='_r').map(([naam,sd])=>{
+    const _kampVoorsp=liveAll._k||{};
+    const _echteKampioen=liveRes.kampioen||'';
+    const sc=Object.entries(liveAll).filter(([k])=>k!=='_r'&&k!=='_k').map(([naam,sd])=>{
       let pt=0,ex=0,goed=0,fout=0,niet=0,inv=0;
       W.forEach(w=>{
         const v=sd[`w${w.id}`],e=liveRes[`w${w.id}`];
@@ -956,9 +986,11 @@ function startLive(){
         else if((v.t>v.u&&e.t>e.u)||(v.t<v.u&&e.t<e.u)||(v.t===v.u&&e.t===e.u)){pt+=2;goed++;}
         else{fout++;}
       });
-      return{naam,pt,ex,goed,fout,niet,inv};
+      const kv=_kampVoorsp[naam]||null;
+      if(_echteKampioen&&kv===_echteKampioen)pt+=KAMPIOEN_BONUS;
+      return{naam,pt,ex,goed,fout,niet,inv,kv};
     }).sort((a,b)=>b.pt-a.pt||b.ex-a.ex);
-    renR(sc);renD(sc);renRes();renLive();
+    renR(sc,_echteKampioen);renD(sc);renRes();renLive();renKvCard();
   });
 }
 
@@ -971,7 +1003,7 @@ function renRes(){
     return new Date(w.iso)<now||espn?.status==='in'||espn?.status==='post';
   }).sort((a,b)=>new Date(b.iso)-new Date(a.iso));
   if(!past.length){el.innerHTML='<div class="leeg"><span class="li">📭</span><p>Nog geen wedstrijden gespeeld</p></div>';return;}
-  const spelers=Object.entries(liveAll).filter(([k])=>k!=='_r');
+  const spelers=Object.entries(liveAll).filter(([k])=>k!=='_r'&&k!=='_k');
   let h='',lastDay='';
   past.forEach(w=>{
     const key=`w${w.id}`;
@@ -1066,7 +1098,7 @@ function _renNextMatch(h,spelers,nu){
 
 function renLive(){
   const el=document.getElementById('livecon');if(!el)return;
-  const spelers=Object.entries(liveAll).filter(([k])=>k!=='_r');
+  const spelers=Object.entries(liveAll).filter(([k])=>k!=='_r'&&k!=='_k');
   const liveMatches=W.filter(w=>espnScores[`w${w.id}`]?.status==='in')
                      .sort((a,b)=>new Date(a.iso)-new Date(b.iso));
   clearInterval(_bigCdI);
@@ -1210,6 +1242,53 @@ function openAdmin(){
 }
 window.openAdmin=openAdmin;
 
+function renKvCard(){
+  const card=document.getElementById('kvcard');
+  if(!card)return;
+  if(!sp){card.style.display='none';return;}
+  card.style.display='block';
+  const nu=new Date();
+  const deadlinePast=nu>KAMPIOEN_DEADLINE;
+  const kampVoorsp=liveAll._k||{};
+  const echteKampioen=liveRes.kampioen||'';
+  const mijnKeuze=kampVoorsp[sp]||null;
+  if(mijnKeuze){
+    const correct=echteKampioen&&mijnKeuze===echteKampioen;
+    const staat=echteKampioen?(correct?`✅ Correct! +${KAMPIOEN_BONUS} pt`:`❌ ${echteKampioen} werd kampioen`):'⏳ Wachten op finale...';
+    const kleur=echteKampioen?(correct?'#4ade80':'#f87171'):'var(--dim)';
+    card.innerHTML=`<div class="kvcard"><h3>🏆 Kampioensvoorspelling</h3>
+      <div class="kv-locked">
+        <span style="font-size:1.5rem">🔒</span>
+        <div><div class="kv-locked-land">${mijnKeuze}</div>
+        <div style="font-size:.7rem;color:${kleur};margin-top:2px">${staat}</div></div>
+      </div></div>`;
+  }else if(deadlinePast){
+    card.innerHTML=`<div class="kvcard"><h3>🏆 Kampioensvoorspelling</h3><p>⏰ Deadline verstreken — je hebt geen voorspelling gemaakt.</p></div>`;
+  }else{
+    const ddl=KAMPIOEN_DEADLINE.toLocaleString('nl-NL',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Amsterdam'});
+    const opts=LANDEN.map(l=>`<option value="${l}">${l}</option>`).join('');
+    card.innerHTML=`<div class="kvcard"><h3>🏆 Wie wordt wereldkampioen?</h3>
+      <p>Eén keuze — daarna vergrendeld! Bonus: <strong style="color:var(--goud)">+${KAMPIOEN_BONUS} punten</strong> als je het goed hebt.<br>⏰ Deadline: ${ddl}</p>
+      <select id="kv-sel"><option value="">-- Kies een land --</option>${opts}</select>
+      <button class="btn bg" onclick="slaKvOp()" style="width:100%">💾 Definitief opslaan →</button>
+    </div>`;
+  }
+}
+
+async function slaKvOp(){
+  if(!sp||!fbK){tt('Niet ingelogd',true);return;}
+  if(new Date()>KAMPIOEN_DEADLINE){tt('⏰ Deadline verstreken!',true);return;}
+  const land=document.getElementById('kv-sel')?.value;
+  if(!land){tt('Kies eerst een land',true);return;}
+  if(!confirm(`Weet je zeker dat je "${land}" kiest als wereldkampioen?\nDit kan NIET meer worden gewijzigd!`))return;
+  try{
+    await _set(_ref(_db,`v/_k/${sp}`),land);
+    tt('🏆 Kampioensvoorspelling opgeslagen!');
+    renKvCard();
+  }catch(e){tt('Fout bij opslaan',true);}
+}
+window.slaKvOp=slaKvOp;
+
 function renAdmin(){
   const now=new Date();
   const past=W.filter(w=>new Date(w.iso)<now).sort((a,b)=>new Date(a.iso)-new Date(b.iso));
@@ -1243,27 +1322,28 @@ async function slaAdminOp(){
 }
 window.slaAdminOp=slaAdminOp;
 
-function renR(sc){
+function renR(sc,echteKampioen=''){
   document.getElementById('rcnt').textContent=sc.length?`${sc.length} deelnemer${sc.length===1?'':'s'} · winnaar krijgt de BBQ van Kawita 🍖`:'';
   if(!sc.length){
     document.getElementById('rcon').innerHTML='<div class="leeg"><span class="li">⏳</span><p>Nog geen deelnemers</p></div>';
     return;
   }
-  const top=sc[0].pt;
   let h=`<div class="rtbl">`;
   h+=`<div class="rtbl-hdr"><span>#</span><span>Naam</span><span>Pt</span><span>🎯</span><span>✅</span><span>❌</span><span>➖</span></div>`;
-  h+=sc.map((s,i)=>`
-    <div class="rtbl-row ${i===0?'r1':i===1?'r2':i===2?'r3':''}">
+  h+=sc.map((s,i)=>{
+    const kvBadge=s.kv?`<div style="font-size:.6rem;color:var(--dim);margin-top:2px;line-height:1">🏆 ${s.kv}${echteKampioen&&s.kv===echteKampioen?' ✅':echteKampioen?' ❌':''}</div>`:'';
+    return`<div class="rtbl-row ${i===0?'r1':i===1?'r2':i===2?'r3':''}">
       <div class="rtbl-nr">${i===0?'👑':i===1?'🥈':i===2?'🥉':i+1}</div>
-      <div class="rtbl-naam">${s.naam}${i===0&&s.pt>0?' 🍖':''}</div>
+      <div class="rtbl-naam">${s.naam}${i===0&&s.pt>0?' 🍖':''}${kvBadge}</div>
       <div class="rtbl-pt">${s.pt}</div>
       <div class="rtbl-st ex">${s.ex}</div>
       <div class="rtbl-st gd">${s.goed}</div>
       <div class="rtbl-st ft">${s.fout}</div>
       <div class="rtbl-st nt">${s.niet}</div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
   h+=`</div>`;
-  h+=`<p style="font-size:.6rem;color:var(--dim);text-align:center;margin-top:4px">🎯 exact +5pt · ✅ goed +2pt · ❌ fout · ➖ niet ingevuld</p>`;
+  h+=`<p style="font-size:.6rem;color:var(--dim);text-align:center;margin-top:4px">🎯 exact +5pt · ✅ goed +2pt · ❌ fout · ➖ niet ingevuld · 🏆 kampioen +${KAMPIOEN_BONUS}pt</p>`;
   h+=`<button class="meedoen-btn" onclick="gaNaar('inv')" style="margin-top:14px">✋ Nog niet mee? Schrijf je in! →</button>`;
   document.getElementById('rcon').innerHTML=h;
 }
@@ -1379,6 +1459,33 @@ function smoGps(){
 }
 window.smoGps=smoGps;
 
+let _smoLocTimer=null,_smoSugg=[];
+function smoLocInput(q){
+  clearTimeout(_smoLocTimer);
+  const drop=document.getElementById('smo-drop');
+  if(!drop)return;
+  if(!q||q.length<2){drop.innerHTML='';drop.classList.remove('open');return;}
+  _smoLocTimer=setTimeout(async()=>{
+    try{
+      const r=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5&accept-language=nl`);
+      const d=await r.json();
+      _smoSugg=d;
+      if(!d.length){drop.innerHTML='';drop.classList.remove('open');return;}
+      drop.innerHTML=d.map((p,i)=>`<div class="smo-drop-item" onmousedown="smoLocKies(${i})">${p.display_name}</div>`).join('');
+      drop.classList.add('open');
+    }catch(e){drop.innerHTML='';drop.classList.remove('open');}
+  },400);
+}
+window.smoLocInput=smoLocInput;
+function smoLocKies(i){
+  const p=_smoSugg[i];if(!p)return;
+  const inp=document.getElementById('smo-loc');
+  const drop=document.getElementById('smo-drop');
+  if(inp)inp.value=p.display_name;
+  if(drop){drop.innerHTML='';drop.classList.remove('open');}
+}
+window.smoLocKies=smoLocKies;
+
 function smoStuur(){
   const wid=document.getElementById('smo-w')?.value;
   const w=W.find(x=>String(x.id)===String(wid));
@@ -1398,7 +1505,7 @@ window.smoStuur=smoStuur;
 
 function deelRanglijst(){
   const url=window.location.href.split('#')[0]+'#rang';
-  const sc=Object.entries(liveAll).filter(([k])=>k!=='_r').map(([naam,sd])=>{
+  const sc=Object.entries(liveAll).filter(([k])=>k!=='_r'&&k!=='_k').map(([naam,sd])=>{
     let pt=0,ex=0;
     W.forEach(w=>{
       const v=sd[`w${w.id}`],e=liveRes[`w${w.id}`];if(!v||v.t===undefined||!e)return;
