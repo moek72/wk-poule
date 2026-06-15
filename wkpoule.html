@@ -259,10 +259,9 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 .bigcd-live .bigcd-match{color:var(--tekst);}
 .meedoen-btn{display:block;width:100%;padding:14px;border-radius:14px;font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;cursor:pointer;border:2px dashed rgba(255,215,0,.4);background:rgba(255,215,0,.06);color:var(--goud);transition:all .2s;margin-top:8px;}
 .meedoen-btn:hover{background:rgba(255,215,0,.12);border-color:var(--goud);}
-.fab{position:fixed;bottom:88px;right:16px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#25D366,#128C7E);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 4px 18px rgba(37,211,102,.45);z-index:200;transition:transform .15s,box-shadow .15s;-webkit-tap-highlight-color:transparent;}
-.fab:active{transform:scale(.9);box-shadow:0 2px 8px rgba(37,211,102,.3);}
-.fab-tip{position:fixed;bottom:92px;right:78px;background:#128C7E;color:#fff;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;padding:5px 10px;border-radius:20px;z-index:199;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .3s;}
-.fab-tip.show{opacity:1;}
+.fab{position:fixed;bottom:88px;right:14px;height:44px;padding:0 16px;border-radius:22px;background:linear-gradient(135deg,#25D366,#128C7E);border:none;cursor:pointer;display:flex;align-items:center;gap:7px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:900;color:#fff;letter-spacing:.3px;box-shadow:0 4px 18px rgba(37,211,102,.45);z-index:200;transition:transform .15s,box-shadow .15s;-webkit-tap-highlight-color:transparent;white-space:nowrap;}
+.fab:active{transform:scale(.93);box-shadow:0 2px 8px rgba(37,211,102,.3);}
+.fab-tip{display:none;}
 
 /* ── Modal (uitslagen invoeren) ── */
 .mo{position:fixed;inset:0;background:rgba(6,6,16,.97);z-index:500;display:none;align-items:center;justify-content:center;padding:15px;overflow-y:auto;}
@@ -389,8 +388,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
   </div>
 </div>
 
-<button class="fab" id="fab" onclick="deelLocatie()" title="Nodig uit bij mij">🏠</button>
-<div class="fab-tip" id="fab-tip">Nodig uit bij mij!</div>
+<button class="fab" id="fab" onclick="deelLocatie()">👥 Kijk samen</button>
 <button class="sab" id="sab" onclick="slaOp()">💾 Opslaan</button>
 <div class="toast" id="toast"></div>
 
