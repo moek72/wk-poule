@@ -281,6 +281,8 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 .kvcard select{width:100%;background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--tekst);font-family:'Nunito',sans-serif;font-size:.88rem;margin-bottom:10px;outline:none;appearance:none;-webkit-appearance:none;}
 .kv-locked{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.04);border-radius:10px;padding:12px 14px;}
 .kv-locked-land{font-family:'Bebas Neue',sans-serif;font-size:1.25rem;color:var(--goud);letter-spacing:1px;}
+.meer-btn{background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:20px;padding:3px 11px;font-size:.65rem;font-weight:800;color:var(--dim);cursor:pointer;white-space:nowrap;font-family:'Nunito',sans-serif;vertical-align:middle;margin-left:2px;}
+.meer-btn:active{background:rgba(255,255,255,.14);}
 </style>
 </head>
 <body>
@@ -1036,13 +1038,30 @@ function renRes(){
         if(v.t===e.t&&v.u===e.u)ex.push(naam);
         else if((v.t>v.u&&e.t>e.u)||(v.t<v.u&&e.t<e.u)||(v.t===v.u&&e.t===e.u))gd.push(naam);
       });
-      if(ex.length||gd.length)h+=`<div class="wkchips">${ex.map(n=>`<span class="wk5">🎯 ${n} +5</span>`).join('')}${gd.map(n=>`<span class="wk2">✅ ${n} +2</span>`).join('')}</div>`;
-      else h+=`<div class="wachten">Niemand had het goed 😅</div>`;
+      const alle=[...ex.map(n=>({n,cls:'wk5',lbl:'🎯',pt:'+5'})),...gd.map(n=>({n,cls:'wk2',lbl:'✅',pt:'+2'}))];
+      if(alle.length){
+        const MAX=3,zb=alle.slice(0,MAX),rest=alle.slice(MAX);
+        let ch=zb.map(({n,cls,lbl,pt})=>`<span class="${cls}">${lbl} ${n} ${pt}</span>`).join('');
+        if(rest.length){
+          ch+=`<span id="meer-${w.id}" style="display:none">${rest.map(({n,cls,lbl,pt})=>`<span class="${cls}">${lbl} ${n} ${pt}</span>`).join('')}</span>`;
+          ch+=`<button class="meer-btn" onclick="toggleMeer(${w.id})">+${rest.length} meer</button>`;
+        }
+        h+=`<div class="wkchips">${ch}</div>`;
+      }else h+=`<div class="wachten">Niemand had het goed 😅</div>`;
     }else h+=`<div class="wachten">${isLive?'⏳ Bezig...':'⏳ Wacht op uitslag…'}</div>`;
     h+=`</div>`;
   });
   el.innerHTML=h;
 }
+
+function toggleMeer(id){
+  const el=document.getElementById(`meer-${id}`);if(!el)return;
+  const btn=el.nextElementSibling;
+  const open=el.style.display==='none';
+  el.style.display=open?'inline':'none';
+  if(btn)btn.textContent=open?'Minder':`+${el.querySelectorAll('span').length} meer`;
+}
+window.toggleMeer=toggleMeer;
 
 // ── Goals weergave: 2 kolommen (thuis | uit) ──
 function renGoals(goals,w){
