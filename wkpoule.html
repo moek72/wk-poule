@@ -608,7 +608,7 @@ const ESPN_NL={
   "Jordan":"Jordanie",
   // K
   "Portugal":"Portugal",
-  "DR Congo":"Congo","Congo, DR":"Congo","Democratic Republic of Congo":"Congo",
+  "DR Congo":"Congo","Congo, DR":"Congo","Congo DR":"Congo","Democratic Republic of Congo":"Congo","Democratic Republic of the Congo":"Congo","Congo (DR)":"Congo","Republic of the Congo":"Congo",
   "Uzbekistan":"Oezbekistan","Colombia":"Colombia",
   // L
   "England":"Engeland","Croatia":"Kroatie","Ghana":"Ghana","Panama":"Panama"
@@ -700,7 +700,8 @@ async function laadStanden(){
     renStanden(json);
   }catch(e){console.warn('[Standen]',e);}
   clearTimeout(standenPollT);
-  standenPollT=setTimeout(laadStanden,300000);
+  const hasLiveNow=Object.values(espnScores).some(s=>s.status==='in');
+  standenPollT=setTimeout(laadStanden,hasLiveNow?60000:300000);
 }
 
 function renStanden(json){
@@ -709,7 +710,15 @@ function renStanden(json){
   if(!groups.length){el.innerHTML='<div class="leeg"><span class="li">⏳</span><p>Nog geen standen</p></div>';return;}
   let h='';
   groups.forEach(grp=>{
-    const entries=grp.standings?.entries||[];if(!entries.length)return;
+    const raw=grp.standings?.entries||[];if(!raw.length)return;
+    const getSt=en=>{const s={};(en.stats||[]).forEach(x=>{s[x.name]=x.value;});return s;};
+    const entries=[...raw].sort((a,b)=>{
+      const sa=getSt(a),sb=getSt(b);
+      const pd=(sb.points??0)-(sa.points??0);if(pd)return pd;
+      const gdA=(sa.pointsFor??0)-(sa.pointsAgainst??0),gdB=(sb.pointsFor??0)-(sb.pointsAgainst??0);
+      if(gdB!==gdA)return gdB-gdA;
+      return(sb.pointsFor??0)-(sa.pointsFor??0);
+    });
     h+=`<div class="stgrp"><div class="daghdr">${grp.name||grp.abbreviation||''}</div>`;
     h+=`<table class="stbl"><thead><tr><th>Team</th><th>P</th><th>W</th><th>G</th><th>V</th><th>Doel</th><th>Pts</th></tr></thead><tbody>`;
     entries.forEach((en,i)=>{
