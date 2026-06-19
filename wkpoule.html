@@ -1280,25 +1280,29 @@ function renKvCard(){
   const kampVoorsp=liveAll._k||{};
   const echteKampioen=liveRes.kampioen||'';
   const mijnKeuze=kampVoorsp[sp]||null;
-  if(mijnKeuze){
-    const correct=echteKampioen&&mijnKeuze===echteKampioen;
-    const staat=echteKampioen?(correct?`✅ Correct! +${KAMPIOEN_BONUS} pt`:`❌ ${echteKampioen} werd kampioen`):'⏳ Wachten op finale...';
-    const kleur=echteKampioen?(correct?'#4ade80':'#f87171'):'var(--dim)';
-    card.innerHTML=`<div class="kvcard"><h3>🏆 Kampioensvoorspelling</h3>
-      <div class="kv-locked">
-        <span style="font-size:1.5rem">🔒</span>
+  if(deadlinePast){
+    if(mijnKeuze){
+      const correct=echteKampioen&&mijnKeuze===echteKampioen;
+      const staat=echteKampioen?(correct?`✅ Correct! +${KAMPIOEN_BONUS} pt`:`❌ ${echteKampioen} werd kampioen`):'⏳ Wachten op finale...';
+      const kleur=echteKampioen?(correct?'#4ade80':'#f87171'):'var(--dim)';
+      card.innerHTML=`<div class="kvcard"><h3>🏆 Kampioensvoorspelling</h3>
+        <div class="kv-locked"><span style="font-size:1.5rem">🔒</span>
         <div><div class="kv-locked-land">${mijnKeuze}</div>
-        <div style="font-size:.7rem;color:${kleur};margin-top:2px">${staat}</div></div>
-      </div></div>`;
-  }else if(deadlinePast){
-    card.innerHTML=`<div class="kvcard"><h3>🏆 Kampioensvoorspelling</h3><p>⏰ Deadline verstreken — je hebt geen voorspelling gemaakt.</p></div>`;
+        <div style="font-size:.7rem;color:${kleur};margin-top:2px">${staat}</div></div></div></div>`;
+    }else{
+      card.innerHTML=`<div class="kvcard"><h3>🏆 Kampioensvoorspelling</h3><p>⏰ Deadline verstreken — je hebt geen voorspelling gemaakt.</p></div>`;
+    }
   }else{
     const ddl=KAMPIOEN_DEADLINE.toLocaleString('nl-NL',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Amsterdam'});
-    const opts=LANDEN.map(l=>`<option value="${l}">${l}</option>`).join('');
+    const opts=LANDEN.map(l=>`<option value="${l}"${l===mijnKeuze?' selected':''}>${l}</option>`).join('');
+    const sub=mijnKeuze
+      ?`<p style="font-size:.72rem;color:var(--dim);margin-bottom:8px">Huidige keuze: <strong style="color:var(--goud)">${mijnKeuze}</strong> — je kunt dit nog wijzigen tot de deadline.</p>`
+      :`<p>Kies één land — bonus: <strong style="color:var(--goud)">+${KAMPIOEN_BONUS} punten</strong> als je het goed hebt.</p>`;
     card.innerHTML=`<div class="kvcard"><h3>🏆 Wie wordt wereldkampioen?</h3>
-      <p>Eén keuze — daarna vergrendeld! Bonus: <strong style="color:var(--goud)">+${KAMPIOEN_BONUS} punten</strong> als je het goed hebt.<br>⏰ Deadline: ${ddl}</p>
+      ${sub}
+      <p style="font-size:.7rem;color:var(--dim);margin-bottom:8px">⏰ Deadline: ${ddl}</p>
       <select id="kv-sel"><option value="">-- Kies een land --</option>${opts}</select>
-      <button class="btn bg" onclick="slaKvOp()" style="width:100%">💾 Definitief opslaan →</button>
+      <button class="btn bg" onclick="slaKvOp()" style="width:100%">${mijnKeuze?'✏️ Keuze aanpassen →':'💾 Opslaan →'}</button>
     </div>`;
   }
 }
@@ -1308,10 +1312,9 @@ async function slaKvOp(){
   if(new Date()>KAMPIOEN_DEADLINE){tt('⏰ Deadline verstreken!',true);return;}
   const land=document.getElementById('kv-sel')?.value;
   if(!land){tt('Kies eerst een land',true);return;}
-  if(!confirm(`Weet je zeker dat je "${land}" kiest als wereldkampioen?\nDit kan NIET meer worden gewijzigd!`))return;
   try{
     await _set(_ref(_db,`v/_k/${sp}`),land);
-    tt('🏆 Kampioensvoorspelling opgeslagen!');
+    tt(`🏆 ${land} opgeslagen!`);
     renKvCard();
   }catch(e){tt('Fout bij opslaan',true);}
 }
