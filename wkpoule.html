@@ -825,6 +825,12 @@ async function laadR(){
 // ── Wedstrijden renderen (chronologisch) ──
 function renW(sd){
   userSd=sd;
+  // Bewaar onopgeslagen waarden in open velden vóór herrenderen
+  const unsaved={};
+  W.forEach(w=>{
+    const te=document.getElementById(`t${w.id}`),ue=document.getElementById(`u${w.id}`);
+    if(te&&!te.disabled&&(te.value!==''||ue?.value!==''))unsaved[w.id]={t:te.value,u:ue?.value??''};
+  });
   const sorted=[...W].sort((a,b)=>new Date(a.iso)-new Date(b.iso));
   let h='',lastDay='';
   sorted.forEach(w=>{
@@ -863,6 +869,11 @@ function renW(sd){
   });
   if(lastDay)h+='</div>';
   document.getElementById('wcon').innerHTML=h;
+  // Herstel onopgeslagen waarden na herrenderen
+  Object.entries(unsaved).forEach(([id,v])=>{
+    const te=document.getElementById(`t${id}`),ue=document.getElementById(`u${id}`);
+    if(te&&!te.disabled){te.value=v.t;if(ue)ue.value=v.u;document.getElementById(`c${id}`)?.classList.toggle('hi',v.t!==''&&v.u!=='');}
+  });
   W.forEach(w=>sCD(w));upVG(sd);
   bouwSelect();pasFilterToe();
 }
