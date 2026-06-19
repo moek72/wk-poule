@@ -922,13 +922,32 @@ function sCD(w){
   u();cdT[w.id]=setInterval(u,1000);
 }
 
+let _autoSaveT=null;
 function sgw(id){
   const c=document.getElementById(`c${id}`);
   const t=document.getElementById(`t${id}`).value,u=document.getElementById(`u${id}`).value;
   if(t!==''&&u!=='')c.classList.add('hi');else c.classList.remove('hi');
   upVGL();
+  clearTimeout(_autoSaveT);
+  _autoSaveT=setTimeout(autoSlaOp,1500);
 }
 window.sgw=sgw;
+
+async function autoSlaOp(){
+  if(!sp||!fbK)return;
+  const ups={};let n=0;
+  W.forEach(w=>{
+    const te=document.getElementById(`t${w.id}`),ue=document.getElementById(`u${w.id}`);
+    if(!te||!ue||te.disabled)return;
+    if(te.value!==''&&ue.value!==''){ups[`v/${sp}/w${w.id}`]={t:parseInt(te.value),u:parseInt(ue.value),ai:te.dataset.ai==='true'};n++;}
+  });
+  if(!n)return;
+  try{
+    await _update(_ref(_db),ups);
+    const btn=document.getElementById('sab');
+    if(btn){const prev=btn.textContent;btn.textContent='✓ Opgeslagen';btn.style.background='linear-gradient(135deg,#4ade80,#16a34a)';setTimeout(()=>{btn.textContent=prev;btn.style.background='';},2000);}
+  }catch(e){}
+}
 
 function upVGL(){
   let n=0;
