@@ -106,6 +106,11 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 .sab{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);z-index:200;padding:12px 34px;background:linear-gradient(135deg,var(--groen),#00a044);color:#000;border:none;border-radius:30px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.9rem;cursor:pointer;transition:all .2s;box-shadow:0 6px 30px rgba(0,200,83,.5);white-space:nowrap;display:none;}
 .sab.v{display:block;}
 .sab:hover{transform:translateX(-50%) translateY(-3px);}
+.rab{position:fixed;bottom:15px;left:calc(50% - 110px);z-index:200;width:44px;height:44px;background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:50%;color:var(--tekst);font-size:1.1rem;cursor:pointer;display:none;align-items:center;justify-content:center;transition:transform .15s;-webkit-tap-highlight-color:transparent;}
+.rab.v{display:flex;}
+.rab:active{transform:scale(.88);}
+.rab.spin{animation:rabspin .6s linear;}
+@keyframes rabspin{to{transform:rotate(360deg)}}
 .rh{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
 .rh h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--goud);letter-spacing:2px;}
 .ld{display:inline-flex;align-items:center;gap:5px;font-size:.68rem;font-weight:700;color:var(--groen);}
@@ -404,6 +409,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 </div>
 
 <button class="fab" id="fab" onclick="deelLocatie()">👥 Kijk samen</button>
+<button class="rab" id="rab" onclick="verversInvullen()">🔄</button>
 <button class="sab" id="sab" onclick="slaOp()">💾 Opslaan</button>
 <div class="toast" id="toast"></div>
 
@@ -778,6 +784,7 @@ function activ(naam){
   document.getElementById('ssec').style.display='block';
   document.getElementById('wnm').textContent='Hey '+naam+'! 👋';
   document.getElementById('sab').classList.add('v');
+  document.getElementById('rab')?.classList.add('v');
   laadR();renKvCard();
 }
 window.activ=activ;
@@ -788,11 +795,21 @@ function wisN(){
   document.getElementById('ssec').style.display='none';
   document.getElementById('wcon').innerHTML='';
   document.getElementById('sab').classList.remove('v');
+  document.getElementById('rab')?.classList.remove('v');
   document.getElementById('ni').value='';
   Object.values(cdT).forEach(clearInterval);cdT={};
   laadN();renKvCard();
 }
 window.wisN=wisN;
+
+async function verversInvullen(){
+  const btn=document.getElementById('rab');
+  if(btn){btn.classList.add('spin');btn.disabled=true;}
+  await laadR();
+  setTimeout(()=>{if(btn){btn.classList.remove('spin');btn.disabled=false;}},600);
+  tt('🔄 Bijgewerkt');
+}
+window.verversInvullen=verversInvullen;
 
 async function verwijderN(){
   if(!confirm(`Weet je zeker dat je de deelname van ${sp} wilt verwijderen?\nAlle ingevulde voorspellingen worden gewist.`))return;
