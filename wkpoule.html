@@ -103,11 +103,11 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 .sin:focus{border-color:var(--goud);}
 .sin:disabled{opacity:.4;cursor:not-allowed;}
 .ss{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--dim);text-align:center;}
-.sab{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);z-index:200;padding:12px 34px;background:linear-gradient(135deg,var(--groen),#00a044);color:#000;border:none;border-radius:30px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.9rem;cursor:pointer;transition:all .2s;box-shadow:0 6px 30px rgba(0,200,83,.5);white-space:nowrap;display:none;}
-.sab.v{display:block;}
-.sab:hover{transform:translateX(-50%) translateY(-3px);}
-.rab{position:fixed;bottom:15px;left:calc(50% - 110px);z-index:200;width:44px;height:44px;background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:50%;color:var(--tekst);font-size:1.1rem;cursor:pointer;display:none;align-items:center;justify-content:center;transition:transform .15s;-webkit-tap-highlight-color:transparent;}
-.rab.v{display:flex;}
+.bbar{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);z-index:200;display:none;align-items:center;gap:8px;}
+.bbar.v{display:flex;}
+.sab{padding:12px 34px;background:linear-gradient(135deg,var(--groen),#00a044);color:#000;border:none;border-radius:30px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.9rem;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 6px 30px rgba(0,200,83,.5);white-space:nowrap;}
+.sab:active{transform:translateY(2px);box-shadow:0 3px 12px rgba(0,200,83,.35);}
+.rab{width:44px;height:44px;background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:50%;color:var(--tekst);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s;-webkit-tap-highlight-color:transparent;flex-shrink:0;}
 .rab:active{transform:scale(.88);}
 .rab.spin{animation:rabspin .6s linear;}
 @keyframes rabspin{to{transform:rotate(360deg)}}
@@ -435,8 +435,10 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 </div>
 
 <button class="fab" id="fab" onclick="deelLocatie()">👥 Kijk samen</button>
-<button class="rab" id="rab" onclick="verversInvullen()">🔄</button>
-<button class="sab" id="sab" onclick="slaOp()">💾 Opslaan</button>
+<div class="bbar" id="bbar">
+  <button class="rab" id="rab" onclick="verversInvullen()" title="Vernieuwen">🔄</button>
+  <button class="sab" id="sab" onclick="slaOp()">💾 Opslaan</button>
+</div>
 <div class="toast" id="toast"></div>
 
 <div class="mo" id="smo">
@@ -813,8 +815,7 @@ function activ(naam){
   document.getElementById('nsec').style.display='none';
   document.getElementById('ssec').style.display='block';
   document.getElementById('wnm').textContent='Hey '+naam+'! 👋';
-  document.getElementById('sab').classList.add('v');
-  document.getElementById('rab')?.classList.add('v');
+  document.getElementById('bbar')?.classList.add('v');
   laadR();renKvCard();
 }
 window.activ=activ;
@@ -824,8 +825,7 @@ function wisN(){
   document.getElementById('nsec').style.display='block';
   document.getElementById('ssec').style.display='none';
   document.getElementById('wcon').innerHTML='';
-  document.getElementById('sab').classList.remove('v');
-  document.getElementById('rab')?.classList.remove('v');
+  document.getElementById('bbar')?.classList.remove('v');
   document.getElementById('ni').value='';
   Object.values(cdT).forEach(clearInterval);cdT={};
   laadN();renKvCard();
