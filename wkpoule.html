@@ -324,12 +324,24 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 .smo-drop-item{padding:10px 12px;font-family:'Nunito',sans-serif;font-size:.8rem;color:var(--tekst);cursor:pointer;border-bottom:1px solid rgba(255,255,255,.05);line-height:1.35;}
 .smo-drop-item:last-child{border-bottom:none;}
 .smo-drop-item:hover,.smo-drop-item:active{background:rgba(255,255,255,.08);}
-.kvcard{background:linear-gradient(135deg,rgba(255,215,0,.08),rgba(255,215,0,.03));border:1px solid rgba(255,215,0,.22);border-radius:14px;padding:16px;margin-bottom:13px;}
+.kvcard{background:linear-gradient(135deg,rgba(255,215,0,.08),rgba(255,215,0,.03));border:1px solid rgba(255,215,0,.22);border-radius:14px;padding:16px;margin-bottom:13px;transition:border-color .3s,box-shadow .3s;}
+.kvcard.alert{border-color:rgba(251,146,60,.7);box-shadow:0 0 0 3px rgba(251,146,60,.12);animation:kvalert 2s ease-in-out infinite;}
+@keyframes kvalert{0%,100%{box-shadow:0 0 0 3px rgba(251,146,60,.12);}50%{box-shadow:0 0 0 6px rgba(251,146,60,.25);}}
 .kvcard h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--goud);letter-spacing:1.5px;margin-bottom:4px;}
 .kvcard p{font-size:.75rem;color:var(--dim);margin-bottom:10px;line-height:1.4;}
 .kvcard select{width:100%;background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--tekst);font-family:'Nunito',sans-serif;font-size:.88rem;margin-bottom:10px;outline:none;appearance:none;-webkit-appearance:none;}
 .kv-locked{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.04);border-radius:10px;padding:12px 14px;}
 .kv-locked-land{font-family:'Bebas Neue',sans-serif;font-size:1.25rem;color:var(--goud);letter-spacing:1px;}
+/* ── Tab notification dot ── */
+.tabdot{display:inline-block;width:7px;height:7px;background:var(--rood);border-radius:50%;margin-left:3px;vertical-align:middle;margin-top:-8px;animation:tdp 1.5s ease-in-out infinite;}
+@keyframes tdp{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(.7);}}
+/* ── Stats kaartjes ── */
+.statrow{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:4px 0 8px;-webkit-overflow-scrolling:touch;}
+.statrow::-webkit-scrollbar{display:none;}
+.statk{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:10px 12px;flex-shrink:0;min-width:130px;max-width:160px;}
+.statk .ski{font-size:1.2rem;margin-bottom:3px;}
+.statk .skv{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--goud);letter-spacing:1px;line-height:1.1;word-break:break-word;}
+.statk .skl{font-size:.58rem;color:var(--dim);text-transform:uppercase;letter-spacing:.4px;margin-top:2px;}
 .meer-btn{background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:20px;padding:3px 11px;font-size:.65rem;font-weight:800;color:var(--dim);cursor:pointer;white-space:nowrap;font-family:'Nunito',sans-serif;vertical-align:middle;margin-left:2px;}
 .meer-btn:active{background:rgba(255,255,255,.14);}
 </style>
@@ -347,7 +359,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 </div>
 
 <div class="tabs">
-  <div class="tab active" onclick="showTab('inv',this)"><span class="ti">✏️</span>Invullen</div>
+  <div class="tab active" onclick="showTab('inv',this)"><span class="ti">✏️</span>Invullen<span class="tabdot" id="dot-inv" style="display:none"></span></div>
   <div class="tab" onclick="showTab('res',this)"><span class="ti">📊</span>Uitslagen</div>
   <div class="tab" onclick="showTab('stan',this)"><span class="ti">📈</span>Standen</div>
   <div class="tab" onclick="showTab('live',this)"><span class="ti" id="livetabti">📺</span>Live</div>
