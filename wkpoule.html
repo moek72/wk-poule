@@ -365,6 +365,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
   <div class="tab" onclick="showTab('live',this)"><span class="ti" id="livetabti">📺</span>Live</div>
   <div class="tab" onclick="showTab('rang',this)"><span class="ti">🏆</span>Ranglijst</div>
   <div class="tab" onclick="showTab('deel',this)"><span class="ti">👥</span>Wie mee?</div>
+  <div class="tab" onclick="showTab('stat',this)"><span class="ti">📈</span>Stats</div>
   <div class="tab" onclick="showTab('uit',this)"><span class="ti">📋</span>Regels</div>
 </div>
 
@@ -440,6 +441,11 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
     </div>
     <p style="font-size:.76rem;color:var(--dim);margin-bottom:12px">Wie heeft al ingevuld?</p>
     <div id="dcon" class="dg"><div class="leeg"><span class="li">👀</span><p>Nog niemand!</p></div></div>
+  </div>
+
+  <div class="panel" id="panel-stat">
+    <div class="rh"><h2>📈 Statistieken</h2><span class="ld">LIVE</span></div>
+    <div id="statcon"><div class="leeg"><span class="li">⏳</span><p>Laden...</p></div></div>
   </div>
 
   <div class="panel" id="panel-uit">
@@ -1154,7 +1160,7 @@ function startLive(){
       if(_echteKampioen&&kv===_echteKampioen)pt+=KAMPIOEN_BONUS;
       return{naam,pt,ex,goed,fout,niet,inv,kv};
     }).sort((a,b)=>b.pt-a.pt||b.ex-a.ex);
-    renR(sc,_echteKampioen);renD(sc);renRes();renLive();renKvCard();
+    renR(sc,_echteKampioen);renD(sc);renRes();renLive();renKvCard();renStats(sc,_echteKampioen);
   });
 }
 
@@ -1656,6 +1662,68 @@ function renD(data){
     const p=Math.round(s.inv/TOT*100);
     return`<div class="dc ${s.inv>0?'a':''}"><span class="da">${AVT[i%AVT.length]}</span><div class="dn">${s.naam}</div><div class="dv">${s.inv}/${TOT} · ${p}%</div><div class="db"><div class="df" style="width:${p}%"></div></div></div>`;
   }).join('');
+}
+
+function renStats(sc,echteKampioen=''){
+  const el=document.getElementById('statcon');if(!el)return;
+  if(!sc.length){el.innerHTML='<div class="leeg"><span class="li">⏳</span><p>Nog geen data</p></div>';return;}
+  const kampVoorsp=liveAll._k||{};
+  const poedelDrempel=Math.floor(TOT*0.75)+1;
+  // Bereken stats
+  const leider=sc[0];
+  const poedel=sc[sc.length-1];
+  const totaalEx=sc.reduce((a,s)=>a+s.ex,0);
+  const totaalGoed=sc.reduce((a,s)=>a+s.goed,0);
+  const totaalVoorsps=sc.reduce((a,s)=>a+s.inv,0);
+  const meestEx=[...sc].sort((a,b)=>b.ex-a.ex)[0];
+  const meestInv=[...sc].sort((a,b)=>b.inv-a.inv)[0];
+  // Populairste kampioen
+  const kvTelling={};
+  Object.values(kampVoorsp).forEach(l=>{if(l)kvTelling[l]=(kvTelling[l]||0)+1;});
+  const kvSorted=Object.entries(kvTelling).sort((a,b)=>b[1]-a[1]);
+  const popKamp=kvSorted[0];
+  // Aantal met kampioen gekozen
+  const metKamp=Object.keys(kampVoorsp).filter(n=>n!=='_r'&&n!=='_k'&&n!=='_bbq'&&kampVoorsp[n]).length;
+  const zonderKamp=sc.length-metKamp;
+  // Bouw HTML
+  const sk=(ico,val,lbl)=>`<div class="statk"><div class="ski">${ico}</div><div class="skv">${val}</div><div class="skl">${lbl}</div></div>`;
+  let h='';
+  // Sectie: Stand
+  h+=`<div class="rt">🏆 STAND</div><div class="statrow">`;
+  h+=sk('👑',leider.naam,`Leider · ${leider.pt} pt`);
+  h+=sk('🥇',`${leider.pt} pt`,`Hoogste score`);
+  if(sc.length>1)h+=sk('🎲',poedel.naam+(poedel.inv>=poedelDrempel?' 🎲':''),`Laatste · ${poedel.pt} pt`);
+  h+=sk('🎯',meestEx.naam,`Meeste exact (${meestEx.ex}x)`);
+  h+=sk('📝',meestInv.naam,`Meest ingevuld (${meestInv.inv}/${TOT})`);
+  h+=`</div>`;
+  // Sectie: Totalen
+  h+=`<div class="rt">📊 TOTALEN</div><div class="statrow">`;
+  h+=sk('👥',sc.length,'Deelnemers');
+  h+=sk('🎯',totaalEx,'Exacte scores');
+  h+=sk('✅',totaalGoed,'Goede uitslagen');
+  h+=sk('📝',totaalVoorsps,'Voorspellingen');
+  h+=sk('🏆',metKamp,`Kampioen gekozen`);
+  if(zonderKamp>0)h+=sk('⚠️',zonderKamp,'Nog geen kampioen');
+  h+=`</div>`;
+  // Sectie: Kampioensvoorspellingen
+  if(kvSorted.length){
+    h+=`<div class="rt">🌍 KAMPIOENSKEUZES</div>`;
+    const max=kvSorted[0][1];
+    h+=kvSorted.map(([land,n])=>{
+      const pct=Math.round(n/sc.length*100);
+      const correct=echteKampioen&&land===echteKampioen;
+      return`<div style="margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:3px">
+          <span style="font-weight:700;color:${correct?'#4ade80':'var(--tekst)'}">${land}${correct?' ✅':''}</span>
+          <span style="color:var(--dim)">${n}x · ${pct}%</span>
+        </div>
+        <div style="background:rgba(255,255,255,.07);border-radius:6px;height:7px;overflow:hidden">
+          <div style="height:100%;background:${correct?'#4ade80':'var(--goud)'};width:${Math.round(n/max*100)}%;border-radius:6px;transition:width .4s"></div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  el.innerHTML=h;
 }
 
 // ── Header countdown: volgende wedstrijd / live nu ──
