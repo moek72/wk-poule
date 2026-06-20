@@ -111,6 +111,32 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 .rab:active{transform:scale(.88);}
 .rab.spin{animation:rabspin .6s linear;}
 @keyframes rabspin{to{transform:rotate(360deg)}}
+/* ── Stats modal ── */
+.stmo{position:fixed;inset:0;background:rgba(6,6,16,.93);z-index:550;display:none;align-items:flex-end;justify-content:center;}
+.stmo.open{display:flex;}
+.stmd{background:var(--card);border:1px solid var(--border);border-radius:20px 20px 0 0;padding:20px 18px 30px;max-width:480px;width:100%;max-height:88vh;overflow-y:auto;animation:stslide .22s ease;}
+@keyframes stslide{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
+.stmd-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.stmd-nm{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--goud);letter-spacing:2px;}
+.stmd-close{background:rgba(255,255,255,.07);border:none;border-radius:50%;width:32px;height:32px;color:var(--tekst);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.stmd-sum{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:14px;}
+.stmd-sum-itm{background:rgba(255,255,255,.04);border-radius:10px;padding:8px 4px;text-align:center;}
+.stmd-sum-itm .sv{font-family:'VT323',monospace;font-size:1.4rem;color:var(--goud);}
+.stmd-sum-itm .sl{font-size:.58rem;color:var(--dim);margin-top:1px;}
+.stmd-match{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.stmd-match:last-child{border-bottom:none;}
+.stmd-badge{font-size:.85rem;width:20px;text-align:center;flex-shrink:0;}
+.stmd-teams{flex:1;min-width:0;}
+.stmd-tn{font-size:.72rem;color:var(--tekst);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.stmd-scores{display:flex;gap:6px;align-items:center;flex-shrink:0;}
+.stmd-pred{font-family:'VT323',monospace;font-size:1rem;color:var(--dim);}
+.stmd-act{font-family:'VT323',monospace;font-size:1rem;color:var(--tekst);}
+.stmd-match.ex .stmd-act{color:var(--groen);}
+.stmd-match.gd .stmd-act{color:#60a5fa;}
+.stmd-match.ft .stmd-act{color:var(--rood);}
+.stmd-sect{font-size:.65rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin:12px 0 6px;}
+.rtbl-row{cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.rtbl-row:active{opacity:.7;}
 .rh{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
 .rh h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--goud);letter-spacing:2px;}
 .ld{display:inline-flex;align-items:center;gap:5px;font-size:.68rem;font-weight:700;color:var(--groen);}
@@ -445,6 +471,10 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
   </div>
 </div>
 
+
+<div class="stmo" id="stmo" onclick="sluitStats(event)">
+  <div class="stmd" id="stmd"></div>
+</div>
 
 <script type="module">
 // ════════════════════════════════════════════════════════
@@ -1256,7 +1286,7 @@ function renLive(){
   if(sc.length){
     h+=`<div class="rtbl">`;
     h+=`<div class="rtbl-hdr"><span>#</span><span>Naam</span><span>Pt</span><span>🎯</span><span>✅</span><span>❌</span><span>➖</span></div>`;
-    h+=sc.map((s,i)=>`<div class="rtbl-row ${i===0?'r1':i===1?'r2':i===2?'r3':''}">
+    h+=sc.map((s,i)=>{const nm=s.naam.replace(/'/g,"\\'");return`<div class="rtbl-row ${i===0?'r1':i===1?'r2':i===2?'r3':''}" onclick="toonStats('${nm}')">
       <div class="rtbl-nr">${i===0?'👑':i===1?'🥈':i===2?'🥉':i+1}</div>
       <div class="rtbl-naam">${s.naam}${i===0&&s.pt>0?' 🍖':''}</div>
       <div class="rtbl-pt">${s.pt}</div>
@@ -1264,7 +1294,7 @@ function renLive(){
       <div class="rtbl-st gd">${s.goed}</div>
       <div class="rtbl-st ft">${s.fout}</div>
       <div class="rtbl-st nt">${s.niet}</div>
-    </div>`).join('');
+    </div>`}).join('');
     h+=`</div>`;
   }else{
     h+=`<div class="leeg" style="padding:20px"><p>Nog geen deelnemers</p></div>`;
@@ -1410,7 +1440,8 @@ function renR(sc,echteKampioen=''){
   h+=`<div class="rtbl-hdr"><span>#</span><span>Naam</span><span>Pt</span><span>🎯</span><span>✅</span><span>❌</span><span>➖</span></div>`;
   h+=sc.map((s,i)=>{
     const kvBadge=s.kv?`<div style="font-size:.6rem;color:var(--dim);margin-top:2px;line-height:1">🏆 ${s.kv}${echteKampioen&&s.kv===echteKampioen?' ✅':echteKampioen?' ❌':''}</div>`:'';
-    return`<div class="rtbl-row ${i===0?'r1':i===1?'r2':i===2?'r3':''}">
+    const nm=s.naam.replace(/'/g,"\\'");
+    return`<div class="rtbl-row ${i===0?'r1':i===1?'r2':i===2?'r3':''}" onclick="toonStats('${nm}')">
       <div class="rtbl-nr">${i===0?'👑':i===1?'🥈':i===2?'🥉':i+1}</div>
       <div class="rtbl-naam">${s.naam}${i===0&&s.pt>0?' 🍖':''}${kvBadge}</div>
       <div class="rtbl-pt">${s.pt}</div>
@@ -1425,6 +1456,66 @@ function renR(sc,echteKampioen=''){
   h+=`<button class="meedoen-btn" onclick="gaNaar('inv')" style="margin-top:14px">✋ Nog niet mee? Schrijf je in! →</button>`;
   document.getElementById('rcon').innerHTML=h;
 }
+
+function toonStats(naam){
+  const mo=document.getElementById('stmo'),box=document.getElementById('stmd');
+  if(!mo||!box)return;
+  const sd=liveAll[naam]||{};
+  const echteKampioen=liveRes.kampioen||'';
+  const kampVoorsp=liveAll._k||{};
+  const kv=kampVoorsp[naam]||null;
+  let pt=0,ex=0,goed=0,fout=0,niet=0,inv=0;
+  const now=new Date();
+  const gespeeld=W.filter(w=>liveRes[`w${w.id}`]!=null);
+  const matches=[];
+  W.forEach(w=>{
+    const v=sd[`w${w.id}`],e=liveRes[`w${w.id}`];
+    if(v&&v.t!==undefined)inv++;
+    if(!e)return;
+    let cls='',badge='',myPred='';
+    if(!v||v.t===undefined){niet++;badge='➖';cls='nt';myPred='–';}
+    else if(v.t===e.t&&v.u===e.u){pt+=5;ex++;badge='🎯';cls='ex';myPred=`${v.t}-${v.u}`;}
+    else if((v.t>v.u&&e.t>e.u)||(v.t<v.u&&e.t<e.u)||(v.t===v.u&&e.t===e.u)){pt+=2;goed++;badge='✅';cls='gd';myPred=`${v.t}-${v.u}`;}
+    else{fout++;badge='❌';cls='ft';myPred=v?`${v.t}-${v.u}`:'–';}
+    matches.push({w,e,cls,badge,myPred});
+  });
+  if(echteKampioen&&kv===echteKampioen)pt+=KAMPIOEN_BONUS;
+  const kvBadge=kv?`<div style="background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.25);border-radius:10px;padding:8px 12px;margin-bottom:14px;font-size:.78rem;">
+    🏆 Kampioen: <strong style="color:var(--goud)">${kv}</strong>${echteKampioen?(kv===echteKampioen?' ✅ +10pt':' ❌'):''}
+  </div>`:'';
+  const matchHtml=matches.length?matches.map(({w,e,cls,badge,myPred})=>`
+    <div class="stmd-match ${cls}">
+      <div class="stmd-badge">${badge}</div>
+      <div class="stmd-teams"><div class="stmd-tn">${w.th} vs ${w.ui}</div><div style="font-size:.6rem;color:var(--dim)">${w.d}</div></div>
+      <div class="stmd-scores">
+        <div class="stmd-pred">${myPred}</div>
+        <div style="color:var(--dim);font-size:.7rem">→</div>
+        <div class="stmd-act">${e.t}-${e.u}</div>
+      </div>
+    </div>`).join(''):'<p style="font-size:.75rem;color:var(--dim)">Nog geen gespeelde wedstrijden.</p>';
+  box.innerHTML=`
+    <div class="stmd-hdr">
+      <div class="stmd-nm">${naam}</div>
+      <button class="stmd-close" onclick="sluitStats()">✕</button>
+    </div>
+    <div class="stmd-sum">
+      <div class="stmd-sum-itm"><div class="sv">${pt}</div><div class="sl">Punten</div></div>
+      <div class="stmd-sum-itm"><div class="sv" style="color:#4ade80">${ex}</div><div class="sl">🎯 Exact</div></div>
+      <div class="stmd-sum-itm"><div class="sv" style="color:#60a5fa">${goed}</div><div class="sl">✅ Goed</div></div>
+      <div class="stmd-sum-itm"><div class="sv" style="color:var(--rood)">${fout}</div><div class="sl">❌ Fout</div></div>
+      <div class="stmd-sum-itm"><div class="sv" style="color:var(--dim)">${niet}</div><div class="sl">➖ Mis</div></div>
+    </div>
+    ${kvBadge}
+    ${matches.length?'<div class="stmd-sect">Gespeelde wedstrijden</div>':''}
+    ${matchHtml}`;
+  mo.classList.add('open');
+}
+window.toonStats=toonStats;
+function sluitStats(e){
+  if(e&&e.target!==document.getElementById('stmo'))return;
+  document.getElementById('stmo')?.classList.remove('open');
+}
+window.sluitStats=sluitStats;
 
 function renD(data){
   if(!data||!data.length){
