@@ -1529,14 +1529,22 @@ function renR(sc,echteKampioen=''){
     document.getElementById('rcon').innerHTML='<div class="leeg"><span class="li">⏳</span><p>Nog geen deelnemers</p></div>';
     return;
   }
+  const poedelDrempel=Math.floor(TOT*0.75)+1; // > 3/4 van alle wedstrijden
+  const last=sc.length-1;
   let h=`<div class="rtbl">`;
   h+=`<div class="rtbl-hdr"><span>#</span><span>Naam</span><span>Pt</span><span>🎯</span><span>✅</span><span>❌</span><span>➖</span></div>`;
   h+=sc.map((s,i)=>{
     const kvBadge=s.kv?`<div style="font-size:.6rem;color:var(--dim);margin-top:2px;line-height:1">🏆 ${s.kv}${echteKampioen&&s.kv===echteKampioen?' ✅':echteKampioen?' ❌':''}</div>`:'';
+    const isLast=i===last&&sc.length>1;
+    const poedelBadge=isLast
+      ?(s.inv>=poedelDrempel
+        ?`<div style="font-size:.58rem;color:#f59e0b;margin-top:2px;line-height:1">🎲 Poedelprijs kandidaat!</div>`
+        :`<div style="font-size:.58rem;color:var(--dim);margin-top:2px;line-height:1">🎲 Te weinig ingevuld voor poedelprijs</div>`)
+      :'';
     const nm=s.naam.replace(/'/g,"\\'");
     return`<div class="rtbl-row ${i===0?'r1':i===1?'r2':i===2?'r3':''}" onclick="toonStats('${nm}')">
       <div class="rtbl-nr">${i===0?'👑':i===1?'🥈':i===2?'🥉':i+1}</div>
-      <div class="rtbl-naam">${s.naam}${i===0&&s.pt>0?' 🍖':''}${kvBadge}</div>
+      <div class="rtbl-naam">${s.naam}${i===0&&s.pt>0?' 🍖':''}${kvBadge}${poedelBadge}</div>
       <div class="rtbl-pt">${s.pt}</div>
       <div class="rtbl-st ex">${s.ex}</div>
       <div class="rtbl-st gd">${s.goed}</div>
@@ -1546,6 +1554,7 @@ function renR(sc,echteKampioen=''){
   }).join('');
   h+=`</div>`;
   h+=`<p style="font-size:.6rem;color:var(--dim);text-align:center;margin-top:4px">🎯 exact +5pt · ✅ goed +2pt · ❌ fout · ➖ niet ingevuld · 🏆 kampioen +${KAMPIOEN_BONUS}pt</p>`;
+  h+=`<p style="font-size:.6rem;color:var(--dim);text-align:center;margin-top:3px">🎲 Poedelprijs (bitterballen): alleen als je meer dan ¾ van de wedstrijden hebt ingevuld (minimaal ${poedelDrempel} van ${TOT})</p>`;
   h+=`<button class="meedoen-btn" onclick="gaNaar('inv')" style="margin-top:14px">✋ Nog niet mee? Schrijf je in! →</button>`;
   document.getElementById('rcon').innerHTML=h;
 }
