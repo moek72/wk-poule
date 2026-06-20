@@ -476,6 +476,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 <div class="actbar">
   <button class="actbtn off" id="rab" onclick="verversInvullen()"><span class="ai">🔄</span><span class="al">Ververs</span></button>
   <button class="actbtn sav off" id="sab" onclick="slaOp()"><span class="ai">💾</span><span class="al">Opslaan</span></button>
+  <button class="actbtn" onclick="gaNaar('stat')"><span class="ai">📈</span><span class="al">Stats</span></button>
   <button class="actbtn kijk" id="fab" onclick="deelLocatie()"><span class="ai">👥</span><span class="al">Kijk samen</span></button>
 </div>
 <div class="toast" id="toast"></div>
@@ -1465,6 +1466,12 @@ function renKvCard(){
       <button class="btn bg" onclick="slaKvOp()" style="width:100%">${mijnKeuze?'✏️ Keuze aanpassen →':'💾 Opslaan →'}</button>
     </div>`;
   }
+  // Alert wiring: pulse card + show tab dot when no choice before deadline
+  const needsAlert=sp&&!deadlinePast&&!mijnKeuze;
+  const kvc=card.querySelector('.kvcard');
+  if(kvc){needsAlert?kvc.classList.add('alert'):kvc.classList.remove('alert');}
+  const dot=document.getElementById('dot-inv');
+  if(dot)dot.style.display=needsAlert?'':'none';
 }
 
 async function slaKvOp(){
