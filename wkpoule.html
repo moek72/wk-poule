@@ -369,7 +369,10 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
     <div id="ssec" style="display:none">
       <div class="wban">
         <div><div class="wnm" id="wnm">Hey!</div><div class="wsb">Invullen vóór aftrap ⬇️</div></div>
-        <button class="wb" onclick="verwijderN()" style="color:var(--rood);border-color:rgba(232,0,61,.3)">🗑 Verwijder deelname</button>
+        <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
+          <button class="wb" onclick="wisN()" style="font-size:.7rem;padding:5px 10px">🔄 Wissel</button>
+          <button class="wb" onclick="verwijderN()" style="color:var(--rood);border-color:rgba(232,0,61,.3);font-size:.65rem;padding:4px 8px">🗑 Verwijder</button>
+        </div>
       </div>
       <div class="vgw">
         <div class="vgr"><span class="vgl">📊 Voortgang</span><span class="vgn" id="vgn">0/104</span></div>
@@ -860,6 +863,7 @@ window.setN=setN;
 
 function activ(naam){
   sp=naam;
+  try{localStorage.setItem('wkNaam',naam);}catch(e){}
   document.getElementById('nsec').style.display='none';
   document.getElementById('ssec').style.display='block';
   document.getElementById('wnm').textContent='Hey '+naam+'! 👋';
@@ -871,6 +875,7 @@ window.activ=activ;
 
 function wisN(){
   sp=null;
+  try{localStorage.removeItem('wkNaam');}catch(e){}
   document.getElementById('nsec').style.display='block';
   document.getElementById('ssec').style.display='none';
   document.getElementById('wcon').innerHTML='';
@@ -906,8 +911,13 @@ async function laadN(){
   if(!fbK)return;
   try{
     const s=await _get(_ref(_db,'v'));
-    const nn=s.exists()?Object.keys(s.val()).filter(k=>k!=='_r'&&k!=='_k'):[];
+    const nn=s.exists()?Object.keys(s.val()).filter(k=>k!=='_r'&&k!=='_k'&&k!=='_bbq'):[];
     document.getElementById('bnn').innerHTML=nn.map(n=>`<button class="nc" onclick="activ('${n.replace(/'/g,"\\'")}')">${n}</button>`).join('');
+    // Auto-login als naam bekend is uit localStorage
+    if(!sp){
+      const opgeslagen=localStorage.getItem('wkNaam');
+      if(opgeslagen&&nn.includes(opgeslagen))activ(opgeslagen);
+    }
   }catch(e){}
 }
 
