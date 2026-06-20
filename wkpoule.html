@@ -49,7 +49,8 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 .bbq-date:focus{border-color:var(--goud);}
 .bbq-saved{font-size:.72rem;color:var(--groen);margin-top:6px;display:none;}
 .bbq-saved.v{display:block;}
-.sbar{display:flex;align-items:center;justify-content:center;gap:6px;padding:5px;font-size:.68rem;font-weight:700;color:var(--dim);border-bottom:1px solid var(--border);}
+.sbar{display:flex;align-items:center;justify-content:center;gap:6px;padding:5px 10px;font-size:.68rem;font-weight:700;color:var(--dim);border-bottom:1px solid var(--border);}
+#sbar-naam{margin-left:auto;font-size:.68rem;font-weight:700;}
 .tabs{position:sticky;top:0;z-index:100;display:flex;background:rgba(6,6,16,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;}
 .tabs::-webkit-scrollbar{display:none;}
 .tab{flex:1;min-width:68px;padding:10px 5px;text-align:center;font-size:.63rem;font-weight:800;color:var(--dim);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;text-transform:uppercase;letter-spacing:.5px;}
@@ -851,7 +852,7 @@ async function start(){
     return;
   }
   fbK=true;
-  document.getElementById('sbar').innerHTML='<span style="color:var(--groen)">●</span><span style="color:var(--groen);font-size:.68rem;font-weight:700">Verbonden · Live actief</span>';
+  document.getElementById('sbar').innerHTML='<span style="color:var(--groen)">●</span><span style="color:var(--groen);font-size:.68rem;font-weight:700">Verbonden · Live actief</span><span id="sbar-naam"></span>';
   laadN();startLive();laadESPN();laadStanden();
 }
 
@@ -869,6 +870,8 @@ function activ(naam){
   document.getElementById('wnm').textContent='Hey '+naam+'! 👋';
   document.getElementById('rab')?.classList.remove('off');
   document.getElementById('sab')?.classList.remove('off');
+  const sn=document.getElementById('sbar-naam');
+  if(sn)sn.innerHTML=`<span style="color:rgba(255,255,255,.25);margin:0 4px">·</span><span style="color:var(--groen);cursor:pointer" onclick="gaNaar('inv')">👤 ${naam}</span>`;
   laadR();renKvCard();
 }
 window.activ=activ;
@@ -881,6 +884,7 @@ function wisN(){
   document.getElementById('wcon').innerHTML='';
   document.getElementById('rab')?.classList.add('off');
   document.getElementById('sab')?.classList.add('off');
+  const sn=document.getElementById('sbar-naam');if(sn)sn.innerHTML='';
   document.getElementById('ni').value='';
   Object.values(cdT).forEach(clearInterval);cdT={};
   laadN();renKvCard();
