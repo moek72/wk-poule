@@ -342,6 +342,17 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 .statk .ski{font-size:1.2rem;margin-bottom:3px;}
 .statk .skv{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--goud);letter-spacing:1px;line-height:1.1;word-break:break-word;}
 .statk .skl{font-size:.58rem;color:var(--dim);text-transform:uppercase;letter-spacing:.4px;margin-top:2px;}
+.statk-tap{cursor:pointer;border-color:rgba(255,215,0,.18);-webkit-tap-highlight-color:transparent;transition:background .12s,transform .1s;}
+.statk-tap:active{background:rgba(255,215,0,.08);transform:scale(.96);}
+.statk-hint{font-size:.5rem;color:var(--goud);opacity:.5;margin-top:4px;letter-spacing:.3px;}
+.sdmo{position:fixed;inset:0;background:rgba(6,6,16,.93);z-index:560;display:none;align-items:flex-end;justify-content:center;}
+.sdmo.open{display:flex;}
+.sdmd{background:var(--card);border:1px solid var(--border);border-radius:20px 20px 0 0;padding:20px 18px 30px;max-width:480px;width:100%;max-height:88vh;overflow-y:auto;animation:stslide .22s ease;}
+.sdrow{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.sdrow:last-child{border-bottom:none;}
+.sdrow-naam{font-size:.82rem;color:var(--tekst);}
+.sdrow-val{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--goud);letter-spacing:.5px;}
+.sdrow-nr{font-size:.75rem;color:var(--dim);width:20px;flex-shrink:0;}
 .meer-btn{background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:20px;padding:3px 11px;font-size:.65rem;font-weight:800;color:var(--dim);cursor:pointer;white-space:nowrap;font-family:'Nunito',sans-serif;vertical-align:middle;margin-left:2px;}
 .meer-btn:active{background:rgba(255,255,255,.14);}
 </style>
@@ -547,6 +558,10 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 
 <div class="stmo" id="stmo" onclick="sluitStats(event)">
   <div class="stmd" id="stmd"></div>
+</div>
+
+<div class="sdmo" id="sdmo" onclick="sluitSd(event)">
+  <div class="sdmd" id="sdmd"></div>
 </div>
 
 <script type="module">
@@ -1139,7 +1154,7 @@ async function aiVul(){
 window.aiVul=aiVul;
 
 // ── Live data ──
-let liveAll={},liveRes={};
+let liveAll={},liveRes={},_lastSc=[];
 function startLive(){
   if(!fbK)return;
   _onValue(_ref(_db,'v'),snap=>{
@@ -1660,6 +1675,45 @@ function sluitStats(e){
 }
 window.sluitStats=sluitStats;
 
+function toonStatDetail(type){
+  const mo=document.getElementById('sdmo'),box=document.getElementById('sdmd');
+  if(!mo||!box||!_lastSc.length)return;
+  const sc=_lastSc;
+  const kampVoorsp=liveAll._k||{};
+  const configs={
+    rnk:{titel:'👥 Ranglijst',sort:(a,b)=>b.pt-a.pt||b.ex-a.ex,val:s=>`${s.pt} pt`,sub:s=>`🎯${s.ex} ✅${s.goed} ❌${s.fout}`},
+    ex:{titel:'🎯 Exacte scores',sort:(a,b)=>b.ex-a.ex||b.pt-a.pt,val:s=>`${s.ex}×`,sub:s=>`${s.pt} pt`},
+    goed:{titel:'✅ Goede uitslagen',sort:(a,b)=>b.goed-a.goed||b.pt-a.pt,val:s=>`${s.goed}×`,sub:s=>`${s.pt} pt`},
+    inv:{titel:'📝 Voorspellingen ingevuld',sort:(a,b)=>b.inv-a.inv,val:s=>`${s.inv}/${TOT}`,sub:s=>`${s.pt} pt`},
+    kamp:{titel:'🏆 Kampioen gekozen',sort:(a,b)=>(b.kv?1:0)-(a.kv?1:0)||(a.kv||'zzz').localeCompare(b.kv||'zzz'),val:s=>s.kv||'—',sub:s=>`${s.pt} pt`},
+    nokamp:{titel:'⚠️ Nog geen kampioen',sort:(a,b)=>a.naam.localeCompare(b.naam),val:_=>'Niet gekozen',sub:s=>`${s.pt} pt`,filter:s=>!s.kv},
+  };
+  const cfg=configs[type];if(!cfg)return;
+  let lijst=[...sc];
+  if(cfg.filter)lijst=lijst.filter(cfg.filter);
+  lijst.sort(cfg.sort);
+  const rows=lijst.map((s,i)=>`
+    <div class="sdrow">
+      <span class="sdrow-nr">${i+1}</span>
+      <span class="sdrow-naam">${s.naam}</span>
+      <span style="flex:1;min-width:0;font-size:.65rem;color:var(--dim);padding:0 6px;text-align:right">${cfg.sub(s)}</span>
+      <span class="sdrow-val">${cfg.val(s)}</span>
+    </div>`).join('');
+  box.innerHTML=`
+    <div class="stmd-hdr">
+      <div class="stmd-nm">${cfg.titel}</div>
+      <button class="stmd-close" onclick="sluitSd()">✕</button>
+    </div>
+    ${rows||'<p style="color:var(--dim);font-size:.8rem">Geen data</p>'}`;
+  mo.classList.add('open');
+}
+window.toonStatDetail=toonStatDetail;
+function sluitSd(e){
+  if(e&&e.target!==document.getElementById('sdmo'))return;
+  document.getElementById('sdmo')?.classList.remove('open');
+}
+window.sluitSd=sluitSd;
+
 function renD(data){
   if(!data||!data.length){
     document.getElementById('dcon').innerHTML='<div class="leeg"><span class="li">👀</span><p>Nog niemand!</p></div>';
@@ -1672,6 +1726,7 @@ function renD(data){
 }
 
 function renStats(sc,echteKampioen=''){
+  _lastSc=sc;
   const el=document.getElementById('statcon');if(!el)return;
   if(!sc.length){el.innerHTML='<div class="leeg"><span class="li">⏳</span><p>Nog geen data</p></div>';return;}
   const kampVoorsp=liveAll._k||{};
@@ -1694,6 +1749,7 @@ function renStats(sc,echteKampioen=''){
   const zonderKamp=sc.length-metKamp;
   // Bouw HTML
   const sk=(ico,val,lbl)=>`<div class="statk"><div class="ski">${ico}</div><div class="skv">${val}</div><div class="skl">${lbl}</div></div>`;
+  const skc=(ico,val,lbl,type)=>`<div class="statk statk-tap" onclick="toonStatDetail('${type}')"><div class="ski">${ico}</div><div class="skv">${val}</div><div class="skl">${lbl}</div><div class="statk-hint">Tik voor overzicht ›</div></div>`;
   let h='';
   // Sectie: Stand
   h+=`<div class="rt">🏆 STAND</div><div class="statrow">`;
@@ -1705,12 +1761,12 @@ function renStats(sc,echteKampioen=''){
   h+=`</div>`;
   // Sectie: Totalen
   h+=`<div class="rt">📊 TOTALEN</div><div class="statrow">`;
-  h+=sk('👥',sc.length,'Deelnemers');
-  h+=sk('🎯',totaalEx,'Exacte scores');
-  h+=sk('✅',totaalGoed,'Goede uitslagen');
-  h+=sk('📝',totaalVoorsps,'Voorspellingen');
-  h+=sk('🏆',metKamp,`Kampioen gekozen`);
-  if(zonderKamp>0)h+=sk('⚠️',zonderKamp,'Nog geen kampioen');
+  h+=skc('👥',sc.length,'Deelnemers','rnk');
+  h+=skc('🎯',totaalEx,'Exacte scores','ex');
+  h+=skc('✅',totaalGoed,'Goede uitslagen','goed');
+  h+=skc('📝',totaalVoorsps,'Voorspellingen','inv');
+  h+=skc('🏆',metKamp,'Kampioen gekozen','kamp');
+  if(zonderKamp>0)h+=skc('⚠️',zonderKamp,'Nog geen kampioen','nokamp');
   h+=`</div>`;
   // Sectie: Kampioensvoorspellingen
   if(kvSorted.length){
