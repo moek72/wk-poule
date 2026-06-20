@@ -31,8 +31,24 @@ body::after{content:'';position:fixed;inset:0;background:url('assets/trophy.png?
 @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
 h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:var(--goud);letter-spacing:3px;line-height:1;text-shadow:0 0 40px rgba(255,215,0,.35);margin:5px 0 3px;}
 .sub{font-size:.73rem;color:var(--dim);letter-spacing:1px;}
-.prijs{display:inline-flex;align-items:center;gap:5px;background:rgba(180,0,40,.18);border:1px solid rgba(232,0,61,.35);border-radius:20px;padding:4px 13px;margin-top:8px;font-weight:700;font-size:.72rem;color:rgba(255,120,120,.9);white-space:nowrap;}
-.prijs .pi{font-size:.8rem;}
+.hpimg{width:min(200px,52vw);height:auto;cursor:pointer;filter:drop-shadow(0 4px 20px rgba(255,200,0,.35));transition:transform .2s,filter .2s;display:block;margin:8px auto 0;-webkit-tap-highlight-color:transparent;}
+.hpimg:active{transform:scale(.95);filter:drop-shadow(0 2px 8px rgba(255,200,0,.2));}
+/* ── BBQ modal ── */
+.bbqmo{position:fixed;inset:0;background:rgba(6,6,16,.93);z-index:550;display:none;align-items:flex-end;justify-content:center;}
+.bbqmo.open{display:flex;}
+.bbqmd{background:var(--card);border:1px solid var(--border);border-radius:20px 20px 0 0;padding:22px 18px 30px;max-width:480px;width:100%;max-height:88vh;overflow-y:auto;animation:stslide .22s ease;}
+.bbqmd h2{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--goud);letter-spacing:2px;margin-bottom:4px;}
+.bbqmd .sub2{font-size:.75rem;color:var(--dim);margin-bottom:18px;}
+.bbqlbl{font-size:.72rem;font-weight:800;color:var(--tekst);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;margin-top:16px;display:block;}
+.bbqopts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;}
+.bbqopt{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:8px;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;}
+.bbqopt input[type=checkbox]{accent-color:var(--goud);width:16px;height:16px;flex-shrink:0;}
+.bbqopt:has(input:checked){background:rgba(255,215,0,.08);border-color:rgba(255,215,0,.4);}
+.bbqopt span{font-size:.8rem;font-weight:700;}
+.bbq-date{width:100%;background:var(--donker);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--tekst);font-family:'Nunito',sans-serif;font-size:.85rem;outline:none;margin-top:2px;}
+.bbq-date:focus{border-color:var(--goud);}
+.bbq-saved{font-size:.72rem;color:var(--groen);margin-top:6px;display:none;}
+.bbq-saved.v{display:block;}
 .sbar{display:flex;align-items:center;justify-content:center;gap:6px;padding:5px;font-size:.68rem;font-weight:700;color:var(--dim);border-bottom:1px solid var(--border);}
 .tabs{position:sticky;top:0;z-index:100;display:flex;background:rgba(6,6,16,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;}
 .tabs::-webkit-scrollbar{display:none;}
@@ -325,7 +341,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
   <div class="logo"><img src="assets/jaikaran-logo.png?v=2" alt="Jaikaran Family"></div>
   <h1>Jaikaran WK Poule 2026</h1>
   <div class="sub">11 JUN – 19 JUL · VS · CANADA · MEXICO · 104 WEDSTRIJDEN</div>
-  <div class="prijs"><span class="pi">🍖</span> Hoofdprijs: BBQ door Kawita · winnaar 19 jul</div>
+  <img src="assets/hoofdprijs.png" class="hpimg" alt="Hoofdprijs: BBQ door Kawita" onclick="openBbq()">
   <div id="cdban" style="margin-top:10px;min-height:28px;"></div>
 </div>
 
@@ -474,6 +490,36 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
   </div>
 </div>
 
+
+<div class="bbqmo" id="bbqmo" onclick="sluitBbq(event)">
+  <div class="bbqmd">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0">
+      <h2>🍖 BBQ Aanmelding</h2>
+      <button class="stmd-close" onclick="sluitBbq()">✕</button>
+    </div>
+    <p class="sub2">De winnaar krijgt een geheel verzorgde BBQ door Kawita. Geef alvast aan wanneer het past en wat je wilt eten!</p>
+
+    <label class="bbqlbl">📅 Wanneer past het jou?</label>
+    <input type="date" id="bbq-datum" class="bbq-date" min="2026-07-19">
+
+    <label class="bbqlbl">🍽️ Wat wil jij eten? (geen rund/varken)</label>
+    <div class="bbqopts">
+      <label class="bbqopt"><input type="checkbox" value="kip" id="bbq-kip"><span>🍗 Kip</span></label>
+      <label class="bbqopt"><input type="checkbox" value="lam" id="bbq-lam"><span>🐑 Lam</span></label>
+      <label class="bbqopt"><input type="checkbox" value="vis" id="bbq-vis"><span>🐟 Vis</span></label>
+      <label class="bbqopt"><input type="checkbox" value="garnalen" id="bbq-garnalen"><span>🦐 Garnalen</span></label>
+      <label class="bbqopt"><input type="checkbox" value="kalkoen" id="bbq-kalkoen"><span>🦃 Kalkoen</span></label>
+      <label class="bbqopt"><input type="checkbox" value="vegetarisch" id="bbq-veg"><span>🥗 Vegetarisch</span></label>
+    </div>
+
+    <label class="bbqlbl" style="margin-top:14px">💬 Extra wensen / allergieën</label>
+    <input type="text" id="bbq-extra" class="bbq-date" placeholder="Bijv. glutenvrij, extra pittig..." style="margin-bottom:12px">
+
+    <button class="btn bg" style="width:100%;margin-top:4px" onclick="slaBbqOp()">💾 Aanmelding opslaan</button>
+    <p class="bbq-saved" id="bbq-saved">✅ Opgeslagen! Kawita ziet jouw voorkeur.</p>
+    <p style="font-size:.62rem;color:var(--dim);margin-top:10px;text-align:center">Iedereen mag invullen — de winnaar kiest uiteindelijk de datum 🏆</p>
+  </div>
+</div>
 
 <div class="stmo" id="stmo" onclick="sluitStats(event)">
   <div class="stmd" id="stmd"></div>
@@ -1066,7 +1112,7 @@ function startLive(){
     liveAll=snap.exists()?snap.val():{};liveRes=liveAll._r||{};
     const _kampVoorsp=liveAll._k||{};
     const _echteKampioen=liveRes.kampioen||'';
-    const sc=Object.entries(liveAll).filter(([k])=>k!=='_r'&&k!=='_k').map(([naam,sd])=>{
+    const sc=Object.entries(liveAll).filter(([k])=>k!=='_r'&&k!=='_k'&&k!=='_bbq').map(([naam,sd])=>{
       let pt=0,ex=0,goed=0,fout=0,niet=0,inv=0;
       W.forEach(w=>{
         const v=sd[`w${w.id}`],e=liveRes[`w${w.id}`];
@@ -1399,6 +1445,50 @@ async function slaKvOp(){
   }catch(e){tt('Fout bij opslaan',true);}
 }
 window.slaKvOp=slaKvOp;
+
+// ── BBQ aanmelding ──
+const BBQ_ETEN=['kip','lam','vis','garnalen','kalkoen','vegetarisch'];
+function openBbq(){
+  const mo=document.getElementById('bbqmo');if(!mo)return;
+  // Laad eventueel bestaande keuze
+  const naam=sp||null;
+  const saved=document.getElementById('bbq-saved');
+  if(saved)saved.classList.remove('v');
+  if(naam&&liveAll._bbq&&liveAll._bbq[naam]){
+    const d=liveAll._bbq[naam];
+    const dt=document.getElementById('bbq-datum');
+    if(dt&&d.datum)dt.value=d.datum;
+    BBQ_ETEN.forEach(k=>{const el=document.getElementById(`bbq-${k}`);if(el)el.checked=!!(d.eten&&d.eten.includes(k));});
+    const ex=document.getElementById('bbq-extra');
+    if(ex)ex.value=d.extra||'';
+    if(saved&&d.datum){saved.classList.add('v');}
+  }else{
+    const dt=document.getElementById('bbq-datum');if(dt)dt.value='';
+    BBQ_ETEN.forEach(k=>{const el=document.getElementById(`bbq-${k}`);if(el)el.checked=false;});
+    const ex=document.getElementById('bbq-extra');if(ex)ex.value='';
+  }
+  mo.classList.add('open');
+}
+window.openBbq=openBbq;
+function sluitBbq(e){
+  if(e&&e.target!==document.getElementById('bbqmo'))return;
+  document.getElementById('bbqmo')?.classList.remove('open');
+}
+window.sluitBbq=sluitBbq;
+async function slaBbqOp(){
+  if(!fbK){tt('Niet verbonden met database',true);return;}
+  const naam=sp||'anoniem';
+  const datum=document.getElementById('bbq-datum')?.value||'';
+  const eten=BBQ_ETEN.filter(k=>document.getElementById(`bbq-${k}`)?.checked);
+  const extra=document.getElementById('bbq-extra')?.value?.trim()||'';
+  if(!datum&&!eten.length){tt('Kies een datum of eten',true);return;}
+  try{
+    await _set(_ref(_db,`v/_bbq/${naam}`),{datum,eten,extra,naam,ts:Date.now()});
+    const saved=document.getElementById('bbq-saved');if(saved)saved.classList.add('v');
+    tt('🍖 BBQ aanmelding opgeslagen!');
+  }catch(e){tt('Fout bij opslaan',true);}
+}
+window.slaBbqOp=slaBbqOp;
 
 function renAdmin(){
   const now=new Date();
