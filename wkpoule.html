@@ -1891,9 +1891,10 @@ function ontdekKampioen(){
   Object.entries(liveAll._k||{}).forEach(([n,l])=>{if(l)tel[l]=(tel[l]||0)+1;});
   const sorted=Object.entries(tel).sort((a,b)=>b[1]-a[1]);
   const tot=_lastSc.length||1;
+  const echteKampioen=liveRes.kampioen||'';
   _openSd(_sdHdr('🏆 Kampioen gekozen')+
     `<p style="color:var(--dim);font-size:.7rem;margin:0 0 12px">Welk land deelnemers als wereldkampioen kozen</p>`+
-    _sdBars(sorted.map(([land,n])=>{const correct=_echteKampioen&&land===_echteKampioen;return{label:land+(correct?' ✅':''),sub:`${n}x · ${Math.round(n/tot*100)}%`,n,kleur:correct?'#4ade80':'var(--goud)'};}),'var(--goud)'));
+    _sdBars(sorted.map(([land,n])=>{const correct=echteKampioen&&land===echteKampioen;return{label:land+(correct?' ✅':''),sub:`${n}x · ${Math.round(n/tot*100)}%`,n,kleur:correct?'#4ade80':'var(--goud)'};}),'var(--goud)'));
 }
 window.ontdekDurf=ontdekDurf;window.ontdekPoedel=ontdekPoedel;window.ontdekBesteWed=ontdekBesteWed;window.ontdekOranje=ontdekOranje;window.ontdekH2H=ontdekH2H;
 window.ontdekUitslagen=ontdekUitslagen;window.ontdekVoorspellingen=ontdekVoorspellingen;window.ontdekKampioen=ontdekKampioen;
