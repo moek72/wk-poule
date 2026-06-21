@@ -1443,7 +1443,7 @@ function renLive(){
   h+=`<div class="rt" style="margin-top:16px">🏆 HUIDIGE STAND <span class="rc">${sc.length} deelnemer${sc.length===1?'':'s'}</span></div>`;
   if(sc.length){
     h+=`<div class="rtbl">`;
-    h+=`<div class="rtbl-hdr"><span>#</span><span>${lang==='en'?'Name':'Naam'}</span><span>Pt</span><span>🎯</span><span>✅</span><span>❌</span><span>📝</span></div>`;
+    h+=`<div class="rtbl-hdr"><span>#</span><span>Naam</span><span>Pt</span><span>🎯</span><span>✅</span><span>❌</span><span>📝</span></div>`;
     h+=sc.map((s,i)=>{const nm=s.naam.replace(/'/g,"\\'");return`<div class="rtbl-row ${i===0?'r1':i===1?'r2':i===2?'r3':''}" onclick="toonStats('${nm}')">
       <div class="rtbl-nr">${i===0?'👑':i===1?'🥈':i===2?'🥉':i+1}</div>
       <div class="rtbl-naam">${s.naam}${i===0&&s.pt>0?' 🍖':''}</div>
