@@ -100,6 +100,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 .wc.om.hi{border-color:rgba(255,109,0,.7);}
 .wc.lk{opacity:.6;}
 .wc.lk::after{content:'Gesloten';position:absolute;top:8px;right:8px;background:rgba(232,0,61,.15);border:1px solid rgba(232,0,61,.3);border-radius:6px;padding:2px 7px;font-size:.6rem;font-weight:800;color:var(--rood);}
+body.lang-en .wc.lk::after{content:'Closed';}
 .wm{display:flex;gap:6px;font-size:.64rem;color:var(--dim);margin-bottom:7px;flex-wrap:wrap;}
 .mc{background:var(--card2);border-radius:5px;padding:2px 5px;font-weight:700;}
 .oc{background:rgba(255,109,0,.2);color:var(--oranje);border-radius:5px;padding:2px 6px;font-weight:900;font-size:.61rem;}
@@ -407,29 +408,29 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
     <div id="kvcard" style="display:none"></div>
     <div id="ssec" style="display:none">
       <div class="wban">
-        <div><div class="wnm" id="wnm">Hey!</div><div class="wsb">Invullen vóór aftrap ⬇️</div></div>
+        <div><div class="wnm" id="wnm">Hey!</div><div class="wsb" data-i18n="wsb">Invullen vóór aftrap ⬇️</div></div>
         <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
-          <button class="wb" onclick="wisN()" style="font-size:.7rem;padding:5px 10px">🔄 Wissel</button>
-          <button class="wb" onclick="verwijderN()" style="color:var(--rood);border-color:rgba(232,0,61,.3);font-size:.65rem;padding:4px 8px">🗑 Verwijder</button>
+          <button class="wb" onclick="wisN()" style="font-size:.7rem;padding:5px 10px">🔄 <span data-i18n="btn-wissel">Wissel</span></button>
+          <button class="wb" onclick="verwijderN()" style="color:var(--rood);border-color:rgba(232,0,61,.3);font-size:.65rem;padding:4px 8px">🗑 <span data-i18n="btn-verwijder">Verwijder</span></button>
         </div>
       </div>
       <div class="vgw">
-        <div class="vgr"><span class="vgl">📊 Voortgang</span><span class="vgn" id="vgn">0/104</span></div>
+        <div class="vgr"><span class="vgl">📊 <span data-i18n="vgl">Voortgang</span></span><span class="vgn" id="vgn">0/104</span></div>
         <div class="pt"><div class="pf" id="pf" style="width:0%"></div></div>
       </div>
       <div class="ais">
-        <div class="ait">🤖 AI Voorspeller</div>
-        <div class="ais2">Laat AI alle lege wedstrijden automatisch invullen</div>
-        <div class="ail" id="ail"><div class="sp"></div>AI berekent...</div>
-        <button class="btn bai" id="aib" onclick="aiVul()">🎲 Laat AI alles invullen</button>
+        <div class="ait">🤖 <span data-i18n="ai-title">AI Voorspeller</span></div>
+        <div class="ais2" data-i18n="ai-sub">Laat AI alle lege wedstrijden automatisch invullen</div>
+        <div class="ail" id="ail"><div class="sp"></div><span data-i18n="ai-busy">AI berekent...</span></div>
+        <button class="btn bai" id="aib" onclick="aiVul()"><span data-i18n="ai-btn">🎲 Laat AI alles invullen</span></button>
       </div>
       <div class="fbar">
         <select class="fsel" id="fsel" onchange="zetFilter(this.value)"></select>
       </div>
       <div class="flegend">
-        <span><span class="fdot op"></span>Open</span>
-        <span><span class="fdot bz"></span>Bezig (live)</span>
-        <span><span class="fdot cl"></span>Gesloten</span>
+        <span><span class="fdot op"></span><span data-i18n="leg-open">Open</span></span>
+        <span><span class="fdot bz"></span><span data-i18n="leg-live">Bezig (live)</span></span>
+        <span><span class="fdot cl"></span><span data-i18n="leg-cl">Gesloten</span></span>
       </div>
       <div id="wcon"></div>
     </div>
@@ -478,7 +479,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
       <div class="rh"><h2>🧠 Dagelijkse Quiz</h2></div>
       <p style="font-size:.72rem;color:var(--dim);margin-bottom:14px">3 WK vragen + 2 poule vragen · 15 seconden per vraag</p>
       <div id="quizcon"><div class="leeg"><span class="li">⏳</span><p>Laden...</p></div></div>
-      <div class="rt" style="margin-top:18px">🏅 QUIZ RANGLIJST</div>
+      <div class="rt" style="margin-top:18px" data-i18n="quiz-rang">🏅 QUIZ RANGLIJST</div>
       <div id="quizrang"></div>
     </div>
   </div>
@@ -1442,7 +1443,7 @@ function renLive(){
   h+=`<div class="rt" style="margin-top:16px">🏆 HUIDIGE STAND <span class="rc">${sc.length} deelnemer${sc.length===1?'':'s'}</span></div>`;
   if(sc.length){
     h+=`<div class="rtbl">`;
-    h+=`<div class="rtbl-hdr"><span>#</span><span>Naam</span><span>Pt</span><span>🎯</span><span>✅</span><span>❌</span><span>📝</span></div>`;
+    h+=`<div class="rtbl-hdr"><span>#</span><span>${lang==='en'?'Name':'Naam'}</span><span>Pt</span><span>🎯</span><span>✅</span><span>❌</span><span>📝</span></div>`;
     h+=sc.map((s,i)=>{const nm=s.naam.replace(/'/g,"\\'");return`<div class="rtbl-row ${i===0?'r1':i===1?'r2':i===2?'r3':''}" onclick="toonStats('${nm}')">
       <div class="rtbl-nr">${i===0?'👑':i===1?'🥈':i===2?'🥉':i+1}</div>
       <div class="rtbl-naam">${s.naam}${i===0&&s.pt>0?' 🍖':''}</div>
@@ -1810,7 +1811,7 @@ function renStats(sc,echteKampioen=''){
   const skc=(ico,val,lbl,type)=>`<div class="statk statk-tap" onclick="toonStatDetail('${type}')"><div class="ski">${ico}</div><div class="skv">${val}</div><div class="skl">${lbl}</div><div class="statk-hint">Tik voor overzicht ›</div></div>`;
   let h='';
   // Sectie: Stand
-  h+=`<div class="rt">🏆 STAND</div><div class="statrow">`;
+  h+=`<div class="rt">${t('stats-stand')}</div><div class="statrow">`;
   h+=sk('👑',leider.naam,`Leider · ${leider.pt} pt`);
   h+=sk('🥇',`${leider.pt} pt`,`Hoogste score`);
   if(sc.length>1)h+=sk('🎲',poedel.naam+(poedel.inv>=poedelDrempel?' 🎲':''),`Laatste · ${poedel.pt} pt`);
@@ -1818,17 +1819,17 @@ function renStats(sc,echteKampioen=''){
   h+=sk('📝',meestInv.naam,`Meest ingevuld (${meestInv.inv}/${TOT})`);
   h+=`</div>`;
   // Sectie: Totalen
-  h+=`<div class="rt">📊 TOTALEN</div><div class="statrow">`;
-  h+=skc('👥',sc.length,'Deelnemers','rnk');
-  h+=skc('🎯',totaalEx,'Exacte scores','ex');
-  h+=skc('✅',totaalGoed,'Goede uitslagen','goed');
-  h+=skc('📝',totaalVoorsps,'Voorspellingen','inv');
-  h+=skc('🏆',metKamp,'Kampioen gekozen','kamp');
-  if(zonderKamp>0)h+=skc('⚠️',zonderKamp,'Nog geen kampioen','nokamp');
+  h+=`<div class="rt">${t('stats-totalen')}</div><div class="statrow">`;
+  h+=skc('👥',sc.length,t('stats-deeln'),'rnk');
+  h+=skc('🎯',totaalEx,t('stats-exacte'),'ex');
+  h+=skc('✅',totaalGoed,t('stats-goede'),'goed');
+  h+=skc('📝',totaalVoorsps,t('stats-voorsps'),'inv');
+  h+=skc('🏆',metKamp,t('stats-kampkoz'),'kamp');
+  if(zonderKamp>0)h+=skc('⚠️',zonderKamp,t('stats-nokamp'),'nokamp');
   h+=`</div>`;
   // Sectie: Kampioensvoorspellingen
   if(kvSorted.length){
-    h+=`<div class="rt">🌍 KAMPIOENSKEUZES</div>`;
+    h+=`<div class="rt">${t('stats-kamp')}</div>`;
     const max=kvSorted[0][1];
     h+=kvSorted.map(([land,n])=>{
       const pct=Math.round(n/sc.length*100);
@@ -1941,7 +1942,7 @@ function renQuiz(saved){
     const msg=score===nSaved?'🎉 Perfect!':score>=nSaved*0.6?'👍 Goed gedaan!':score>0?'💪 Morgen beter!':'😅 Helaas, morgen weer';
     let h=`<div style="text-align:center;padding:10px 0 14px">
       <div style="font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--goud);line-height:1">${score}/${nSaved}</div>
-      <div style="font-size:.7rem;color:var(--dim);margin-top:4px">${msg} · Nieuwe vragen morgen</div>
+      <div style="font-size:.7rem;color:var(--dim);margin-top:4px">${msg} · ${t('quiz-nieuw')}</div>
     </div>`;
     // Toon alle vragen met resultaat (gebruik opgeslagen vragen+indices)
     weergaveVragen.slice(0,nSaved).forEach((q,i)=>{
@@ -1979,7 +1980,7 @@ function toonQuizVraag(nr){
     const tag=nr>=3?`<span style="font-size:.55rem;background:rgba(167,139,250,.15);color:#a78bfa;border-radius:4px;padding:1px 5px;margin-left:5px;vertical-align:middle">POULE</span>`:'';
     const locked=_quizAntw[nr]!==null&&_quizAntw[nr]!==-1;
     let h=`<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
-      <span class="quiz-prog">Vraag ${nr+1} van ${nV}</span>
+      <span class="quiz-prog">${t('quiz-vraag')} ${nr+1} ${t('quiz-van')} ${nV}</span>
       <span class="quiz-tnum" style="color:${kleur}">${_quizSec}s</span>
     </div>
     <div class="quiz-tbar"><div class="quiz-tbar-fill" style="width:${pct}%;background:${kleur}"></div></div>
@@ -2085,7 +2086,7 @@ async function renQuizRang(){
       </div>`;
     });
     h+='</div>';
-    h+=`<p style="font-size:.65rem;color:var(--dim);margin-top:8px">🏅 Quiz-winnaar krijgt +${QUIZ_BONUS} bonus pt in de hoofdpoule op 19 juli</p>`;
+    h+=`<p style="font-size:.65rem;color:var(--dim);margin-top:8px">${t('quiz-bonus')}${QUIZ_BONUS}${t('quiz-bonus2')}</p>`;
     el.innerHTML=h;
   }catch(e){el.innerHTML='';}
 }
