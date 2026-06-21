@@ -20,7 +20,7 @@ jobs:
           DATETIME=$(date -u +"%Y-%m-%d_%H%M")
           DATE=$(date -u +"%Y-%m-%d")
           mkdir -p backups
-          curl -s "https://wk-2026-poule-867ae-default-rtdb.europe-west1.firebasedatabase.app/v.json?auth=${{ secrets.FIREBASE_DB_SECRET }}" \
+          curl -s "https://wk-2026-poule-867ae-default-rtdb.europe-west1.firebasedatabase.app/v.json" \
             -o "backups/backup-${DATE}.json"
           echo "Backup saved: backups/backup-${DATE}.json"
           wc -c "backups/backup-${DATE}.json"
