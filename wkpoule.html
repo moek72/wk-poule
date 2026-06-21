@@ -1310,25 +1310,9 @@ function renLive(){
 
   if(liveMatches.length){
     bouwLiveTab(true);
-    // Header knop tonen
-    const nu=new Date();
-    const heeftVolg=W.some(w=>{const e=espnScores[`w${w.id}`];return(!e||e.status==='pre')&&new Date(w.iso)>nu;});
-    const vnbtn=document.getElementById('vnbtn');
-    if(vnbtn){
-      if(heeftVolg){
-        vnbtn.style.display='';
-        vnbtn.textContent=window._showNext?'🔴 Terug naar live':'⏭️ Volgende';
-      } else {
-        vnbtn.style.display='none';
-      }
-    }
+    const vnbtn=document.getElementById('vnbtn');if(vnbtn)vnbtn.style.display='none';
 
-    if(window._showNext){
-      const res=_renNextMatch(h,spelers,new Date());
-      h=res.h;
-      if(res.volg)needCdTicker=true;
-    } else {
-      liveMatches.forEach(w=>{
+    liveMatches.forEach(w=>{
         const key=`w${w.id}`,espn=espnScores[key],e={t:espn.th,u:espn.ui};
         h+=`<div class="bigcd-live">`;
         h+=`<div class="bigcd-label">🔴 LIVE NU · ${LBL[w.g]||w.g}${w.o?' · 🇳🇱 ORANJE!':''}</div>`;
@@ -1356,7 +1340,10 @@ function renLive(){
           h+='</div>';
         }else{h+='<div class="wachten" style="margin-top:8px">Niemand heeft deze wedstrijd voorspeld</div>';}
       });
-    }
+    // Toon altijd de volgende wedstrijd(en) eronder
+    const resVolg=_renNextMatch(h,spelers,new Date());
+    h=resVolg.h;
+    if(resVolg.volg)needCdTicker=true;
   } else {
     bouwLiveTab(false);
     window._showNext=false;
