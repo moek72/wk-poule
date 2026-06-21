@@ -1896,6 +1896,109 @@ function ontdekKampioen(){
     `<p style="color:var(--dim);font-size:.7rem;margin:0 0 12px">Welk land deelnemers als wereldkampioen kozen</p>`+
     _sdBars(sorted.map(([land,n])=>{const correct=echteKampioen&&land===echteKampioen;return{label:land+(correct?' ✅':''),sub:`${n}x · ${Math.round(n/tot*100)}%`,n,kleur:correct?'#4ade80':'var(--goud)'};}),'var(--goud)'));
 }
+// Gedeelde punten-helper: 5=exact, 2=goede uitslag, 0=fout, null=niet ingevuld
+function _puntenVoor(v,e){if(!v||v.t===undefined||!e||e.t===undefined)return null;if(v.t===e.t&&v.u===e.u)return 5;if((v.t>v.u&&e.t>e.u)||(v.t<v.u&&e.t<e.u)||(v.t===v.u&&e.t===e.u))return 2;return 0;}
+function _gespeeldSorted(){const res=liveAll._r||{};return W.filter(w=>res[`w${w.id}`]&&res[`w${w.id}`].t!==undefined).sort((a,b)=>new Date(a.iso)-new Date(b.iso));}
+// Voorspel-persoonlijkheid op basis van ingevulde uitslagen
+function _persona(sd){
+  let n=0,goals=0,low=0,durf=0;
+  W.forEach(w=>{const v=sd[`w${w.id}`];if(v&&v.t!==undefined){n++;const tot=v.t+v.u;goals+=tot;if(tot<=1)low++;if(tot>=4||Math.abs(v.t-v.u)>=3)durf++;}});
+  if(!n)return{emo:'🆕',naam:'Nieuw'};
+  const avg=goals/n,lowSh=low/n,durfSh=durf/n;
+  if(durfSh>=0.4)return{emo:'🎢',naam:'De Gokker'};
+  if(lowSh>=0.45)return{emo:'🧱',naam:'De Muur'};
+  if(avg>=3)return{emo:'☀️',naam:'De Optimist'};
+  if(avg<=1.7)return{emo:'🛡️',naam:'De Verdediger'};
+  return{emo:'⚖️',naam:'De Realist'};
+}
+// 🔥 Streaks: heetste reeksen en wie in een dipje zit
+function ontdekStreaks(){
+  const res=liveAll._r||{},gespeeld=_gespeeldSorted();
+  const hot=[],cold=[];
+  _spelersRaw().forEach(([naam,sd])=>{
+    let cur=0,max=0,coldCur=0,played=0;
+    gespeeld.forEach(w=>{const p=_puntenVoor(sd[`w${w.id}`],res[`w${w.id}`]);if(p===null)return;played++;if(p>0){cur++;if(cur>max)max=cur;coldCur=0;}else{cur=0;coldCur++;}});
+    if(played){hot.push({naam,max});cold.push({naam,coldCur});}
+  });
+  hot.sort((a,b)=>b.max-a.max);cold.sort((a,b)=>b.coldCur-a.coldCur);
+  let body=`<p style="color:var(--dim);font-size:.7rem;margin:0 0 10px">Punten op rij = exacte of goede uitslag, op volgorde van speeldatum</p>`;
+  body+=`<div style="font-size:.8rem;font-weight:800;color:#4ade80;margin:4px 0 6px">🔥 Heetste reeksen</div>`;
+  body+=_sdRows(hot.slice(0,5).map(r=>({naam:r.naam,sub:'beste reeks',val:r.max+'×'})));
+  const koud=cold.filter(c=>c.coldCur>=2).slice(0,5);
+  if(koud.length){
+    body+=`<div style="font-size:.8rem;font-weight:800;color:#f87171;margin:16px 0 6px">🥶 In een dipje</div>`;
+    body+=_sdRows(koud.map(r=>({naam:r.naam,sub:'nu zonder punten',val:r.coldCur+'×'})));
+  }
+  _openSd(_sdHdr('🔥 Streaks')+body);
+}
+// 🏅 Speler van de dag: meeste punten op een speeldag
+function ontdekDag(){
+  const res=liveAll._r||{},gespeeld=_gespeeldSorted();
+  const dagen={};gespeeld.forEach(w=>{(dagen[w.d]=dagen[w.d]||[]).push(w);});
+  const dagLijst=Object.entries(dagen).sort((a,b)=>new Date(b[1][0].iso)-new Date(a[1][0].iso));
+  let body=`<p style="color:var(--dim);font-size:.7rem;margin:0 0 10px">Wie pakte de meeste punten op een speeldag</p>`;
+  let getoond=0;
+  dagLijst.forEach(([dag,ws])=>{
+    let best=null;
+    _spelersRaw().forEach(([naam,sd])=>{let pt=0,ex=0;ws.forEach(w=>{const p=_puntenVoor(sd[`w${w.id}`],res[`w${w.id}`]);if(p){pt+=p;if(p===5)ex++;}});if(!best||pt>best.pt||(pt===best.pt&&ex>best.ex))best={naam,pt,ex};});
+    if(best&&best.pt>0){getoond++;
+      body+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)">
+        <div><div style="font-size:.68rem;color:var(--dim)">${dag} · ${ws.length} wedstrijd${ws.length===1?'':'en'}</div><div style="font-weight:800;font-size:.86rem">🏅 ${best.naam}</div></div>
+        <div style="color:var(--goud);font-weight:900;font-size:1rem;white-space:nowrap">${best.pt} pt</div>
+      </div>`;
+    }
+  });
+  if(!getoond)body+='<p style="color:var(--dim)">Nog geen speeldag met punten</p>';
+  _openSd(_sdHdr('🏅 Speler van de dag')+body);
+}
+// 🎭 Voorspeller-types: persona-badge per deelnemer
+function ontdekTypes(){
+  const scMap={};_lastSc.forEach(s=>scMap[s.naam]=s);
+  const rows=_spelersRaw().map(([naam,sd])=>{
+    const s=scMap[naam]||{ex:0,goed:0,fout:0};
+    const played=s.ex+s.goed+s.fout;
+    let p=_persona(sd);
+    if(played>=5&&s.ex/played>=0.28)p={emo:'🎯',naam:'Scherpschutter'};
+    return{naam,p};
+  }).sort((a,b)=>a.naam.localeCompare(b.naam));
+  let body=`<p style="color:var(--dim);font-size:.7rem;margin:0 0 10px">Voorspel-persoonlijkheid op basis van ingevulde uitslagen</p>`;
+  body+=rows.map(r=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-weight:700;font-size:.84rem">${r.naam}</span><span style="font-size:.82rem;color:var(--goud)">${r.p.emo} ${r.p.naam}</span></div>`).join('');
+  _openSd(_sdHdr('🎭 Voorspeller-types')+body);
+}
+// 🃏 Spelerskaart: persoonlijke hoogtepunten per deelnemer
+function ontdekSpelerkaart(naam){
+  const namen=_spelersRaw().map(([n])=>n).sort((a,b)=>a.localeCompare(b));
+  if(!namen.length){_openSd(_sdHdr('👤 Spelerskaart')+'<p style="color:var(--dim)">Geen deelnemers</p>');return;}
+  naam=naam&&namen.includes(naam)?naam:namen[0];
+  const sd=liveAll[naam]||{},res=liveAll._r||{};
+  const rank=_lastSc.findIndex(s=>s.naam===naam)+1||'?';
+  const s=_lastSc.find(x=>x.naam===naam)||{pt:0,ex:0,goed:0,fout:0,inv:0,kv:null};
+  let beste=null,misser=null,hotMax=0,hotCur=0;const favTel={};
+  W.forEach(w=>{const v=sd[`w${w.id}`];if(v&&v.t!==undefined)favTel[`${v.t}-${v.u}`]=(favTel[`${v.t}-${v.u}`]||0)+1;});
+  _gespeeldSorted().forEach(w=>{const v=sd[`w${w.id}`],e=res[`w${w.id}`];const p=_puntenVoor(v,e);
+    if(p===null){hotCur=0;return;}
+    if(p>0){hotCur++;if(hotCur>hotMax)hotMax=hotCur;}else hotCur=0;
+    if(p===5){const goals=e.t+e.u;if(!beste||goals>beste.goals)beste={w,e,goals};}
+    const err=Math.abs(v.t-e.t)+Math.abs(v.u-e.u);if(err>0&&(!misser||err>misser.err))misser={w,v,e,err};
+  });
+  const fav=Object.entries(favTel).sort((a,b)=>b[1]-a[1])[0];
+  const persona=_persona(sd);
+  const opt=namen.map(n=>`<option ${n===naam?'selected':''}>${n.replace(/"/g,'')}</option>`).join('');
+  const hl=(ico,lbl,val)=>`<div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)"><span style="color:var(--dim);font-size:.76rem;white-space:nowrap">${ico} ${lbl}</span><span style="font-weight:700;font-size:.8rem;text-align:right">${val}</span></div>`;
+  let body=`<select class="fsel" style="width:100%;margin-bottom:12px" onchange="ontdekSpelerkaart(this.value)">${opt}</select>`;
+  body+=`<div style="text-align:center;padding:14px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.3);border-radius:14px;margin-bottom:12px">
+    <div style="font-size:.74rem;color:var(--dim)">${rank===1?'👑 ':''}#${rank} · ${persona.emo} ${persona.naam}</div>
+    <div style="font-size:2.1rem;font-weight:900;color:var(--goud);line-height:1.1">${s.pt}</div>
+    <div style="font-size:.7rem;color:var(--dim)">punten · 🎯${s.ex} ✅${s.goed} 📝${s.inv}/${TOT}</div>
+  </div>`;
+  body+=hl('🌟','Beste voorspelling',beste?`${beste.w.th} ${beste.e.t}-${beste.e.u} ${beste.w.ui}`:'nog geen exacte');
+  body+=hl('🙈','Grootste misser',misser?`${misser.w.th}-${misser.w.ui}: jij ${misser.v.t}-${misser.v.u}, werd ${misser.e.t}-${misser.e.u}`:'—');
+  body+=hl('💟','Favoriete uitslag',fav?`${fav[0]} (${fav[1]}×)`:'—');
+  body+=hl('🔥','Langste reeks',hotMax?`${hotMax}× op rij`:'—');
+  body+=hl('🏆','Kampioenskeuze',s.kv||'nog niet gekozen');
+  _openSd(_sdHdr('👤 Spelerskaart')+body);
+}
+window.ontdekStreaks=ontdekStreaks;window.ontdekDag=ontdekDag;window.ontdekTypes=ontdekTypes;window.ontdekSpelerkaart=ontdekSpelerkaart;
 window.ontdekDurf=ontdekDurf;window.ontdekPoedel=ontdekPoedel;window.ontdekBesteWed=ontdekBesteWed;window.ontdekOranje=ontdekOranje;window.ontdekH2H=ontdekH2H;
 window.ontdekUitslagen=ontdekUitslagen;window.ontdekVoorspellingen=ontdekVoorspellingen;window.ontdekKampioen=ontdekKampioen;
 
@@ -1956,6 +2059,10 @@ function renStats(sc,echteKampioen=''){
   // Sectie: Ontdek — extra inzichten als tegels
   const skt=(ico,lbl,fn)=>`<div class="statk statk-tap" onclick="${fn}"><div class="ski">${ico}</div><div class="skv" style="font-size:.92rem">${lbl}</div><div class="statk-hint">Tik voor overzicht ›</div></div>`;
   h+=`<div class="rt">🔍 ONTDEK</div><div class="statrow">`;
+  h+=skt('👤','Spelerskaart','ontdekSpelerkaart()');
+  h+=skt('🏅','Speler van de dag','ontdekDag()');
+  h+=skt('🔥','Streaks','ontdekStreaks()');
+  h+=skt('🎭','Voorspeller-types','ontdekTypes()');
   h+=skt('⚽','Meest voorkomende uitslagen','ontdekUitslagen()');
   h+=skt('📝','Meest gekozen voorspellingen','ontdekVoorspellingen()');
   h+=skt('🏆','Kampioen gekozen','ontdekKampioen()');
