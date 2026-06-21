@@ -1811,7 +1811,7 @@ function renStats(sc,echteKampioen=''){
   const skc=(ico,val,lbl,type)=>`<div class="statk statk-tap" onclick="toonStatDetail('${type}')"><div class="ski">${ico}</div><div class="skv">${val}</div><div class="skl">${lbl}</div><div class="statk-hint">Tik voor overzicht ›</div></div>`;
   let h='';
   // Sectie: Stand
-  h+=`<div class="rt">${t('stats-stand')}</div><div class="statrow">`;
+  h+=`<div class="rt">📊 STAND</div><div class="statrow">`;
   h+=sk('👑',leider.naam,`Leider · ${leider.pt} pt`);
   h+=sk('🥇',`${leider.pt} pt`,`Hoogste score`);
   if(sc.length>1)h+=sk('🎲',poedel.naam+(poedel.inv>=poedelDrempel?' 🎲':''),`Laatste · ${poedel.pt} pt`);
@@ -1819,17 +1819,17 @@ function renStats(sc,echteKampioen=''){
   h+=sk('📝',meestInv.naam,`Meest ingevuld (${meestInv.inv}/${TOT})`);
   h+=`</div>`;
   // Sectie: Totalen
-  h+=`<div class="rt">${t('stats-totalen')}</div><div class="statrow">`;
-  h+=skc('👥',sc.length,t('stats-deeln'),'rnk');
-  h+=skc('🎯',totaalEx,t('stats-exacte'),'ex');
-  h+=skc('✅',totaalGoed,t('stats-goede'),'goed');
-  h+=skc('📝',totaalVoorsps,t('stats-voorsps'),'inv');
-  h+=skc('🏆',metKamp,t('stats-kampkoz'),'kamp');
-  if(zonderKamp>0)h+=skc('⚠️',zonderKamp,t('stats-nokamp'),'nokamp');
+  h+=`<div class="rt">TOTALEN</div><div class="statrow">`;
+  h+=skc('👥',sc.length,'Deelnemers','rnk');
+  h+=skc('🎯',totaalEx,'Exacte scores','ex');
+  h+=skc('✅',totaalGoed,'Goede uitslagen','goed');
+  h+=skc('📝',totaalVoorsps,'Voorspellingen','inv');
+  h+=skc('🏆',metKamp,'Kampioen gekozen','kamp');
+  if(zonderKamp>0)h+=skc('⚠️',zonderKamp,'Nog geen kampioen','nokamp');
   h+=`</div>`;
   // Sectie: Kampioensvoorspellingen
   if(kvSorted.length){
-    h+=`<div class="rt">${t('stats-kamp')}</div>`;
+    h+=`<div class="rt">🏆 KAMPIOEN GEKOZEN</div>`;
     const max=kvSorted[0][1];
     h+=kvSorted.map(([land,n])=>{
       const pct=Math.round(n/sc.length*100);
@@ -1942,7 +1942,7 @@ function renQuiz(saved){
     const msg=score===nSaved?'🎉 Perfect!':score>=nSaved*0.6?'👍 Goed gedaan!':score>0?'💪 Morgen beter!':'😅 Helaas, morgen weer';
     let h=`<div style="text-align:center;padding:10px 0 14px">
       <div style="font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--goud);line-height:1">${score}/${nSaved}</div>
-      <div style="font-size:.7rem;color:var(--dim);margin-top:4px">${msg} · ${t('quiz-nieuw')}</div>
+      <div style="font-size:.7rem;color:var(--dim);margin-top:4px">${msg} · Nieuwe vragen morgen</div>
     </div>`;
     // Toon alle vragen met resultaat (gebruik opgeslagen vragen+indices)
     weergaveVragen.slice(0,nSaved).forEach((q,i)=>{
@@ -1980,7 +1980,7 @@ function toonQuizVraag(nr){
     const tag=nr>=3?`<span style="font-size:.55rem;background:rgba(167,139,250,.15);color:#a78bfa;border-radius:4px;padding:1px 5px;margin-left:5px;vertical-align:middle">POULE</span>`:'';
     const locked=_quizAntw[nr]!==null&&_quizAntw[nr]!==-1;
     let h=`<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
-      <span class="quiz-prog">${t('quiz-vraag')} ${nr+1} ${t('quiz-van')} ${nV}</span>
+      <span class="quiz-prog">Vraag ${nr+1} van ${nV}</span>
       <span class="quiz-tnum" style="color:${kleur}">${_quizSec}s</span>
     </div>
     <div class="quiz-tbar"><div class="quiz-tbar-fill" style="width:${pct}%;background:${kleur}"></div></div>
@@ -2086,7 +2086,7 @@ async function renQuizRang(){
       </div>`;
     });
     h+='</div>';
-    h+=`<p style="font-size:.65rem;color:var(--dim);margin-top:8px">${t('quiz-bonus')}${QUIZ_BONUS}${t('quiz-bonus2')}</p>`;
+    h+=`<p style="font-size:.65rem;color:var(--dim);margin-top:8px">🏅 Quiz-winnaar van de dag krijgt extra ${QUIZ_BONUS} punten in de hoofdpoule</p>`;
     el.innerHTML=h;
   }catch(e){el.innerHTML='';}
 }
