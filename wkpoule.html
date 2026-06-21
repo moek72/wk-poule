@@ -1778,6 +1778,43 @@ function renStats(sc,echteKampioen=''){
   h+=skc('🏆',metKamp,'Kampioen gekozen','kamp');
   if(zonderKamp>0)h+=skc('⚠️',zonderKamp,'Nog geen kampioen','nokamp');
   h+=`</div>`;
+  // Sectie: Meest voorkomende echte uitslagen (top 5)
+  const echteTel={};
+  Object.entries(liveAll._r||{}).forEach(([w,v])=>{if(v&&v.t!==undefined&&v.u!==undefined)echteTel[`${v.t}-${v.u}`]=(echteTel[`${v.t}-${v.u}`]||0)+1;});
+  const echteSorted=Object.entries(echteTel).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  if(echteSorted.length){
+    h+=`<div class="rt">⚽ MEEST VOORKOMENDE UITSLAGEN</div>`;
+    const max=echteSorted[0][1];
+    h+=echteSorted.map(([sco,n])=>`<div style="margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:3px">
+        <span style="font-weight:700;color:var(--tekst)">${sco}</span>
+        <span style="color:var(--dim)">${n}x</span>
+      </div>
+      <div style="background:rgba(255,255,255,.07);border-radius:6px;height:7px;overflow:hidden">
+        <div style="height:100%;background:#4ade80;width:${Math.round(n/max*100)}%;border-radius:6px;transition:width .4s"></div>
+      </div>
+    </div>`).join('');
+  }
+  // Sectie: Meest gekozen voorspellingen (top 5)
+  const voorTel={};
+  Object.entries(liveAll).filter(([k])=>k!=='_r'&&k!=='_k'&&k!=='_bbq'&&k!=='_quiz').forEach(([naam,vv])=>{
+    if(!vv||typeof vv!=='object')return;
+    Object.entries(vv).forEach(([w,v])=>{if(v&&typeof v==='object'&&v.t!==undefined&&v.u!==undefined)voorTel[`${v.t}-${v.u}`]=(voorTel[`${v.t}-${v.u}`]||0)+1;});
+  });
+  const voorSorted=Object.entries(voorTel).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  if(voorSorted.length){
+    h+=`<div class="rt">📝 MEEST GEKOZEN VOORSPELLINGEN</div>`;
+    const max=voorSorted[0][1];
+    h+=voorSorted.map(([sco,n])=>`<div style="margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:3px">
+        <span style="font-weight:700;color:var(--tekst)">${sco}</span>
+        <span style="color:var(--dim)">${n}x</span>
+      </div>
+      <div style="background:rgba(255,255,255,.07);border-radius:6px;height:7px;overflow:hidden">
+        <div style="height:100%;background:var(--goud);width:${Math.round(n/max*100)}%;border-radius:6px;transition:width .4s"></div>
+      </div>
+    </div>`).join('');
+  }
   // Sectie: Kampioensvoorspellingen
   if(kvSorted.length){
     h+=`<div class="rt">🏆 KAMPIOEN GEKOZEN</div>`;
