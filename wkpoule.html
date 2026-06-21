@@ -368,6 +368,8 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 .quiz-tnum{font-family:'VT323',monospace;font-size:1.5rem;line-height:1;}
 .quiz-prog{font-size:.63rem;color:var(--dim);}
 .actbtn.qz{color:#a78bfa;}
+.langbtn{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 11px;font-size:.62rem;font-weight:800;color:var(--dim);cursor:pointer;letter-spacing:.6px;-webkit-tap-highlight-color:transparent;transition:background .12s;}
+.langbtn:active{background:rgba(255,255,255,.14);}
 </style>
 </head>
 <body>
@@ -375,33 +377,34 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 <div class="sbar" id="sbar"><span id="si">⏳</span><span id="st">Verbinden met database...</span></div>
 
 <div class="header">
+  <button class="langbtn" id="langbtn" onclick="toggleLang()">🌐 EN</button>
   <div class="logo"><img src="assets/jaikaran-logo.png?v=2" alt="Jaikaran Family"></div>
   <h1>Jaikaran WK Poule 2026</h1>
-  <div class="sub">11 JUN – 19 JUL · VS · CANADA · MEXICO · 104 WEDSTRIJDEN</div>
+  <div class="sub" data-i18n="sub">11 JUN – 19 JUL · VS · CANADA · MEXICO · 104 WEDSTRIJDEN</div>
   <img src="assets/hoofdprijs2.png" class="hpimg" alt="Hoofdprijs: BBQ door Kawita" onclick="openBbq()">
   <div id="cdban" style="margin-top:10px;min-height:28px;"></div>
 </div>
 
 <div class="tabs">
-  <div class="tab active" onclick="showTab('inv',this)"><span class="ti">✏️</span>Invullen<span class="tabdot" id="dot-inv" style="display:none"></span></div>
-  <div class="tab" onclick="showTab('res',this)"><span class="ti">📊</span>Uitslagen</div>
-  <div class="tab" onclick="showTab('stan',this)"><span class="ti">📈</span>Standen</div>
+  <div class="tab active" onclick="showTab('inv',this)"><span class="ti">✏️</span><span data-i18n="tab-inv">Invullen</span><span class="tabdot" id="dot-inv" style="display:none"></span></div>
+  <div class="tab" onclick="showTab('res',this)"><span class="ti">📊</span><span data-i18n="tab-res">Uitslagen</span></div>
+  <div class="tab" onclick="showTab('stan',this)"><span class="ti">📈</span><span data-i18n="tab-stan">Standen</span></div>
   <div class="tab" onclick="showTab('live',this)"><span class="ti" id="livetabti">📺</span>Live</div>
-  <div class="tab" onclick="showTab('rang',this)"><span class="ti">🏆</span>Ranglijst</div>
-  <div class="tab" onclick="showTab('deel',this)"><span class="ti">👥</span>Wie mee?</div>
+  <div class="tab" onclick="showTab('rang',this)"><span class="ti">🏆</span><span data-i18n="tab-rang">Ranglijst</span></div>
+  <div class="tab" onclick="showTab('deel',this)"><span class="ti">👥</span><span data-i18n="tab-deel">Wie mee?</span></div>
   <div class="tab" onclick="showTab('stat',this)"><span class="ti">📈</span>Stats</div>
   <div class="tab" onclick="showTab('quiz',this)"><span class="ti">🧠</span>Quiz</div>
-  <div class="tab" onclick="showTab('uit',this)"><span class="ti">📋</span>Regels</div>
+  <div class="tab" onclick="showTab('uit',this)"><span class="ti">📋</span><span data-i18n="tab-uit">Regels</span></div>
 </div>
 
 <div class="content">
   <div class="panel active" id="panel-inv">
     <div id="nsec" class="ncard">
-      <h2>👤 Wie ben jij?</h2>
-      <p>Kies je naam om te beginnen</p>
+      <h2>👤 <span data-i18n="login-title">Wie ben jij?</span></h2>
+      <p data-i18n="login-sub">Kies je naam om te beginnen</p>
       <input type="text" class="ni" id="ni" placeholder="Je naam..." maxlength="20" onkeypress="if(event.key==='Enter')setN()">
-      <button class="btn bg" onclick="setN()">⚽ Start invullen!</button>
-      <div class="sd">of kies</div>
+      <button class="btn bg" onclick="setN()"><span data-i18n="login-btn">⚽ Start invullen!</span></button>
+      <div class="sd" data-i18n="login-of">of kies</div>
       <div class="bnn" id="bnn"></div>
     </div>
     <div id="kvcard" style="display:none"></div>
@@ -509,11 +512,11 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.7rem,7vw,2.6rem);color:
 </div>
 
 <div class="actbar">
-  <button class="actbtn off" id="rab" onclick="verversInvullen()"><span class="ai">🔄</span><span class="al">Ververs</span></button>
-  <button class="actbtn sav off" id="sab" onclick="slaOp()"><span class="ai">💾</span><span class="al">Opslaan</span></button>
+  <button class="actbtn off" id="rab" onclick="verversInvullen()"><span class="ai">🔄</span><span class="al" data-i18n="btn-ververs">Ververs</span></button>
+  <button class="actbtn sav off" id="sab" onclick="slaOp()"><span class="ai">💾</span><span class="al" data-i18n="btn-sla">Opslaan</span></button>
   <button class="actbtn" onclick="gaNaar('stat')"><span class="ai">📈</span><span class="al">Stats</span></button>
   <button class="actbtn qz" onclick="gaNaar('quiz')"><span class="ai">🧠</span><span class="al">Quiz</span></button>
-  <button class="actbtn kijk" id="fab" onclick="deelLocatie()"><span class="ai">👥</span><span class="al">Kijk samen</span></button>
+  <button class="actbtn kijk" id="fab" onclick="deelLocatie()"><span class="ai">👥</span><span class="al" data-i18n="btn-kijk">Kijk samen</span></button>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -742,6 +745,43 @@ const QUIZ_Q=[
 ];
 const LANDEN=['Algerije','Argentinie','Australie','Belgie','Bosnie & Herz.','Brazilie','Canada','Colombia','Congo','Curacao','Duitsland','Ecuador','Egypte','Engeland','Frankrijk','Ghana','Haiti','Irak','Iran','Ivoorkust','Japan','Jordanie','Kaapverdie','Kroatie','Marokko','Mexico','Nederland','Nieuw-Zeeland','Noorwegen','Oezbekistan','Oostenrijk','Panama','Paraguay','Portugal','Qatar','Saoedi-Arabie','Schotland','Senegal','Spanje','Tsjechie','Tunisie','Turkije','Uruguay','Verenigde Staten','Zuid-Afrika','Zuid-Korea','Zweden','Zwitserland'];
 
+// ── Taal / Language ──
+let lang=localStorage.getItem('wkLang')||'nl';
+const T={
+  en:{
+    'sub':'11 JUN – 19 JUL · USA · CANADA · MEXICO · 104 MATCHES',
+    'tab-inv':'Fill In','tab-res':'Results','tab-stan':'Standings',
+    'tab-rang':'Rankings','tab-deel':'Who\'s in?','tab-uit':'Rules',
+    'btn-ververs':'Refresh','btn-sla':'Save','btn-kijk':'Watch together',
+    'login-title':'Who are you?','login-sub':'Choose your name to start',
+    'login-btn':'⚽ Start filling in!','login-of':'or choose',
+  },
+  nl:{
+    'sub':'11 JUN – 19 JUL · VS · CANADA · MEXICO · 104 WEDSTRIJDEN',
+    'tab-inv':'Invullen','tab-res':'Uitslagen','tab-stan':'Standen',
+    'tab-rang':'Ranglijst','tab-deel':'Wie mee?','tab-uit':'Regels',
+    'btn-ververs':'Ververs','btn-sla':'Opslaan','btn-kijk':'Kijk samen',
+    'login-title':'Wie ben jij?','login-sub':'Kies je naam om te beginnen',
+    'login-btn':'⚽ Start invullen!','login-of':'of kies',
+  }
+};
+function applyLang(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k=el.getAttribute('data-i18n');
+    if(T[lang]?.[k])el.textContent=T[lang][k];
+  });
+  const ni=document.getElementById('ni');
+  if(ni)ni.placeholder=lang==='en'?'Your name...':'Je naam...';
+  const btn=document.getElementById('langbtn');
+  if(btn)btn.textContent=lang==='nl'?'🌐 EN':'🌐 NL';
+}
+function toggleLang(){
+  lang=lang==='nl'?'en':'nl';
+  localStorage.setItem('wkLang',lang);
+  applyLang();
+}
+window.toggleLang=toggleLang;
+
 let sp=null, fbK=false, cdT={};
 let _db,_ref,_set,_get,_onValue,_update;
 let userSd={}, espnScores={}, espnPollT=null;
@@ -938,6 +978,7 @@ async function initFirebase(){
 
 // ── App opstarten ──
 async function start(){
+  applyLang();
   const ok=await initFirebase();
   if(!ok){
     document.getElementById('sbar').innerHTML='<span style="color:var(--rood)">●</span><span style="color:var(--rood);font-size:.68rem;font-weight:700">Verbinding mislukt</span>';
