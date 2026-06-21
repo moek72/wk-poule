@@ -1264,38 +1264,47 @@ function _renNextMatch(h,spelers,nu){
   if(!komend.length)return{h,volg:null};
   const volg=komend[0];
   window._volgW=volg;
-  // Alle wedstrijden die binnen 5 minuten van het vroegste tijdstip vallen
+  // Batch 1: wedstrijden binnen 5 min van de eerste
   const vroegste=new Date(volg.iso);
-  const batch=komend.filter(w=>Math.abs(new Date(w.iso)-vroegste)<5*60*1000);
-  const diff=vroegste-nu;
-  const da=Math.floor(diff/86400000),uu=Math.floor((diff%86400000)/3600000),mm=Math.floor((diff%3600000)/60000),ss=Math.floor((diff%60000)/1000);
-  const fmt=da>0?`${da}d ${String(uu%24).padStart(2,'0')}:${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`:
-                `${String(uu).padStart(2,'0')}:${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
-  // Gedeelde countdown bovenaan
-  h+=`<div class="bigcd">`;
-  h+=`<div class="bigcd-label">⏱️ VOLGENDE WEDSTRIJD${batch.length>1?'EN':''}</div>`;
-  h+=`<div class="bigcd-timer" id="bigcdtimer">${fmt}</div>`;
-  h+=`<div class="bigcd-info">📅 ${volg.d} · ${volg.t}</div>`;
-  h+=`</div>`;
-  // Per wedstrijd een kaart met voorspellingen
-  batch.forEach(w=>{
-    h+=`<div class="bigcd-live" style="border-color:rgba(255,215,0,.2);margin-bottom:10px">`;
-    h+=`<div class="bigcd-label" style="color:var(--goud)">⚽ ${LBL[w.g]||w.g}${w.o?' · 🇳🇱 ORANJE!':''}</div>`;
-    h+=`<div class="bigcd-match">${w.th} vs ${w.ui}</div>`;
+  const batch1=komend.filter(w=>Math.abs(new Date(w.iso)-vroegste)<5*60*1000);
+  // Batch 2: eerste wedstrijd(en) ná batch 1
+  const rest=komend.filter(w=>!batch1.includes(w));
+  const volg2=rest[0]||null;
+  const batch2=volg2?rest.filter(w=>Math.abs(new Date(w.iso)-new Date(volg2.iso))<5*60*1000):[];
+
+  function renderBatch(batch,label,cdId){
+    const t0=new Date(batch[0].iso);
+    const diff=t0-nu;
+    const da=Math.floor(diff/86400000),uu=Math.floor((diff%86400000)/3600000),mm=Math.floor((diff%3600000)/60000),ss=Math.floor((diff%60000)/1000);
+    const fmt=da>0?`${da}d ${String(uu%24).padStart(2,'0')}:${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`:
+                  `${String(uu).padStart(2,'0')}:${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
+    h+=`<div class="bigcd">`;
+    h+=`<div class="bigcd-label">${label}</div>`;
+    h+=`<div class="bigcd-timer"${cdId?` id="${cdId}"`:''}>${fmt}</div>`;
+    h+=`<div class="bigcd-info">📅 ${batch[0].d} · ${batch[0].t}</div>`;
     h+=`</div>`;
-    if(spelers.length){
-      h+=`<div class="liveban" style="margin:6px 0 6px"><span class="liveban-t">Voorspellingen · ${w.th} vs ${w.ui}</span></div><div class="lvlist">`;
-      [...spelers].sort((a,b)=>a[0].localeCompare(b[0])).forEach(([naam,sd])=>{
-        const v=sd[`w${w.id}`];
-        if(!v||v.t===undefined){
-          h+=`<div class="lvrow g0"><span class="lvnaam">${naam}</span><span class="lvvoor" style="font-size:.72rem;color:var(--dim)">nog niet ingevuld</span><span class="lvpt">?</span></div>`;
-        }else{
-          h+=`<div class="lvrow"><span class="lvnaam">${naam}</span><span class="lvvoor">${v.t}-${v.u}</span><span class="lvpt" style="background:var(--border);color:var(--dim)">🤫</span></div>`;
-        }
-      });
+    batch.forEach(w=>{
+      h+=`<div class="bigcd-live" style="border-color:rgba(255,215,0,.2);margin-bottom:10px">`;
+      h+=`<div class="bigcd-label" style="color:var(--goud)">⚽ ${LBL[w.g]||w.g}${w.o?' · 🇳🇱 ORANJE!':''}</div>`;
+      h+=`<div class="bigcd-match">${w.th} vs ${w.ui}</div>`;
       h+=`</div>`;
-    }
-  });
+      if(spelers.length){
+        h+=`<div class="liveban" style="margin:6px 0 6px"><span class="liveban-t">Voorspellingen · ${w.th} vs ${w.ui}</span></div><div class="lvlist">`;
+        [...spelers].sort((a,b)=>a[0].localeCompare(b[0])).forEach(([naam,sd])=>{
+          const v=sd[`w${w.id}`];
+          if(!v||v.t===undefined){
+            h+=`<div class="lvrow g0"><span class="lvnaam">${naam}</span><span class="lvvoor" style="font-size:.72rem;color:var(--dim)">nog niet ingevuld</span><span class="lvpt">?</span></div>`;
+          }else{
+            h+=`<div class="lvrow"><span class="lvnaam">${naam}</span><span class="lvvoor">${v.t}-${v.u}</span><span class="lvpt" style="background:var(--border);color:var(--dim)">🤫</span></div>`;
+          }
+        });
+        h+=`</div>`;
+      }
+    });
+  }
+
+  renderBatch(batch1,`⏱️ VOLGENDE WEDSTRIJD${batch1.length>1?'EN':''}`, 'bigcdtimer');
+  if(batch2.length)renderBatch(batch2,`⏭️ DAARNA${batch2.length>1?' ('+batch2.length+'x)':''}`,null);
   return{h,volg};
 }
 
