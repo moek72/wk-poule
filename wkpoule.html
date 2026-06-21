@@ -1286,10 +1286,13 @@ function _renNextMatch(h,spelers,nu){
     h+=`<div class="bigcd-label" style="color:var(--goud)">⚽ ${LBL[w.g]||w.g}${w.o?' · 🇳🇱 ORANJE!':''}</div>`;
     h+=`<div class="bigcd-match">${w.th} vs ${w.ui}</div>`;
     h+=`</div>`;
-    batch.forEach(w=>{
-      h+=`<div class="bigcd-live" style="border-color:rgba(255,215,0,.2);margin-bottom:10px">`;
-      h+=`<div class="bigcd-label" style="color:var(--goud)">⚽ ${LBL[w.g]||w.g}${w.o?' · 🇳🇱 ORANJE!':''}</div>`;
-      h+=`<div class="bigcd-match">${w.th} vs ${w.ui}</div>`;
+    if(spelers.length){
+      h+=`<div class="liveban" style="margin:6px 0 6px"><span class="liveban-t">Voorspellingen · ${w.th} vs ${w.ui}</span></div><div class="lvlist">`;
+      [...spelers].sort((a,b)=>a[0].localeCompare(b[0])).forEach(([naam,sd])=>{
+        const v=sd[`w${w.id}`];
+        if(!v||v.t===undefined){h+=`<div class="lvrow g0"><span class="lvnaam">${naam}</span><span class="lvvoor" style="font-size:.72rem;color:var(--dim)">nog niet ingevuld</span><span class="lvpt">?</span></div>`;}
+        else{h+=`<div class="lvrow"><span class="lvnaam">${naam}</span><span class="lvvoor">${v.t}-${v.u}</span><span class="lvpt" style="background:var(--border);color:var(--dim)">🤫</span></div>`;}
+      });
       h+=`</div>`;
     }
   });
