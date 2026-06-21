@@ -441,7 +441,6 @@ body.lang-en .wc.lk::after{content:'Closed';}
 
   <div class="panel" id="panel-rang">
     <div class="rh"><h2>🏆 Ranglijst</h2><div style="display:flex;gap:6px;align-items:center"><span class="ld">LIVE</span><button onclick="deelRanglijst()" style="background:linear-gradient(135deg,#25D366,#128C7E);border:none;border-radius:20px;color:#fff;font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;padding:5px 12px;cursor:pointer">📤 Deel stand</button></div></div>
-    <div id="livecon" style="display:none"></div>
     <p id="rcnt" style="font-size:.72rem;color:var(--dim);margin-bottom:10px"></p>
     <div id="rcon"><div class="leeg"><span class="li">⏳</span><p>Nog geen deelnemers</p></div></div>
   </div>
@@ -1302,7 +1301,7 @@ function _renNextMatch(h,spelers,nu){
 
 function renLive(){
   const el=document.getElementById('livecon');if(!el)return;
-  const spelers=Object.entries(liveAll).filter(([k])=>k!=='_r'&&k!=='_k');
+  const spelers=Object.entries(liveAll).filter(([k])=>k!=='_r'&&k!=='_k'&&k!=='_bbq'&&k!=='_quiz');
   const liveMatches=W.filter(w=>espnScores[`w${w.id}`]?.status==='in')
                      .sort((a,b)=>new Date(a.iso)-new Date(b.iso));
   clearInterval(_bigCdI);
