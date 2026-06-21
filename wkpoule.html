@@ -1825,7 +1825,50 @@ function ontdekH2H(a,b){
       ${kol(b,sB,winB,sB.pt>sA.pt)}
     </div>`);
 }
+// Balkenlijst voor in de detail-overlay
+function _sdBars(items,kleur){
+  if(!items.length)return'<p style="color:var(--dim)">Geen data</p>';
+  const max=Math.max(...items.map(i=>i.n));
+  return items.map(it=>`<div style="margin-bottom:9px">
+    <div style="display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:4px">
+      <span style="font-weight:700;color:${it.kleur||'var(--tekst)'}">${it.label}</span>
+      <span style="color:var(--dim)">${it.sub}</span>
+    </div>
+    <div style="background:rgba(255,255,255,.07);border-radius:6px;height:8px;overflow:hidden">
+      <div style="height:100%;background:${it.kleur||kleur};width:${Math.round(it.n/max*100)}%;border-radius:6px;transition:width .4s"></div>
+    </div>
+  </div>`).join('');
+}
+// ⚽ Meest voorkomende echte uitslagen
+function ontdekUitslagen(){
+  const tel={};
+  Object.entries(liveAll._r||{}).forEach(([w,v])=>{if(v&&v.t!==undefined&&v.u!==undefined)tel[`${v.t}-${v.u}`]=(tel[`${v.t}-${v.u}`]||0)+1;});
+  const sorted=Object.entries(tel).sort((a,b)=>b[1]-a[1]);
+  _openSd(_sdHdr('⚽ Meest voorkomende uitslagen')+
+    `<p style="color:var(--dim);font-size:.7rem;margin:0 0 12px">De vaakst geslagen echte uitslagen</p>`+
+    _sdBars(sorted.map(([sco,n])=>({label:sco,sub:n+'x',n})),'#4ade80'));
+}
+// 📝 Meest gekozen voorspellingen
+function ontdekVoorspellingen(){
+  const tel={};
+  _spelersRaw().forEach(([naam,vv])=>{if(!vv||typeof vv!=='object')return;Object.entries(vv).forEach(([w,v])=>{if(v&&typeof v==='object'&&v.t!==undefined&&v.u!==undefined)tel[`${v.t}-${v.u}`]=(tel[`${v.t}-${v.u}`]||0)+1;});});
+  const sorted=Object.entries(tel).sort((a,b)=>b[1]-a[1]).slice(0,12);
+  _openSd(_sdHdr('📝 Meest gekozen voorspellingen')+
+    `<p style="color:var(--dim);font-size:.7rem;margin:0 0 12px">Welke uitslagen deelnemers het vaakst invullen</p>`+
+    _sdBars(sorted.map(([sco,n])=>({label:sco,sub:n+'x',n})),'var(--goud)'));
+}
+// 🏆 Kampioen gekozen
+function ontdekKampioen(){
+  const tel={};
+  Object.entries(liveAll._k||{}).forEach(([n,l])=>{if(l)tel[l]=(tel[l]||0)+1;});
+  const sorted=Object.entries(tel).sort((a,b)=>b[1]-a[1]);
+  const tot=_lastSc.length||1;
+  _openSd(_sdHdr('🏆 Kampioen gekozen')+
+    `<p style="color:var(--dim);font-size:.7rem;margin:0 0 12px">Welk land deelnemers als wereldkampioen kozen</p>`+
+    _sdBars(sorted.map(([land,n])=>{const correct=_echteKampioen&&land===_echteKampioen;return{label:land+(correct?' ✅':''),sub:`${n}x · ${Math.round(n/tot*100)}%`,n,kleur:correct?'#4ade80':'var(--goud)'};}),'var(--goud)'));
+}
 window.ontdekDurf=ontdekDurf;window.ontdekPoedel=ontdekPoedel;window.ontdekBesteWed=ontdekBesteWed;window.ontdekOranje=ontdekOranje;window.ontdekH2H=ontdekH2H;
+window.ontdekUitslagen=ontdekUitslagen;window.ontdekVoorspellingen=ontdekVoorspellingen;window.ontdekKampioen=ontdekKampioen;
 
 function renD(data){
   if(!data||!data.length){
@@ -1884,67 +1927,15 @@ function renStats(sc,echteKampioen=''){
   // Sectie: Ontdek — extra inzichten als tegels
   const skt=(ico,lbl,fn)=>`<div class="statk statk-tap" onclick="${fn}"><div class="ski">${ico}</div><div class="skv" style="font-size:.92rem">${lbl}</div><div class="statk-hint">Tik voor overzicht ›</div></div>`;
   h+=`<div class="rt">🔍 ONTDEK</div><div class="statrow">`;
+  h+=skt('⚽','Meest voorkomende uitslagen','ontdekUitslagen()');
+  h+=skt('📝','Meest gekozen voorspellingen','ontdekVoorspellingen()');
+  h+=skt('🏆','Kampioen gekozen','ontdekKampioen()');
   h+=skt('🎲','Durf-score','ontdekDurf()');
   h+=skt('⚔️','Head-to-head','ontdekH2H()');
   h+=skt('🎯','Beste per wedstrijd','ontdekBesteWed()');
   h+=skt('🦅','Oranje-kenner','ontdekOranje()');
   h+=skt('🃏','Poedel hall of fame','ontdekPoedel()');
   h+=`</div>`;
-  // Sectie: Meest voorkomende echte uitslagen (top 5)
-  const echteTel={};
-  Object.entries(liveAll._r||{}).forEach(([w,v])=>{if(v&&v.t!==undefined&&v.u!==undefined)echteTel[`${v.t}-${v.u}`]=(echteTel[`${v.t}-${v.u}`]||0)+1;});
-  const echteSorted=Object.entries(echteTel).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  if(echteSorted.length){
-    h+=`<div class="rt">⚽ MEEST VOORKOMENDE UITSLAGEN</div>`;
-    const max=echteSorted[0][1];
-    h+=echteSorted.map(([sco,n])=>`<div style="margin-bottom:8px">
-      <div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:3px">
-        <span style="font-weight:700;color:var(--tekst)">${sco}</span>
-        <span style="color:var(--dim)">${n}x</span>
-      </div>
-      <div style="background:rgba(255,255,255,.07);border-radius:6px;height:7px;overflow:hidden">
-        <div style="height:100%;background:#4ade80;width:${Math.round(n/max*100)}%;border-radius:6px;transition:width .4s"></div>
-      </div>
-    </div>`).join('');
-  }
-  // Sectie: Meest gekozen voorspellingen (top 5)
-  const voorTel={};
-  Object.entries(liveAll).filter(([k])=>k!=='_r'&&k!=='_k'&&k!=='_bbq'&&k!=='_quiz').forEach(([naam,vv])=>{
-    if(!vv||typeof vv!=='object')return;
-    Object.entries(vv).forEach(([w,v])=>{if(v&&typeof v==='object'&&v.t!==undefined&&v.u!==undefined)voorTel[`${v.t}-${v.u}`]=(voorTel[`${v.t}-${v.u}`]||0)+1;});
-  });
-  const voorSorted=Object.entries(voorTel).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  if(voorSorted.length){
-    h+=`<div class="rt">📝 MEEST GEKOZEN VOORSPELLINGEN</div>`;
-    const max=voorSorted[0][1];
-    h+=voorSorted.map(([sco,n])=>`<div style="margin-bottom:8px">
-      <div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:3px">
-        <span style="font-weight:700;color:var(--tekst)">${sco}</span>
-        <span style="color:var(--dim)">${n}x</span>
-      </div>
-      <div style="background:rgba(255,255,255,.07);border-radius:6px;height:7px;overflow:hidden">
-        <div style="height:100%;background:var(--goud);width:${Math.round(n/max*100)}%;border-radius:6px;transition:width .4s"></div>
-      </div>
-    </div>`).join('');
-  }
-  // Sectie: Kampioensvoorspellingen
-  if(kvSorted.length){
-    h+=`<div class="rt">🏆 KAMPIOEN GEKOZEN</div>`;
-    const max=kvSorted[0][1];
-    h+=kvSorted.map(([land,n])=>{
-      const pct=Math.round(n/sc.length*100);
-      const correct=echteKampioen&&land===echteKampioen;
-      return`<div style="margin-bottom:8px">
-        <div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:3px">
-          <span style="font-weight:700;color:${correct?'#4ade80':'var(--tekst)'}">${land}${correct?' ✅':''}</span>
-          <span style="color:var(--dim)">${n}x · ${pct}%</span>
-        </div>
-        <div style="background:rgba(255,255,255,.07);border-radius:6px;height:7px;overflow:hidden">
-          <div style="height:100%;background:${correct?'#4ade80':'var(--goud)'};width:${Math.round(n/max*100)}%;border-radius:6px;transition:width .4s"></div>
-        </div>
-      </div>`;
-    }).join('');
-  }
   el.innerHTML=h;
 }
 
