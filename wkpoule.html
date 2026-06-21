@@ -356,19 +356,6 @@ body.lang-en .wc.lk::after{content:'Closed';}
 .sdrow-nr{font-size:.75rem;color:var(--dim);width:20px;flex-shrink:0;}
 .meer-btn{background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:20px;padding:3px 11px;font-size:.65rem;font-weight:800;color:var(--dim);cursor:pointer;white-space:nowrap;font-family:'Nunito',sans-serif;vertical-align:middle;margin-left:2px;}
 .meer-btn:active{background:rgba(255,255,255,.14);}
-/* ── Quiz ── */
-.quiz-q{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:10px;}
-.quiz-qtxt{font-size:.82rem;color:var(--tekst);margin-bottom:10px;line-height:1.45;font-weight:600;}
-.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
-.quiz-opt{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:8px;padding:9px 6px;font-size:.72rem;color:var(--dim);cursor:pointer;text-align:center;line-height:1.3;transition:border-color .12s,background .12s,color .12s;-webkit-tap-highlight-color:transparent;}
-.quiz-opt:active{background:rgba(255,255,255,.1);}
-.quiz-opt.gekozen{border-color:var(--goud);color:var(--goud);background:rgba(255,215,0,.08);}
-.quiz-opt:disabled{cursor:default;pointer-events:none;}
-.quiz-tbar{height:5px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;margin-bottom:10px;}
-.quiz-tbar-fill{height:100%;border-radius:4px;transition:width 1s linear,background .3s;}
-.quiz-tnum{font-family:'VT323',monospace;font-size:1.5rem;line-height:1;}
-.quiz-prog{font-size:.63rem;color:var(--dim);}
-.actbtn.qz{color:#a78bfa;}
 </style>
 </head>
 <body>
@@ -391,7 +378,6 @@ body.lang-en .wc.lk::after{content:'Closed';}
   <div class="tab" onclick="showTab('rang',this)"><span class="ti">🏆</span>Ranglijst</div>
   <div class="tab" onclick="showTab('deel',this)"><span class="ti">👥</span>Wie mee?</div>
   <div class="tab" onclick="showTab('stat',this)"><span class="ti">📈</span>Stats</div>
-  <div class="tab" onclick="showTab('quiz',this)"><span class="ti">🧠</span>Quiz</div>
   <div class="tab" onclick="showTab('uit',this)"><span class="ti">📋</span>Regels</div>
 </div>
 
@@ -474,16 +460,6 @@ body.lang-en .wc.lk::after{content:'Closed';}
     <div id="statcon"><div class="leeg"><span class="li">⏳</span><p>Laden...</p></div></div>
   </div>
 
-  <div class="panel" id="panel-quiz">
-    <div class="con">
-      <div class="rh"><h2>🧠 Dagelijkse Quiz</h2></div>
-      <p style="font-size:.72rem;color:var(--dim);margin-bottom:14px">3 WK vragen + 2 poule vragen · 15 seconden per vraag</p>
-      <div id="quizcon"><div class="leeg"><span class="li">⏳</span><p>Laden...</p></div></div>
-      <div class="rt" style="margin-top:18px" data-i18n="quiz-rang">🏅 QUIZ RANGLIJST</div>
-      <div id="quizrang"></div>
-    </div>
-  </div>
-
   <div class="panel" id="panel-uit">
     <div class="ic"><h3>🍖 Hoofdprijs</h3><p style="font-size:.95rem;font-weight:900;color:var(--goud)">Geheel verzorgde BBQ door Kawita</p><p>Meeste punten op 19 juli wint. Bij gelijkstand: meeste exacte scores.</p></div>
     <div class="ic"><h3>⏰ Deadline</h3><p>Voorspelling moet in zijn <strong style="color:var(--rood)">vóór de aftrap</strong>. Daarna vergrendeld.</p></div>
@@ -513,7 +489,6 @@ body.lang-en .wc.lk::after{content:'Closed';}
   <button class="actbtn off" id="rab" onclick="verversInvullen()"><span class="ai">🔄</span><span class="al">Ververs</span></button>
   <button class="actbtn sav off" id="sab" onclick="slaOp()"><span class="ai">💾</span><span class="al">Opslaan</span></button>
   <button class="actbtn" onclick="gaNaar('stat')"><span class="ai">📈</span><span class="al">Stats</span></button>
-  <button class="actbtn qz" onclick="gaNaar('quiz')"><span class="ai">🧠</span><span class="al">Quiz</span></button>
   <button class="actbtn kijk" id="fab" onclick="deelLocatie()"><span class="ai">👥</span><span class="al">Kijk samen</span></button>
 </div>
 <div class="toast" id="toast"></div>
@@ -708,39 +683,6 @@ const AVT=["⚽","🏃","👑","🦁","🐯","🦅","🌟","🎯","💪","🔥",
 const TOT=W.length;
 const KAMPIOEN_DEADLINE=new Date('2026-06-22T22:00:00Z');
 const KAMPIOEN_BONUS=10;
-const QUIZ_BONUS=10; // bonus pts in hoofdpoule voor quiz-winnaar
-const QUIZ_Q=[
-  {v:"In welk jaar werd het eerste FIFA WK gespeeld?",o:["1924","1928","1930","1934"],a:2},
-  {v:"Welk land heeft de meeste WK-titels (5 stuks)?",o:["Duitsland","Italië","Argentinië","Brazilië"],a:3},
-  {v:"Wie scoorde de meeste WK-goals ooit (16 in totaal)?",o:["Ronaldo","Pelé","Miroslav Klose","Just Fontaine"],a:2},
-  {v:"Wie won het WK 2022 in Qatar?",o:["Brazilië","Frankrijk","Marokko","Argentinië"],a:3},
-  {v:"Wie won het WK 2018 in Rusland?",o:["Kroatië","België","Frankrijk","Argentinië"],a:2},
-  {v:"Wie won het WK 2014 in Brazilië?",o:["Argentinië","Duitsland","Nederland","Brazilië"],a:1},
-  {v:"Wie won het WK 2010 in Zuid-Afrika?",o:["Spanje","Nederland","Duitsland","Brazilië"],a:0},
-  {v:"Wie won het WK 2006 in Duitsland?",o:["Duitsland","Argentinië","Italië","Frankrijk"],a:2},
-  {v:"Wie won het WK 1998 in Frankrijk?",o:["Brazilië","Italië","Duitsland","Frankrijk"],a:3},
-  {v:"Hoeveel keer won Nederland het WK?",o:["1x","2x","3x","Nooit"],a:3},
-  {v:"In welk jaar verloor Nederland de WK finale van West-Duitsland?",o:["1966","1970","1974","1982"],a:2},
-  {v:"Wie was topscorer op WK 2022 met 8 doelpunten?",o:["Messi","Benzema","Mbappé","Modrić"],a:2},
-  {v:"Hoeveel doelpunten scoorde Just Fontaine op WK 1958 (toernooirecord)?",o:["10","11","13","15"],a:2},
-  {v:"Welk land organiseerde het WK 2014?",o:["Argentinië","Mexico","Colombia","Brazilië"],a:3},
-  {v:"In welk jaar werden gele en rode kaarten ingevoerd op het WK?",o:["1966","1970","1974","1978"],a:1},
-  {v:"Hoeveel WK-titels heeft Duitsland (inclusief West-Duitsland)?",o:["3","4","5","6"],a:1},
-  {v:"Welk land verloor drie WK finales zonder ooit te winnen (1974, 1978, 2010)?",o:["Duitsland","Argentinië","Italië","Nederland"],a:3},
-  {v:"Hoe heet de prijs voor de beste keeper van het WK?",o:["Golden Boot","Golden Glove","Golden Ball","Lev Yashin Award"],a:3},
-  {v:"Hoe heet de prijs voor de topscorer van het WK?",o:["Golden Glove","Golden Boot","Golden Ball","Adidas Award"],a:1},
-  {v:"Hoe heet de prijs voor de beste speler van het WK?",o:["Golden Glove","Golden Boot","Golden Ball","FIFA Award"],a:2},
-  {v:"Hoeveel teams doen mee aan WK 2026?",o:["32","40","48","64"],a:2},
-  {v:"In hoeveel landen wordt WK 2026 georganiseerd?",o:["1","2","3","4"],a:2},
-  {v:"Welke landen organiseren WK 2026 samen?",o:["USA & Canada","USA & Mexico","Canada, USA & Mexico","USA, Canada, Mexico & Brazilië"],a:2},
-  {v:"Wie is de regerend wereldkampioen bij aanvang WK 2026?",o:["Brazilië","Frankrijk","Spanje","Argentinië"],a:3},
-  {v:"Hoeveel groepen zijn er op WK 2026?",o:["8","10","12","16"],a:2},
-  {v:"Wat betekent VAR?",o:["Video Analysis Referee","Video Assistant Referee","Virtual Assist Review","Video Action Replay"],a:1},
-  {v:"Welk Latijns-Amerikaans land won het allereerste WK in 1930?",o:["Argentinië","Brazilië","Paraguay","Uruguay"],a:3},
-  {v:"Wie was Brazilïë's beroemde sterspeler ook wel 'O Rei' (De Koning) genoemd?",o:["Ronaldo","Ronaldinho","Pelé","Zico"],a:2},
-  {v:"In welk jaar won Spanje voor het eerst het WK?",o:["2006","2008","2010","2012"],a:2},
-  {v:"Hoeveel minuten duurt een WK-wedstrijd in reguliere speeltijd?",o:["80 min","90 min","95 min","100 min"],a:1},
-];
 const LANDEN=['Algerije','Argentinie','Australie','Belgie','Bosnie & Herz.','Brazilie','Canada','Colombia','Congo','Curacao','Duitsland','Ecuador','Egypte','Engeland','Frankrijk','Ghana','Haiti','Irak','Iran','Ivoorkust','Japan','Jordanie','Kaapverdie','Kroatie','Marokko','Mexico','Nederland','Nieuw-Zeeland','Noorwegen','Oezbekistan','Oostenrijk','Panama','Paraguay','Portugal','Qatar','Saoedi-Arabie','Schotland','Senegal','Spanje','Tsjechie','Tunisie','Turkije','Uruguay','Verenigde Staten','Zuid-Afrika','Zuid-Korea','Zweden','Zwitserland'];
 
 let sp=null, fbK=false, cdT={};
@@ -1848,249 +1790,6 @@ function renStats(sc,echteKampioen=''){
   el.innerHTML=h;
 }
 
-// ── Quiz ──
-let _quizAntw=[],_quizVragen=[],_quizVraagNr=0,_quizTimerId=null,_quizSec=15;
-
-function quizDatum(){
-  const d=new Date();
-  return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
-
-// Deterministisch shufflen op basis van seed (zelfde dag = zelfde volgorde voor iedereen)
-function seededShuffle(arr,seed){
-  const a=[...arr];let s=Math.abs(seed|0);
-  for(let i=a.length-1;i>0;i--){s=(s*1664525+1013904223)&0x7fffffff;const j=s%(i+1);[a[i],a[j]]=[a[j],a[i]];}
-  return a;
-}
-
-// Genereer 2 live poule-vragen op basis van actuele stand
-function maakPouleVragen(dag){
-  if(!_lastSc||_lastSc.length<3)return[];
-  const sc=_lastSc;
-  const vragen=[];
-  const type=dag%3;
-
-  if(type===0){
-    // Wie leidt de poule?
-    const leider=sc[0];
-    const anderen=seededShuffle(sc.slice(1),dag*7).slice(0,3).map(s=>s.naam);
-    const opties=seededShuffle([leider.naam,...anderen],dag*13);
-    const a=opties.indexOf(leider.naam);
-    if(a>=0)vragen.push({v:"👥 Wie staat er op dit moment op de 1e plek in onze poule?",o:opties,a});
-    // Hoeveel exacte scores heeft de leider?
-    const ex=leider.ex;
-    const exOpts=seededShuffle([...new Set([ex,Math.max(0,ex-1),ex+1,ex+2])].slice(0,4),dag*17);
-    if(exOpts.length===4)vragen.push({v:`🎯 Hoeveel exacte scores heeft ${leider.naam} tot nu toe?`,o:exOpts.map(String),a:exOpts.indexOf(ex)});
-  } else if(type===1){
-    // Wie staat laatste?
-    const laatste=sc[sc.length-1];
-    const anderen=seededShuffle(sc.slice(0,-1),dag*7).slice(0,3).map(s=>s.naam);
-    const opties=seededShuffle([laatste.naam,...anderen],dag*13);
-    const a=opties.indexOf(laatste.naam);
-    if(a>=0)vragen.push({v:"👥 Wie staat er op de laatste plek in onze poule?",o:opties,a});
-    // Wie heeft meest ingevuld?
-    const meest=[...sc].sort((a,b)=>b.inv-a.inv)[0];
-    const anderen2=seededShuffle(sc.filter(s=>s.naam!==meest.naam),dag*11).slice(0,3).map(s=>s.naam);
-    const opties2=seededShuffle([meest.naam,...anderen2],dag*19);
-    const a2=opties2.indexOf(meest.naam);
-    if(a2>=0)vragen.push({v:"📝 Wie heeft de meeste wedstrijden ingevuld in onze poule?",o:opties2,a:a2});
-  } else {
-    // Hoeveel deelnemers?
-    const n=sc.length;
-    const nOpts=seededShuffle([...new Set([n,n-1,n+1,n+2])].slice(0,4),dag*23);
-    if(nOpts.length===4)vragen.push({v:"👥 Hoeveel mensen doen er mee in onze poule?",o:nOpts.map(String),a:nOpts.indexOf(n)});
-    // Hoeveel punten heeft de leider?
-    const pt=sc[0].pt;
-    const ptOpts=seededShuffle([...new Set([pt,Math.max(0,pt-3),pt+3,pt+6])].slice(0,4),dag*29);
-    if(ptOpts.length===4)vragen.push({v:`📊 Hoeveel punten heeft ${sc[0].naam} momenteel?`,o:ptOpts.map(String),a:ptOpts.indexOf(pt)});
-  }
-  return vragen.filter(q=>q.o&&q.o.length===4&&q.a>=0&&q.a<4);
-}
-
-function dagVragen(){
-  const dag=Math.floor(Date.now()/86400000);
-  const n=QUIZ_Q.length;
-  const statisch=[0,1,2].map(i=>({...QUIZ_Q[(dag*3+i)%n]}));
-  const dyn=maakPouleVragen(dag);
-  return[...statisch,...dyn];
-}
-
-async function laadQuiz(){
-  const el=document.getElementById('quizcon');if(!el)return;
-  await renQuizRang();
-  if(!sp){el.innerHTML='<p style="color:var(--dim);font-size:.83rem;text-align:center;padding:20px 0">Log in om mee te doen met de quiz 👆</p>';return;}
-  try{
-    const snap=await _get(_ref(_db,`v/_quiz/${sp}/${quizDatum()}`));
-    renQuiz(snap.exists()?snap.val():null);
-  }catch(e){renQuiz(null);}
-}
-window.laadQuiz=laadQuiz;
-
-function renQuiz(saved){
-  const el=document.getElementById('quizcon');if(!el)return;
-  const vragen=dagVragen();
-  const nV=vragen.length;
-  _quizAntw=new Array(nV).fill(null);
-  const datumStr=new Date().toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'long'});
-  if(saved){
-    const score=saved.score??0;
-    const nSaved=saved.nVragen||3;
-    const antw=saved.antwoorden||[];
-    // Gebruik opgeslagen vragen als beschikbaar (voorkomt mismatch bij gewijzigde stand)
-    const weergaveVragen=(saved.vragen&&saved.vragen.length)?saved.vragen:vragen;
-    const juist=saved.juist||weergaveVragen.map(q=>q.a);
-    const msg=score===nSaved?'🎉 Perfect!':score>=nSaved*0.6?'👍 Goed gedaan!':score>0?'💪 Morgen beter!':'😅 Helaas, morgen weer';
-    let h=`<div style="text-align:center;padding:10px 0 14px">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--goud);line-height:1">${score}/${nSaved}</div>
-      <div style="font-size:.7rem;color:var(--dim);margin-top:4px">${msg} · Nieuwe vragen morgen</div>
-    </div>`;
-    // Toon alle vragen met resultaat (gebruik opgeslagen vragen+indices)
-    weergaveVragen.slice(0,nSaved).forEach((q,i)=>{
-      const ja=juist[i]??q.a;
-      const correct=antw[i]===ja;
-      h+=`<div class="quiz-q">`;
-      h+=`<div class="quiz-qtxt"><span style="color:${correct?'#4ade80':'#f87171'}">${correct?'✅':'❌'}</span> ${q.v}</div>`;
-      h+=`<div class="quiz-opts">`;
-      q.o.forEach((opt,j)=>{
-        const isJuist=j===ja,isGekozen=j===antw[i];
-        const bc=isJuist?'#4ade80':isGekozen?'#f87171':'rgba(255,255,255,.07)';
-        h+=`<div class="quiz-opt" style="border-color:${bc};color:${isJuist||isGekozen?bc:'var(--dim)'};cursor:default">${opt}</div>`;
-      });
-      h+=`</div></div>`;
-    });
-    el.innerHTML=h;return;
-  }
-  // Sequentieel met timer — sla vragen op en start bij vraag 0
-  _quizVragen=vragen;
-  _quizVraagNr=0;
-  toonQuizVraag(0);
-}
-
-function toonQuizVraag(nr){
-  const el=document.getElementById('quizcon');if(!el)return;
-  clearInterval(_quizTimerId);
-  if(nr>=_quizVragen.length){autoSubmitQuiz();return;}
-  const q=_quizVragen[nr];
-  const nV=_quizVragen.length;
-  _quizSec=15;
-
-  function render(){
-    const pct=(_quizSec/15)*100;
-    const kleur=_quizSec>8?'var(--goud)':_quizSec>4?'#fb923c':'#f87171';
-    const tag=nr>=3?`<span style="font-size:.55rem;background:rgba(167,139,250,.15);color:#a78bfa;border-radius:4px;padding:1px 5px;margin-left:5px;vertical-align:middle">POULE</span>`:'';
-    const locked=_quizAntw[nr]!==null&&_quizAntw[nr]!==-1;
-    let h=`<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
-      <span class="quiz-prog">Vraag ${nr+1} van ${nV}</span>
-      <span class="quiz-tnum" style="color:${kleur}">${_quizSec}s</span>
-    </div>
-    <div class="quiz-tbar"><div class="quiz-tbar-fill" style="width:${pct}%;background:${kleur}"></div></div>
-    <div class="quiz-q">
-      <div class="quiz-qtxt">${q.v}${tag}</div>
-      <div class="quiz-opts">`;
-    q.o.forEach((opt,j)=>{
-      const gekozen=_quizAntw[nr]===j;
-      h+=`<button class="quiz-opt${gekozen?' gekozen':''}" onclick="kiesAntw(${nr},${j})" ${locked?'disabled':''}>${opt}</button>`;
-    });
-    h+=`</div></div>`;
-    el.innerHTML=h;
-  }
-  render();
-  _quizTimerId=setInterval(()=>{
-    _quizSec--;
-    if(_quizSec<=0){
-      clearInterval(_quizTimerId);
-      if(_quizAntw[nr]===null)_quizAntw[nr]=-1; // time-out = fout
-      render();
-      setTimeout(()=>toonQuizVraag(nr+1),900);
-    }else{render();}
-  },1000);
-}
-
-window.kiesAntw=function(vraagNr,optNr){
-  if(_quizAntw[vraagNr]!==null)return; // al beantwoord
-  clearInterval(_quizTimerId);
-  _quizAntw[vraagNr]=optNr;
-  // Toon even de keuze, dan door naar volgende
-  const el=document.getElementById('quizcon');
-  if(el){
-    const q=_quizVragen[vraagNr];
-    const nV=_quizVragen.length;
-    const kleur='#4ade80';
-    let h=`<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
-      <span class="quiz-prog">Vraag ${vraagNr+1} van ${nV}</span>
-      <span class="quiz-tnum" style="color:${kleur}">✓</span>
-    </div>
-    <div class="quiz-tbar"><div class="quiz-tbar-fill" style="width:100%;background:${kleur}"></div></div>
-    <div class="quiz-q">
-      <div class="quiz-qtxt">${q.v}</div>
-      <div class="quiz-opts">`;
-    q.o.forEach((opt,j)=>{
-      h+=`<button class="quiz-opt${j===optNr?' gekozen':''}" disabled>${opt}</button>`;
-    });
-    h+=`</div></div>`;
-    el.innerHTML=h;
-  }
-  setTimeout(()=>toonQuizVraag(vraagNr+1),1000);
-};
-
-async function autoSubmitQuiz(){
-  const el=document.getElementById('quizcon');
-  if(el)el.innerHTML='<div style="text-align:center;padding:24px 0;color:var(--dim)">⏳ Opslaan...</div>';
-  if(!sp||!fbK){renQuizZonderSave();return;}
-  const vragen=_quizVragen;
-  const juist=vragen.map(q=>q.a);
-  // -1 = time-out telt als fout
-  const score=_quizAntw.reduce((n,a,i)=>n+(a!==null&&a!==-1&&a===juist[i]?1:0),0);
-  const nV=vragen.length;
-  try{
-    const vragenSnap=vragen.map(q=>({v:q.v,o:q.o,a:q.a}));
-    await _set(_ref(_db,`v/_quiz/${sp}/${quizDatum()}`),{score,antwoorden:_quizAntw,juist,nVragen:nV,vragen:vragenSnap});
-    const totSnap=await _get(_ref(_db,`v/_quiz/${sp}/totaal`));
-    await _set(_ref(_db,`v/_quiz/${sp}/totaal`),(totSnap.exists()?totSnap.val():0)+score);
-    const msg=score===nV?'Perfect! 🎉':score>=Math.ceil(nV*0.6)?'Goed gedaan 👍':'Morgen beter 💪';
-    tt(`🧠 ${score}/${nV} goed! ${msg}`);
-    renQuiz({score,antwoorden:_quizAntw,juist,nVragen:nV});
-    renQuizRang();
-  }catch(e){tt('Fout bij opslaan',true);}
-}
-
-function renQuizZonderSave(){
-  // Toon resultaten zonder opslaan (als niet ingelogd)
-  const vragen=_quizVragen;
-  const juist=vragen.map(q=>q.a);
-  const score=_quizAntw.reduce((n,a,i)=>n+(a!==null&&a!==-1&&a===juist[i]?1:0),0);
-  renQuiz({score,antwoorden:_quizAntw,juist,nVragen:vragen.length});
-}
-
-async function renQuizRang(){
-  const el=document.getElementById('quizrang');if(!el)return;
-  try{
-    const snap=await _get(_ref(_db,'v/_quiz'));
-    if(!snap.exists()){el.innerHTML='<p style="color:var(--dim);font-size:.8rem;margin-top:6px">Nog niemand gespeeld vandaag</p>';return;}
-    const data=snap.val();
-    const datum=quizDatum();
-    const lijst=Object.entries(data)
-      .filter(([k])=>!['_r','_k','_bbq','_quiz'].includes(k))
-      .map(([naam,d])=>({naam,tot:typeof d.totaal==='number'?d.totaal:0,vd:d[datum]??null}))
-      .sort((a,b)=>b.tot-a.tot||a.naam.localeCompare(b.naam));
-    if(!lijst.length){el.innerHTML='<p style="color:var(--dim);font-size:.8rem">Nog geen quiz gespeeld</p>';return;}
-    let h='<div class="rtbl">';
-    h+=`<div class="rtbl-hdr"><span>#</span><span>Naam</span><span>🧠 Tot</span><span>Vandaag</span></div>`;
-    lijst.forEach((s,i)=>{
-      const vdTxt=s.vd?`${s.vd.score}/${s.vd.nVragen||3}`:'—';
-      h+=`<div class="rtbl-row">
-        <div class="rtbl-nr">${i===0?'👑':i===1?'🥈':i===2?'🥉':i+1}</div>
-        <div class="rtbl-naam">${s.naam}${i===0?' 🏅':''}</div>
-        <div class="rtbl-st" style="color:var(--goud);font-family:'Bebas Neue',sans-serif;font-size:1rem">${s.tot}</div>
-        <div class="rtbl-st" style="color:var(--dim)">${vdTxt}</div>
-      </div>`;
-    });
-    h+='</div>';
-    h+=`<p style="font-size:.65rem;color:var(--dim);margin-top:8px">🏅 Quiz-winnaar van de dag krijgt extra ${QUIZ_BONUS} punten in de hoofdpoule</p>`;
-    el.innerHTML=h;
-  }catch(e){el.innerHTML='';}
-}
-
 // ── Header countdown: volgende wedstrijd / live nu ──
 function tickCdBan(){
   const el=document.getElementById('cdban');if(!el)return;
@@ -2119,7 +1818,6 @@ function showTab(naam,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById(`panel-${naam}`).classList.add('active');
   if(naam==='stan')laadStanden();
-  if(naam==='quiz')laadQuiz();
   el.classList.add('active');
   history.replaceState(null,'','#'+naam);
   window.scrollTo({top:0,behavior:'smooth'});
@@ -2129,7 +1827,7 @@ window.showTab=showTab;
 // Open tab op basis van URL hash bij laden
 function openHashTab(){
   const hash=window.location.hash.slice(1);
-  const tabs=['inv','res','stan','live','rang','deel','stat','quiz','uit'];
+  const tabs=['inv','res','stan','live','rang','deel','stat','uit'];
   if(hash&&tabs.includes(hash)){
     const el=document.querySelector(`.tab[onclick*="'${hash}'"]`);
     if(el)showTab(hash,el);
