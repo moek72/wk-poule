@@ -1724,6 +1724,109 @@ function sluitSd(e){
 }
 window.sluitSd=sluitSd;
 
+// ── ONTDEK: extra stats-tegels (alles alleen-lezen) ──
+function _openSd(html){
+  const mo=document.getElementById('sdmo'),box=document.getElementById('sdmd');
+  if(!mo||!box)return;
+  box.innerHTML=html;mo.classList.add('open');
+}
+function _sdHdr(titel){return`<div class="stmd-hdr"><div class="stmd-nm">${titel}</div><button class="stmd-close" onclick="sluitSd()">✕</button></div>`;}
+function _sdRows(items){
+  return items.map((it,i)=>`<div class="sdrow"><span class="sdrow-nr">${it.nr??(i+1)}</span><span class="sdrow-naam">${it.naam}</span><span style="flex:1;min-width:0;font-size:.65rem;color:var(--dim);padding:0 6px;text-align:right">${it.sub||''}</span><span class="sdrow-val">${it.val}</span></div>`).join('');
+}
+function _spelersRaw(){return Object.entries(liveAll).filter(([k])=>k!=='_r'&&k!=='_k'&&k!=='_bbq'&&k!=='_quiz');}
+
+// 🎲 Durf-score: hoe vaak iemand een gewaagde uitslag invult
+function ontdekDurf(){
+  const rows=[];
+  _spelersRaw().forEach(([naam,sd])=>{
+    let durf=0,inv=0;
+    W.forEach(w=>{const v=sd[`w${w.id}`];if(v&&v.t!==undefined){inv++;if((v.t+v.u)>=4||Math.abs(v.t-v.u)>=3)durf++;}});
+    if(inv)rows.push({naam,durf,inv,pct:Math.round(durf/inv*100)});
+  });
+  rows.sort((a,b)=>b.pct-a.pct||b.durf-a.durf);
+  _openSd(_sdHdr('🎲 Durf-score')+
+    `<p style="color:var(--dim);font-size:.7rem;margin:0 0 10px">Hoe vaak je een gewaagde uitslag invult (4+ goals óf 3+ verschil)</p>`+
+    (_sdRows(rows.map(r=>({naam:r.naam,sub:`${r.durf}/${r.inv} gewaagd`,val:r.pct+'%'})))||'<p style="color:var(--dim)">Geen data</p>'));
+}
+// 🃏 Poedel hall of fame: onderkant van de ranglijst
+function ontdekPoedel(){
+  if(!_lastSc.length)return;
+  const sc=[..._lastSc].sort((a,b)=>a.pt-b.pt||a.ex-b.ex).slice(0,5);
+  _openSd(_sdHdr('🃏 Poedel hall of fame')+
+    `<p style="color:var(--dim);font-size:.7rem;margin:0 0 10px">De onderkant van de ranglijst 😅</p>`+
+    _sdRows(sc.map((s,i)=>({nr:i===0?'🃏':i+1,naam:s.naam,sub:`🎯${s.ex} ✅${s.goed}`,val:`${s.pt} pt`}))));
+}
+// 🎯 Beste per wedstrijd: wie had de exacte uitslag
+function ontdekBesteWed(){
+  const res=liveAll._r||{};
+  const gespeeld=W.filter(w=>res[`w${w.id}`]&&res[`w${w.id}`].t!==undefined).sort((a,b)=>new Date(b.iso)-new Date(a.iso)).slice(0,20);
+  const spelers=_spelersRaw();
+  let body='';
+  gespeeld.forEach(w=>{
+    const e=res[`w${w.id}`];
+    const exact=spelers.filter(([n,sd])=>{const v=sd[`w${w.id}`];return v&&v.t===e.t&&v.u===e.u;}).map(([n])=>n);
+    body+=`<div style="margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)">
+      <div style="font-size:.78rem;font-weight:700">${w.th} <span style="color:var(--goud)">${e.t}-${e.u}</span> ${w.ui}</div>
+      <div style="font-size:.68rem;color:${exact.length?'#4ade80':'var(--dim)'};margin-top:3px">${exact.length?'🎯 '+exact.join(', '):'Niemand had de exacte uitslag'}</div>
+    </div>`;
+  });
+  _openSd(_sdHdr('🎯 Beste per wedstrijd')+(body||'<p style="color:var(--dim)">Nog geen uitslagen</p>'));
+}
+// 🦅 Oranje-kenner: punten op Nederland-wedstrijden
+function ontdekOranje(){
+  const res=liveAll._r||{};
+  const oranjeW=W.filter(w=>w.o);
+  const gespeeld=oranjeW.filter(w=>res[`w${w.id}`]&&res[`w${w.id}`].t!==undefined);
+  const rows=[];
+  _spelersRaw().forEach(([naam,sd])=>{
+    let pt=0,ex=0;
+    gespeeld.forEach(w=>{const v=sd[`w${w.id}`],e=res[`w${w.id}`];if(!v||v.t===undefined)return;
+      if(v.t===e.t&&v.u===e.u){pt+=5;ex++;}
+      else if((v.t>v.u&&e.t>e.u)||(v.t<v.u&&e.t<e.u)||(v.t===v.u&&e.t===e.u))pt+=2;});
+    rows.push({naam,pt,ex});
+  });
+  rows.sort((a,b)=>b.pt-a.pt||b.ex-a.ex);
+  _openSd(_sdHdr('🦅 Oranje-kenner')+
+    `<p style="color:var(--dim);font-size:.7rem;margin:0 0 10px">Punten op de wedstrijden van Nederland (${gespeeld.length} gespeeld)</p>`+
+    (gespeeld.length?_sdRows(rows.map(r=>({naam:r.naam,sub:`🎯${r.ex}`,val:`${r.pt} pt`}))):'<p style="color:var(--dim)">Nederland heeft nog niet gespeeld</p>'));
+}
+// ⚔️ Head-to-head: vergelijk twee deelnemers
+function ontdekH2H(a,b){
+  const res=liveAll._r||{};
+  const namen=_spelersRaw().map(([n])=>n).sort((x,y)=>x.localeCompare(y));
+  if(namen.length<2){_openSd(_sdHdr('⚔️ Head-to-head')+'<p style="color:var(--dim)">Minimaal 2 deelnemers nodig</p>');return;}
+  a=a&&namen.includes(a)?a:namen[0];
+  b=b&&namen.includes(b)?b:(namen[1]||namen[0]);
+  const sdA=liveAll[a]||{},sdB=liveAll[b]||{};
+  const scoreOf=sd=>{let pt=0,ex=0;W.forEach(w=>{const v=sd[`w${w.id}`],e=res[`w${w.id}`];if(!e||!v||v.t===undefined)return;
+    if(v.t===e.t&&v.u===e.u){pt+=5;ex++;}else if((v.t>v.u&&e.t>e.u)||(v.t<v.u&&e.t<e.u)||(v.t===v.u&&e.t===e.u))pt+=2;});return{pt,ex};};
+  const sA=scoreOf(sdA),sB=scoreOf(sdB);
+  // Per gespeelde wedstrijd: wie pakte meer punten
+  let winA=0,winB=0;
+  W.forEach(w=>{const e=res[`w${w.id}`];if(!e)return;
+    const p=(sd)=>{const v=sd[`w${w.id}`];if(!v||v.t===undefined)return 0;if(v.t===e.t&&v.u===e.u)return 5;if((v.t>v.u&&e.t>e.u)||(v.t<v.u&&e.t<e.u)||(v.t===v.u&&e.t===e.u))return 2;return 0;};
+    const pa=p(sdA),pb=p(sdB);if(pa>pb)winA++;else if(pb>pa)winB++;});
+  const opt=(sel)=>namen.map(n=>`<option ${n===sel?'selected':''}>${n.replace(/"/g,'')}</option>`).join('');
+  const kol=(naam,s,wins,winner)=>`<div style="flex:1;text-align:center;padding:10px;background:${winner?'rgba(74,222,128,.1)':'rgba(255,255,255,.04)'};border:1px solid ${winner?'rgba(74,222,128,.4)':'var(--border)'};border-radius:12px">
+    <div style="font-size:.8rem;font-weight:800;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${naam}${winner?' 👑':''}</div>
+    <div style="font-size:1.4rem;font-weight:900;color:var(--goud)">${s.pt}</div>
+    <div style="font-size:.62rem;color:var(--dim)">punten</div>
+    <div style="font-size:.7rem;margin-top:6px">🎯 ${s.ex} exact</div>
+    <div style="font-size:.7rem">⚔️ ${wins} duels gewonnen</div>
+  </div>`;
+  _openSd(_sdHdr('⚔️ Head-to-head')+
+    `<div style="display:flex;gap:8px;margin-bottom:12px">
+      <select id="h2hA" class="fsel" style="flex:1" onchange="ontdekH2H(this.value,document.getElementById('h2hB').value)">${opt(a)}</select>
+      <select id="h2hB" class="fsel" style="flex:1" onchange="ontdekH2H(document.getElementById('h2hA').value,this.value)">${opt(b)}</select>
+    </div>
+    <div style="display:flex;gap:8px;align-items:stretch">
+      ${kol(a,sA,winA,sA.pt>sB.pt)}
+      ${kol(b,sB,winB,sB.pt>sA.pt)}
+    </div>`);
+}
+window.ontdekDurf=ontdekDurf;window.ontdekPoedel=ontdekPoedel;window.ontdekBesteWed=ontdekBesteWed;window.ontdekOranje=ontdekOranje;window.ontdekH2H=ontdekH2H;
+
 function renD(data){
   if(!data||!data.length){
     document.getElementById('dcon').innerHTML='<div class="leeg"><span class="li">👀</span><p>Nog niemand!</p></div>';
@@ -1777,6 +1880,15 @@ function renStats(sc,echteKampioen=''){
   h+=skc('📝',totaalVoorsps,'Voorspellingen','inv');
   h+=skc('🏆',metKamp,'Kampioen gekozen','kamp');
   if(zonderKamp>0)h+=skc('⚠️',zonderKamp,'Nog geen kampioen','nokamp');
+  h+=`</div>`;
+  // Sectie: Ontdek — extra inzichten als tegels
+  const skt=(ico,lbl,fn)=>`<div class="statk statk-tap" onclick="${fn}"><div class="ski">${ico}</div><div class="skv" style="font-size:.92rem">${lbl}</div><div class="statk-hint">Tik voor overzicht ›</div></div>`;
+  h+=`<div class="rt">🔍 ONTDEK</div><div class="statrow">`;
+  h+=skt('🎲','Durf-score','ontdekDurf()');
+  h+=skt('⚔️','Head-to-head','ontdekH2H()');
+  h+=skt('🎯','Beste per wedstrijd','ontdekBesteWed()');
+  h+=skt('🦅','Oranje-kenner','ontdekOranje()');
+  h+=skt('🃏','Poedel hall of fame','ontdekPoedel()');
   h+=`</div>`;
   // Sectie: Meest voorkomende echte uitslagen (top 5)
   const echteTel={};
