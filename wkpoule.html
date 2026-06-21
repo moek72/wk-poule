@@ -1614,16 +1614,20 @@ function renR(sc,echteKampioen=''){
   const bew=_bewegingMap(sc);
   const poedelDrempel=Math.floor(TOT*0.75)+1; // > 3/4 van alle wedstrijden
   const last=sc.length-1;
+  // Poedelprijs: laagst scorende deelnemer die genoeg invulde én een kampioen koos
+  const poedelKandidaat=sc.length>1?[...sc].filter(s=>s.inv>=poedelDrempel&&s.kv).sort((a,b)=>a.pt-b.pt||a.ex-b.ex)[0]:null;
   let h=`<div class="rtbl">`;
   h+=`<div class="rtbl-hdr"><span>#</span><span>Naam</span><span>Pt</span><span>🎯</span><span>✅</span><span>❌</span><span>📝</span></div>`;
   h+=sc.map((s,i)=>{
     const kvBadge=s.kv?`<div style="font-size:.6rem;color:var(--dim);margin-top:2px;line-height:1">🏆 ${s.kv}${echteKampioen&&s.kv===echteKampioen?' ✅':echteKampioen?' ❌':''}</div>`:'';
     const isLast=i===last&&sc.length>1;
-    const poedelBadge=isLast
-      ?(s.inv>=poedelDrempel
-        ?`<div style="font-size:.58rem;color:#f59e0b;margin-top:2px;line-height:1">🎲 Poedelprijs kandidaat!</div>`
-        :`<div style="font-size:.58rem;color:var(--dim);margin-top:2px;line-height:1">🎲 Te weinig ingevuld voor poedelprijs</div>`)
-      :'';
+    const isPoedel=poedelKandidaat&&s.naam===poedelKandidaat.naam;
+    let poedelBadge='';
+    if(isPoedel)poedelBadge=`<div style="font-size:.58rem;color:#f59e0b;margin-top:2px;line-height:1">🎲 Poedelprijs kandidaat!</div>`;
+    else if(isLast&&!(s.inv>=poedelDrempel&&s.kv)){
+      const reden=s.inv<poedelDrempel?'te weinig ingevuld':'geen kampioen gekozen';
+      poedelBadge=`<div style="font-size:.58rem;color:var(--dim);margin-top:2px;line-height:1">🎲 Geen poedelkans (${reden})</div>`;
+    }
     const nm=s.naam.replace(/'/g,"\\'");
     const d=bew[s.naam];
     const pijl=d>0?`<span style="color:#4ade80;font-size:.56rem;font-weight:900;display:block;line-height:1;margin-top:2px">▲${d}</span>`
@@ -1641,7 +1645,7 @@ function renR(sc,echteKampioen=''){
   h+=`</div>`;
   h+=`<p style="font-size:.6rem;color:var(--dim);text-align:center;margin-top:4px">🎯 exact +5pt · ✅ goed +2pt · ❌ fout · 📝 ingevuld · 🏆 kampioen +${KAMPIOEN_BONUS}pt</p>`;
   h+=`<p style="font-size:.6rem;color:var(--dim);text-align:center;margin-top:3px"><span style="color:#4ade80;font-weight:800">▲</span>/<span style="color:#f87171;font-weight:800">▼</span> = stijger/daler sinds gisteren</p>`;
-  h+=`<p style="font-size:.6rem;color:var(--dim);text-align:center;margin-top:3px">🎲 Poedelprijs (bitterballen): alleen als je meer dan ¾ van de wedstrijden hebt ingevuld (minimaal ${poedelDrempel} van ${TOT})</p>`;
+  h+=`<p style="font-size:.6rem;color:var(--dim);text-align:center;margin-top:3px">🎲 Poedelprijs (bitterballen): alleen als je meer dan ¾ van de wedstrijden invulde (min. ${poedelDrempel} van ${TOT}) én een kampioen koos</p>`;
   h+=`<button class="meedoen-btn" onclick="gaNaar('inv')" style="margin-top:14px">✋ Nog niet mee? Schrijf je in! →</button>`;
   document.getElementById('rcon').innerHTML=h;
 }
@@ -1770,14 +1774,14 @@ function ontdekDurf(){
     `<p style="color:var(--dim);font-size:.7rem;margin:0 0 10px">Hoe vaak je een gewaagde uitslag invult (4+ goals óf 3+ verschil)</p>`+
     (_sdRows(rows.map(r=>({naam:r.naam,sub:`${r.durf}/${r.inv} gewaagd`,val:r.pct+'%'})))||'<p style="color:var(--dim)">Geen data</p>'));
 }
-// 🃏 Poedel hall of fame: onderkant van de ranglijst (alleen wie genoeg ingevuld heeft)
+// 🃏 Poedel hall of fame: onderkant van de ranglijst (alleen volwaardige deelnemers: genoeg ingevuld én kampioen gekozen)
 function ontdekPoedel(){
   if(!_lastSc.length)return;
   const drempel=Math.floor(TOT*0.75)+1;
-  const kandidaten=_lastSc.filter(s=>s.inv>=drempel).sort((a,b)=>a.pt-b.pt||a.ex-b.ex).slice(0,5);
+  const kandidaten=_lastSc.filter(s=>s.inv>=drempel&&s.kv).sort((a,b)=>a.pt-b.pt||a.ex-b.ex).slice(0,5);
   _openSd(_sdHdr('🃏 Poedel hall of fame')+
-    `<p style="color:var(--dim);font-size:.7rem;margin:0 0 10px">Onderaan tussen wie genoeg invulde (min. ${drempel}/${TOT}). Te weinig ingevuld = geen poedelkans 😅</p>`+
-    (kandidaten.length?_sdRows(kandidaten.map((s,i)=>({nr:i===0?'🃏':i+1,naam:s.naam,sub:`🎯${s.ex} ✅${s.goed} · 📝${s.inv}/${TOT}`,val:`${s.pt} pt`}))):'<p style="color:var(--dim)">Nog niemand voldoet aan de invul-drempel</p>'));
+    `<p style="color:var(--dim);font-size:.7rem;margin:0 0 10px">Onderaan tussen wie écht meedoet: min. ${drempel}/${TOT} ingevuld én een kampioen gekozen. Anders geen poedelkans 😅</p>`+
+    (kandidaten.length?_sdRows(kandidaten.map((s,i)=>({nr:i===0?'🃏':i+1,naam:s.naam,sub:`🎯${s.ex} ✅${s.goed} · 📝${s.inv}/${TOT}`,val:`${s.pt} pt`}))):'<p style="color:var(--dim)">Nog niemand voldoet aan de voorwaarden</p>'));
 }
 // 🎯 Beste per wedstrijd: wie had de exacte uitslag
 function ontdekBesteWed(){
