@@ -1770,13 +1770,14 @@ function ontdekDurf(){
     `<p style="color:var(--dim);font-size:.7rem;margin:0 0 10px">Hoe vaak je een gewaagde uitslag invult (4+ goals óf 3+ verschil)</p>`+
     (_sdRows(rows.map(r=>({naam:r.naam,sub:`${r.durf}/${r.inv} gewaagd`,val:r.pct+'%'})))||'<p style="color:var(--dim)">Geen data</p>'));
 }
-// 🃏 Poedel hall of fame: onderkant van de ranglijst
+// 🃏 Poedel hall of fame: onderkant van de ranglijst (alleen wie genoeg ingevuld heeft)
 function ontdekPoedel(){
   if(!_lastSc.length)return;
-  const sc=[..._lastSc].sort((a,b)=>a.pt-b.pt||a.ex-b.ex).slice(0,5);
+  const drempel=Math.floor(TOT*0.75)+1;
+  const kandidaten=_lastSc.filter(s=>s.inv>=drempel).sort((a,b)=>a.pt-b.pt||a.ex-b.ex).slice(0,5);
   _openSd(_sdHdr('🃏 Poedel hall of fame')+
-    `<p style="color:var(--dim);font-size:.7rem;margin:0 0 10px">De onderkant van de ranglijst 😅</p>`+
-    _sdRows(sc.map((s,i)=>({nr:i===0?'🃏':i+1,naam:s.naam,sub:`🎯${s.ex} ✅${s.goed}`,val:`${s.pt} pt`}))));
+    `<p style="color:var(--dim);font-size:.7rem;margin:0 0 10px">Onderaan tussen wie genoeg invulde (min. ${drempel}/${TOT}). Te weinig ingevuld = geen poedelkans 😅</p>`+
+    (kandidaten.length?_sdRows(kandidaten.map((s,i)=>({nr:i===0?'🃏':i+1,naam:s.naam,sub:`🎯${s.ex} ✅${s.goed} · 📝${s.inv}/${TOT}`,val:`${s.pt} pt`}))):'<p style="color:var(--dim)">Nog niemand voldoet aan de invul-drempel</p>'));
 }
 // 🎯 Beste per wedstrijd: wie had de exacte uitslag
 function ontdekBesteWed(){
