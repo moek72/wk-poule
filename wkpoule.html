@@ -1998,43 +1998,6 @@ function ontdekSpelerkaart(naam){
   body+=hl('🏆','Kampioenskeuze',s.kv||'nog niet gekozen');
   _openSd(_sdHdr('👤 Spelerskaart')+body);
 }
-// 🔀 Twijfelaars: wie heeft de meeste voorspellingen gewijzigd? (vergelijkt backups)
-async function ontdekTwijfelaars(){
-  _openSd(_sdHdr('🔀 Twijfelaars')+'<div style="padding:1.2rem;text-align:center;color:var(--dim)">⏳ Backups laden...</div>');
-  const backups=[];
-  const base=window.location.href.replace(/\/[^/]*$/,'')+'/backups';
-  const now=new Date(),start=new Date('2026-06-11');
-  for(let d=new Date(now-86400000);d>=start;d=new Date(d-86400000)){
-    const ds=d.toISOString().slice(0,10);
-    try{const r=await fetch(`${base}/backup-${ds}.json`,{cache:'no-store'});if(r.ok){const j=await r.json();backups.push({ds,data:j.v||j});}}catch(e){}
-  }
-  if(!backups.length){
-    _openSd(_sdHdr('🔀 Twijfelaars')+'<p style="padding:1rem;color:var(--dim)">Nog geen backups beschikbaar om mee te vergelijken.<br><small>Morgen al te zien!</small></p>');
-    return;
-  }
-  const changes={};
-  _spelersRaw().forEach(([naam])=>{changes[naam]=0;});
-  backups.forEach(({data})=>{
-    _spelersRaw().forEach(([naam,lv])=>{
-      const old=data[naam];if(!old)return;
-      W.forEach(w=>{
-        const k=`w${w.id}`,lp=lv[k],op=old[k];
-        if(!lp||!op||lp.t===undefined||op.t===undefined)return;
-        if(lp.t!==op.t||lp.u!==op.u)changes[naam]=(changes[naam]||0)+1;
-      });
-    });
-  });
-  const rows=Object.entries(changes).filter(([,n])=>n>0).sort(([,a],[,b])=>b-a);
-  const sub=backups.length===1?`vs ${backups[0].ds}`:`${backups.length} backup-dagen vergeleken`;
-  if(!rows.length){
-    _openSd(_sdHdr('🔀 Twijfelaars')+`<p style="padding:.4rem 1rem;font-size:.8rem;color:var(--dim)">${sub}</p><p style="padding:1rem;color:#4ade80">✅ Niemand heeft voorspellingen gewijzigd!</p>`);
-    return;
-  }
-  _openSd(_sdHdr('🔀 Twijfelaars')+
-    `<p style="padding:.4rem 1rem;font-size:.8rem;color:var(--dim)">${sub}</p>`+
-    _sdRows(rows.map(([naam,n],i)=>({nr:i===0?'🔀':i+1,naam,sub:`${n} wijziging${n===1?'':'en'}`,val:''}))));
-}
-
 // ⏰ Achterlopers: wie heeft de meeste voorspellingen gemist?
 function ontdekAchterlopers(){
   const sc=_spelersRaw(),gespeeld=_gespeeldSorted();
@@ -2056,7 +2019,7 @@ function ontdekAchterlopers(){
 window.ontdekStreaks=ontdekStreaks;window.ontdekDag=ontdekDag;window.ontdekTypes=ontdekTypes;window.ontdekSpelerkaart=ontdekSpelerkaart;
 window.ontdekDurf=ontdekDurf;window.ontdekPoedel=ontdekPoedel;window.ontdekBesteWed=ontdekBesteWed;window.ontdekOranje=ontdekOranje;window.ontdekH2H=ontdekH2H;
 window.ontdekUitslagen=ontdekUitslagen;window.ontdekVoorspellingen=ontdekVoorspellingen;window.ontdekKampioen=ontdekKampioen;
-window.ontdekTwijfelaars=ontdekTwijfelaars;window.ontdekAchterlopers=ontdekAchterlopers;
+window.ontdekAchterlopers=ontdekAchterlopers;
 
 function renD(data){
   if(!data||!data.length){
@@ -2127,7 +2090,6 @@ function renStats(sc,echteKampioen=''){
   h+=skt('🎯','Beste per wedstrijd','ontdekBesteWed()');
   h+=skt('🦅','Oranje-kenner','ontdekOranje()');
   h+=skt('🃏','Poedel hall of fame','ontdekPoedel()');
-  h+=skt('🔀','Twijfelaars','ontdekTwijfelaars()');
   h+=skt('⏰','Achterlopers','ontdekAchterlopers()');
   h+=`</div>`;
   el.innerHTML=h;
