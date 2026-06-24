@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jaikaran Family WK Gazette 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;700;900&family=Playfair+Display:wght@700;900&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --gold:#FFD700;--gold2:#B8860B;--green:#0a1a0a;--green2:#1a3a1a;--green3:#2d6a2d;
+  --oranje:#FF6B00;--wit:#f5f0e8;--dim:#8a9a8a;
+}
+
+body{background:#000;font-family:'Nunito',sans-serif;overflow:hidden;height:100vh;width:100vw;}
+
+/* ── SLIDES ── */
+.slides{position:relative;width:100%;height:100vh;}
+.slide{
+  position:absolute;inset:0;display:none;flex-direction:column;
+  align-items:center;justify-content:center;
+  background:var(--green);overflow:hidden;
+}
+.slide.active{display:flex;}
+
+/* Animated bg particles */
+.slide::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 20% 20%,rgba(255,215,0,.07) 0%,transparent 60%),
+             radial-gradient(ellipse at 80% 80%,rgba(45,106,45,.15) 0%,transparent 60%);
+  animation:pulse 4s ease-in-out infinite alternate;
+}
+@keyframes pulse{from{opacity:.6}to{opacity:1}}
+
+/* ── NAVIGATIE ── */
+.nav{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  display:flex;gap:10px;z-index:100;align-items:center;
+}
+.nav-dot{
+  width:10px;height:10px;border-radius:50%;
+  background:rgba(255,215,0,.3);cursor:pointer;transition:all .3s;
+}
+.nav-dot.active{background:var(--gold);width:28px;border-radius:5px;}
+.nav-btn{
+  background:rgba(255,215,0,.15);border:1px solid rgba(255,215,0,.3);
+  color:var(--gold);width:40px;height:40px;border-radius:50%;
+  font-size:1.2rem;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;transition:all .2s;
+}
+.nav-btn:hover{background:rgba(255,215,0,.3);}
+
+/* ── PROGRESS BAR ── */
+.progress{position:fixed;top:0;left:0;height:3px;background:var(--gold);
+  transition:width .3s;z-index:100;}
+
+/* ── BEKER ── */
+.beker{
+  width:120px;filter:drop-shadow(0 0 30px rgba(255,215,0,.6));
+  animation:float 3s ease-in-out infinite;
+}
+.beker-lg{width:220px;}
+.beker-sm{width:70px;opacity:.7;}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+
+/* ── GOUDEN LIJN ── */
+.goudlijn{
+  width:80%;height:2px;margin:12px auto;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+
+/* ── TEKST STIJLEN ── */
+.titel-mega{
+  font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,8vw,6rem);
+  color:var(--gold);text-align:center;letter-spacing:4px;
+  text-shadow:0 0 40px rgba(255,215,0,.5);line-height:1;
+}
+.titel-groot{
+  font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,5vw,3.5rem);
+  color:var(--gold);text-align:center;letter-spacing:3px;
+}
+.ondertitel{
+  color:rgba(245,240,232,.7);font-size:clamp(.8rem,2vw,1rem);
+  text-align:center;letter-spacing:2px;text-transform:uppercase;
+}
+.verhaal{
+  color:var(--wit);font-size:clamp(.9rem,2.2vw,1.1rem);
+  line-height:1.7;text-align:center;max-width:700px;padding:0 20px;
+}
+.accent{color:var(--gold);font-weight:900;}
+.oranje{color:var(--oranje);}
+.groen{color:#4ade80;}
+
+/* ── SCOREBORD ── */
+.scorebord{
+  background:rgba(0,0,0,.5);border:2px solid var(--gold);
+  border-radius:16px;overflow:hidden;width:90%;max-width:600px;
+  box-shadow:0 0 40px rgba(255,215,0,.2);
+}
+.scorebord-hdr{
+  background:linear-gradient(135deg,var(--gold2),var(--gold));
+  padding:14px 20px;text-align:center;
+  font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:#000;letter-spacing:2px;
+}
+.score-rij{
+  display:flex;align-items:center;padding:11px 18px;
+  border-bottom:1px solid rgba(255,215,0,.1);gap:12px;
+}
+.score-rij:last-child{border-bottom:none;}
+.score-rij.top1{background:rgba(255,215,0,.12);}
+.score-rij.top2{background:rgba(255,215,0,.08);}
+.score-rij.top3{background:rgba(184,134,11,.06);}
+.score-pos{min-width:36px;font-weight:900;color:var(--gold);font-size:1.1rem;}
+.score-naam{flex:1;color:var(--wit);font-weight:700;font-size:1rem;}
+.score-pt{color:var(--gold);font-weight:900;font-size:1.1rem;min-width:55px;text-align:right;}
+.score-sub{color:var(--dim);font-size:.75rem;margin-left:8px;}
+
+/* ── STAT TEGELS ── */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:90%;max-width:700px;}
+.stat-tegel{
+  background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.25);
+  border-radius:14px;padding:16px 12px;text-align:center;
+}
+.stat-ico{font-size:2rem;margin-bottom:6px;}
+.stat-val{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--gold);}
+.stat-lbl{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;}
+
+/* ── FOTO CONTAINER ── */
+.foto-wrap{
+  position:relative;border-radius:18px;overflow:hidden;
+  box-shadow:0 8px 40px rgba(0,0,0,.6);
+}
+.foto-wrap img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  filter:saturate(1.4) contrast(1.08) brightness(1.05);
+}
+.foto-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(0deg,rgba(10,26,10,.8) 0%,transparent 50%);
+}
+.foto-label{
+  position:absolute;bottom:12px;left:16px;right:16px;
+  color:var(--wit);font-size:.8rem;font-weight:700;
+}
+
+/* ── WHATSAPP BUBBEL ── */
+.wa-bubbel{
+  background:#1a3a1a;border-radius:0 16px 16px 16px;
+  padding:10px 16px;max-width:320px;margin:6px 0;
+  border-left:3px solid var(--oranje);
+  color:var(--wit);font-size:.9rem;
+  animation:popIn .4s ease;
+}
+.wa-naam{color:var(--oranje);font-weight:900;font-size:.75rem;margin-bottom:3px;}
+@keyframes popIn{from{opacity:0;transform:scale(.8) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+/* ── BAR CHART ── */
+.bar-rij{display:flex;align-items:center;gap:10px;margin:6px 0;width:90%;max-width:600px;}
+.bar-vlag{font-size:1.3rem;min-width:30px;}
+.bar-land{color:var(--wit);min-width:100px;font-size:.9rem;font-weight:700;}
+.bar-track{flex:1;background:rgba(255,255,255,.08);border-radius:20px;height:24px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:20px;display:flex;align-items:center;
+  padding-left:10px;font-size:.8rem;font-weight:900;color:#000;
+  transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+.bar-n{color:var(--gold);min-width:60px;text-align:right;font-weight:900;}
+
+/* ── PRIJS KAART ── */
+.prijs-kaart{
+  background:rgba(0,0,0,.4);border-radius:20px;padding:24px 28px;
+  width:90%;max-width:600px;margin:8px 0;
+  border-left:4px solid var(--gold);
+}
+.prijs-titel{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--gold);margin-bottom:6px;}
+.prijs-sub{color:var(--wit);font-size:1rem;line-height:1.5;}
+
+/* ── ANIMATIES ── */
+.fade-up{animation:fadeUp .6s ease forwards;}
+.fade-up:nth-child(2){animation-delay:.15s}
+.fade-up:nth-child(3){animation-delay:.3s}
+.fade-up:nth-child(4){animation-delay:.45s}
+.fade-up:nth-child(5){animation-delay:.6s}
+.fade-up:nth-child(6){animation-delay:.75s}
+.fade-up:nth-child(7){animation-delay:.9s}
+.fade-up:nth-child(8){animation-delay:1.05s}
+.fade-up:nth-child(9){animation-delay:1.2s}
+.fade-up:nth-child(10){animation-delay:1.35s}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.slide-in-right{animation:sir .5s ease forwards;}
+@keyframes sir{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:translateX(0)}}
+
+/* ── COLLAGE ── */
+.collage{
+  display:grid;grid-template-columns:1fr 1fr;
+  grid-template-rows:1fr 1fr;gap:8px;
+  width:92%;max-width:680px;height:52vh;
+}
+.collage .foto-wrap:first-child{grid-row:1/3;}
+
+/* ── FULLSCREEN FOTO ── */
+.foto-full{
+  position:absolute;inset:0;z-index:0;
+}
+.foto-full img{
+  width:100%;height:100%;object-fit:cover;
+  filter:saturate(1.3) brightness(.55) blur(1px);
+}
+.foto-full::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(10,26,10,.4) 0%,rgba(10,26,10,.85) 100%);
+}
+
+/* ── UITSLAG SLIDE ── */
+.uitslag-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:90%;max-width:680px;}
+.uitslag-kaart{
+  background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.2);
+  border-radius:14px;padding:16px;display:flex;align-items:center;gap:12px;
+}
+.uitslag-pos{font-size:1.4rem;}
+.uitslag-naam{color:var(--wit);font-weight:700;font-size:.9rem;}
+.uitslag-pt{color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:1.4rem;}
+.uitslag-sub{color:var(--dim);font-size:.7rem;}
+
+/* ── QUOTE ── */
+.quote-box{
+  background:rgba(0,0,0,.4);border-radius:16px;padding:20px 28px;
+  border-left:4px solid var(--oranje);max-width:600px;width:90%;
+  font-style:italic;color:var(--wit);font-size:1rem;line-height:1.6;
+}
+.quote-auteur{color:var(--oranje);font-size:.8rem;font-weight:900;margin-top:8px;font-style:normal;}
+
+/* ── CREDITS SCROLL ── */
+.credits-list{
+  list-style:none;text-align:center;animation:scrollUp 12s linear infinite;
+}
+.credits-list li{padding:5px 0;color:var(--wit);font-size:.95rem;}
+.credits-list li span{color:var(--gold);font-weight:900;}
+@keyframes scrollUp{0%{transform:translateY(40vh)}100%{transform:translateY(-100%)}}
+
+/* ── CONFETTI ── */
+.confetti-wrap{position:absolute;inset:0;pointer-events:none;z-index:10;overflow:hidden;}
+.conf{position:absolute;width:8px;height:8px;opacity:0;animation:fall linear infinite;}
+@keyframes fall{
+  0%{opacity:1;top:-10px;transform:rotate(0deg);}
+  100%{opacity:0;top:110%;transform:rotate(720deg);}
+}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<div class="slides" id="slides">
+
+<!-- ═══════════════════════════════ SLIDE 1 — INTRO ═══════════════════════════════ -->
+<div class="slide active" id="slide-1">
+  <div class="confetti-wrap" id="conf1"></div>
+  <img src="wkgazetteposter.png" onerror="this.style.display='none'"
+    style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.15;filter:blur(2px)">
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:16px;">
+    <img src="49397.jpg" onerror="this.src=''" class="beker-sm fade-up"
+      style="width:90px;opacity:0;filter:drop-shadow(0 0 20px gold);border-radius:50%;">
+    <div class="goudlijn" style="width:200px"></div>
+    <div class="titel-mega fade-up" style="animation-delay:.2s">JAIKARAN FAMILY</div>
+    <div class="titel-mega fade-up" style="animation-delay:.35s;color:#fff;font-size:clamp(2rem,6vw,4.5rem)">WK GAZETTE</div>
+    <div class="goudlijn fade-up" style="animation-delay:.5s"></div>
+    <div class="ondertitel fade-up" style="animation-delay:.65s">✦ EDITIE #2 · 22 JUNI 2026 ✦</div>
+    <div class="ondertitel fade-up" style="animation-delay:.8s;color:rgba(255,215,0,.6);font-size:.75rem">
+      40 WEDSTRIJDEN · 20 DEELNEMERS · 1 BEKER TE WINNEN
+    </div>
+    <div class="stat-grid fade-up" style="animation-delay:1s;margin-top:8px">
+      <div class="stat-tegel"><div class="stat-ico">⚽</div><div class="stat-val">40</div><div class="stat-lbl">Gespeeld</div></div>
+      <div class="stat-tegel"><div class="stat-ico">👥</div><div class="stat-val">20</div><div class="stat-lbl">Deelnemers</div></div>
+      <div class="stat-tegel"><div class="stat-ico">🏆</div><div class="stat-val">880</div><div class="stat-lbl">Totaal punten</div></div>
+    </div>
+    <div class="ondertitel fade-up" style="animation-delay:1.2s;color:rgba(255,215,0,.4);font-size:.7rem;margin-top:4px">
+      moek72.github.io/wk-poule/wkpoule.html
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SLIDE 2 — HOFHOUSE OPENING ═══════════════════════════════ -->
+<div class="slide" id="slide-2">
+  <div class="foto-full">
+    <img src="49400.jpg" onerror="this.src='49397.jpg'">
+  </div>
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:14px;padding:20px;">
+    <div style="background:rgba(255,107,0,.9);padding:6px 20px;border-radius:20px;" class="fade-up">
+      <span style="color:#fff;font-weight:900;font-size:.85rem;letter-spacing:2px">📍 HOFHOUSE BAR · DEN HAAG · 20 JUNI 2026</span>
+    </div>
+    <div class="titel-groot fade-up" style="animation-delay:.2s">HET BEGINT HIER</div>
+    <div class="goudlijn fade-up" style="animation-delay:.3s"></div>
+    <div class="verhaal fade-up" style="animation-delay:.4s">
+      De familie Jaikaran heeft de Hofhouse Bar overgenomen.<br>
+      <span class="accent">Oranje sjaals. Oranje leis. Oranje biertjes.</span><br>
+      Op het scherm: Nederland. Op de telefoon: de poule.
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px" class="fade-up" style="animation-delay:.6s">
+      <div class="wa-bubbel"><div class="wa-naam">Appgroep</div>💬 "Wie staat laatste nu??"</div>
+      <div class="wa-bubbel"><div class="wa-naam">Céline</div>💬 "Koekie 😂"</div>
+      <div class="wa-bubbel"><div class="wa-naam">??</div>💬 "HUH??? HOE KAN DAT???"</div>
+    </div>
+    <div class="verhaal fade-up" style="animation-delay:.8s;font-style:italic;color:rgba(255,255,255,.6);font-size:.85rem">
+      "Dank Roshni voor de fijne organisatie. Was supergezellig!" — Chanine ♥️
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SLIDE 3 — FOTO COLLAGE HOFHOUSE ═══════════════════════════════ -->
+<div class="slide" id="slide-3">
+  <div class="titel-groot fade-up" style="margin-bottom:12px;z-index:1">📸 ONZE AVOND</div>
+  <div class="collage fade-up" style="animation-delay:.2s;z-index:1">
+    <div class="foto-wrap" style="border-radius:14px">
+      <img src="49397.jpg" onerror="this.src=''" alt="">
+      <div class="foto-overlay"></div>
+      <div class="foto-label">🧡 Hofhouse Bar — samen kijken!</div>
+    </div>
+    <div class="foto-wrap" style="border-radius:14px">
+      <img src="49402.jpg" onerror="this.src=''" alt="">
+    </div>
+    <div class="foto-wrap" style="border-radius:14px">
+      <img src="49401.jpg" onerror="this.src=''" alt="">
+    </div>
+  </div>
+  <div class="goudlijn fade-up" style="animation-delay:.4s;margin-top:12px;z-index:1"></div>
+  <div class="ondertitel fade-up" style="animation-delay:.5s;z-index:1">
+    🇳🇱 Nederland scoort. De familie ook.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SLIDE 4 — DE TWEE LEIDERS ═══════════════════════════════ -->
+<div class="slide" id="slide-4">
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:14px;width:100%;padding:20px">
+    <div class="titel-groot fade-up">👑 AAN DE LEIDING</div>
+    <div class="goudlijn fade-up" style="animation-delay:.15s"></div>
+
+    <div class="scorebord fade-up" style="animation-delay:.25s">
+      <div class="scorebord-hdr">🏆 TUSSENSTAND NA 40 WEDSTRIJDEN</div>
+      <div class="score-rij top1">
+        <div class="score-pos">👑 1</div>
+        <div class="score-naam">POK</div>
+        <div class="score-sub">⭐3 exact · 23 goed · 🇲🇽</div>
+        <div class="score-pt">61 pt</div>
+      </div>
+      <div class="score-rij top1">
+        <div class="score-pos">👑 1</div>
+        <div class="score-naam">SHAMMA</div>
+        <div class="score-sub">⭐3 exact · 23 goed · 🇫🇷</div>
+        <div class="score-pt">61 pt</div>
+      </div>
+    </div>
+
+    <div class="verhaal fade-up" style="animation-delay:.4s">
+      <span class="accent">Gelijk. Op de millimeter.</span><br>
+      Twee leiders. Nul verschil. Na 40 wedstrijden.
+    </div>
+
+    <div style="display:flex;gap:16px;margin-top:4px" class="fade-up" style="animation-delay:.55s">
+      <div class="stat-tegel" style="flex:1">
+        <div class="stat-ico">🇲🇽</div>
+        <div style="color:var(--wit);font-weight:900">Pok → Mexico</div>
+        <div class="stat-lbl">als wereldkampioen</div>
+      </div>
+      <div class="stat-tegel" style="flex:1">
+        <div class="stat-ico">🇫🇷</div>
+        <div style="color:var(--wit);font-weight:900">Shamma → Frankrijk</div>
+        <div class="stat-lbl">als wereldkampioen</div>
+      </div>
+    </div>
+
+    <div class="verhaal fade-up" style="animation-delay:.7s;font-style:italic;color:rgba(255,255,255,.55)">
+      "Of ze overleggen? We zeggen het niet. We denken het wel."
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SLIDE 5 — HET ORAKEL ═══════════════════════════════ -->
+<div class="slide" id="slide-5">
+  <div class="foto-full">
+    <img src="49386.jpg" onerror="this.src='49397.jpg'">
+  </div>
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:14px;padding:24px;">
+    <div style="font-size:4rem" class="fade-up">🔮</div>
+    <div class="titel-mega fade-up" style="animation-delay:.2s;font-size:clamp(2.5rem,7vw,5rem)">SHYAM ASARFI</div>
+    <div class="titel-groot fade-up" style="animation-delay:.3s;color:#fff;font-size:1.5rem">59 PUNTEN — PLEK 3</div>
+    <div class="goudlijn fade-up" style="animation-delay:.4s"></div>
+    <div class="stat-grid fade-up" style="animation-delay:.5s">
+      <div class="stat-tegel">
+        <div class="stat-ico">⭐</div>
+        <div class="stat-val">5×</div>
+        <div class="stat-lbl">Exacte scores</div>
+        <div style="color:#4ade80;font-size:.65rem;margin-top:3px">RECORD IN DE POULE</div>
+      </div>
+      <div class="stat-tegel">
+        <div class="stat-ico">✅</div>
+        <div class="stat-val">17×</div>
+        <div class="stat-lbl">Goede uitslagen</div>
+      </div>
+      <div class="stat-tegel">
+        <div class="stat-ico">🇫🇷</div>
+        <div class="stat-val" style="font-size:1.2rem">Frankr.</div>
+        <div class="stat-lbl">Kiest als kampioen</div>
+      </div>
+    </div>
+    <div class="verhaal fade-up" style="animation-delay:.7s;max-width:500px">
+      Shyam domineert wekenlang. Rustig, zelfverzekerd.<br>
+      <span class="accent">"Niet gokken. Weten."</span>
+    </div>
+    <div class="quote-box fade-up" style="animation-delay:.85s">
+      "Shyam ziet de uitslag al voordat de wedstrijd begint."
+      <div class="quote-auteur">— De rest van de familie</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SLIDE 6 — TOP 5 ═══════════════════════════════ -->
+<div class="slide" id="slide-6">
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;padding:16px">
+    <div class="titel-groot fade-up">🏆 TOP 5 — VOLLEDIGE STAND</div>
+    <div class="goudlijn fade-up" style="animation-delay:.1s"></div>
+    <div class="scorebord fade-up" style="animation-delay:.2s">
+      <div class="scorebord-hdr">RANGLIJST JAIKARAN WK POULE 2026</div>
+      <div class="score-rij top1"><div class="score-pos">👑1</div><div class="score-naam">Pok</div><div class="score-sub">⭐3 · 23✅ · 🇲🇽</div><div class="score-pt">61 pt</div></div>
+      <div class="score-rij top1"><div class="score-pos">👑1</div><div class="score-naam">Shamma</div><div class="score-sub">⭐3 · 23✅ · 🇫🇷</div><div class="score-pt">61 pt</div></div>
+      <div class="score-rij top2"><div class="score-pos">🔮3</div><div class="score-naam">Shyam Asarfi</div><div class="score-sub">⭐5 RECORD · 17✅ · 🇫🇷</div><div class="score-pt">59 pt</div></div>
+      <div class="score-rij top3"><div class="score-pos">🎲4</div><div class="score-naam">Céline Jaikaran</div><div class="score-sub">⭐1 · 26✅ · 🇫🇷</div><div class="score-pt">57 pt</div></div>
+      <div class="score-rij"><div class="score-pos">5️⃣</div><div class="score-naam">Moek</div><div class="score-sub">⭐3 · 20✅ · 🇳🇱</div><div class="score-pt">55 pt</div></div>
+      <div class="score-rij"><div class="score-pos">6️⃣</div><div class="score-naam">Kawita</div><div class="score-sub">⭐3 · 19✅ · 🇩🇪</div><div class="score-pt">53 pt</div></div>
+      <div class="score-rij"><div class="score-pos">7️⃣</div><div class="score-naam">Sunita</div><div class="score-sub">⭐4 · 16✅ · 🇳🇱</div><div class="score-pt">52 pt</div></div>
+      <div class="score-rij"><div class="score-pos">8️⃣</div><div class="score-naam">Sunaina</div><div class="score-sub">⭐2 · 21✅ · 🇫🇷</div><div class="score-pt">52 pt</div></div>
+      <div class="score-rij"><div class="score-pos">9️⃣</div><div class="score-naam">Vinay</div><div class="score-sub">⭐1 · 22✅</div><div class="score-pt">49 pt</div></div>
+      <div class="score-rij"><div class="score-pos">🔟</div><div class="score-naam">Duup</div><div class="score-sub">⭐2 · 18✅ · 🇲🇦</div><div class="score-pt">46 pt</div></div>
+    </div>
+    <div class="ondertitel fade-up" style="animation-delay:.9s;color:rgba(255,215,0,.5)">
+      🔗 moek72.github.io/wk-poule/wkpoule.html
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SLIDE 7 — SPELERTYPEN & DURF ═══════════════════════════════ -->
+<div class="slide" id="slide-7">
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:14px;padding:20px;width:100%">
+    <div class="titel-groot fade-up">🎭 SPELERTYPEN</div>
+    <div class="goudlijn fade-up" style="animation-delay:.1s"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:90%;max-width:620px" class="fade-up" style="animation-delay:.2s">
+      <div class="stat-tegel" style="border-color:rgba(255,107,0,.5)">
+        <div class="stat-ico">🎲</div>
+        <div style="color:var(--oranje);font-weight:900;font-size:1rem">GOKKER</div>
+        <div style="color:var(--wit);font-size:.9rem;margin:4px 0">Céline Jaikaran</div>
+        <div style="color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:1.6rem">51%</div>
+        <div class="stat-lbl">gewaagde voorsp.</div>
+      </div>
+      <div class="stat-tegel" style="border-color:rgba(0,200,100,.3)">
+        <div class="stat-ico">🔮</div>
+        <div style="color:#4ade80;font-weight:900;font-size:1rem">ORAKEL</div>
+        <div style="color:var(--wit);font-size:.9rem;margin:4px 0">Shyam Asarfi</div>
+        <div style="color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:1.6rem">26%</div>
+        <div class="stat-lbl">durf · 5 exact</div>
+      </div>
+      <div class="stat-tegel">
+        <div class="stat-ico">🧱</div>
+        <div style="color:var(--dim);font-weight:900;font-size:1rem">DE MUUR</div>
+        <div style="color:var(--wit);font-size:.75rem;margin:4px 0">Kawita · Sunita · Sunaina</div>
+        <div style="color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:1.6rem">1–3%</div>
+        <div class="stat-lbl">durf — maar punten!</div>
+      </div>
+      <div class="stat-tegel">
+        <div class="stat-ico">😴</div>
+        <div style="color:var(--oranje);font-weight:900;font-size:1rem">SELECTIEF</div>
+        <div style="color:var(--wit);font-size:.9rem;margin:4px 0">Rinaldo Jaikaran</div>
+        <div style="color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:1.6rem">25%</div>
+        <div class="stat-lbl">durf · 4 voorsp. totaal</div>
+      </div>
+    </div>
+    <div class="stat-grid fade-up" style="animation-delay:.5s">
+      <div class="stat-tegel"><div class="stat-ico">⭐</div><div class="stat-val">36</div><div class="stat-lbl">Exacte scores</div></div>
+      <div class="stat-tegel"><div class="stat-ico">✅</div><div class="stat-val">350</div><div class="stat-lbl">Goede uitslagen</div></div>
+      <div class="stat-tegel"><div class="stat-ico">🎯</div><div class="stat-val">880</div><div class="stat-lbl">Totaal punten</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SLIDE 8 — KAMPIOEN KEUZES ═══════════════════════════════ -->
+<div class="slide" id="slide-8">
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:12px;padding:20px;width:100%">
+    <div class="titel-groot fade-up">🌍 WIE WORDT WERELDKAMPIOEN?</div>
+    <div class="ondertitel fade-up" style="animation-delay:.1s">Volgens de 20 Jaikaran-orakels</div>
+    <div class="goudlijn fade-up" style="animation-delay:.15s"></div>
+
+    <div class="bar-rij fade-up" style="animation-delay:.25s">
+      <div class="bar-vlag">🇫🇷</div>
+      <div class="bar-land">Frankrijk</div>
+      <div class="bar-track"><div class="bar-fill" style="width:87.5%;background:linear-gradient(90deg,#002395,#ED2939)">7×</div></div>
+      <div class="bar-n" style="color:#4ade80">7 stemmen ⭐</div>
+    </div>
+    <div class="bar-rij fade-up" style="animation-delay:.4s">
+      <div class="bar-vlag">🇳🇱</div>
+      <div class="bar-land">Nederland</div>
+      <div class="bar-track"><div class="bar-fill" style="width:50%;background:linear-gradient(90deg,#FF6B00,#FF9100)">4×</div></div>
+      <div class="bar-n">4 stemmen 🧡</div>
+    </div>
+    <div class="bar-rij fade-up" style="animation-delay:.55s">
+      <div class="bar-vlag">🇲🇦</div>
+      <div class="bar-land">Marokko</div>
+      <div class="bar-track"><div class="bar-fill" style="width:25%;background:linear-gradient(90deg,#006233,#C1272D)">2×</div></div>
+      <div class="bar-n">2 stemmen</div>
+    </div>
+    <div class="bar-rij fade-up" style="animation-delay:.7s">
+      <div class="bar-vlag">🇧🇷</div>
+      <div class="bar-land">Brazilië</div>
+      <div class="bar-track"><div class="bar-fill" style="width:12.5%;background:linear-gradient(90deg,#009C3B,#FFDF00)">1×</div></div>
+      <div class="bar-n">1 stem</div>
+    </div>
+    <div class="bar-rij fade-up" style="animation-delay:.85s">
+      <div class="bar-vlag">🇩🇪</div>
+      <div class="bar-land">Duitsland</div>
+      <div class="bar-track"><div class="bar-fill" style="width:12.5%;background:#888">1×</div></div>
+      <div class="bar-n">1 stem</div>
+    </div>
+    <div class="bar-rij fade-up" style="animation-delay:1s">
+      <div class="bar-vlag">🇲🇽</div>
+      <div class="bar-land">Mexico</div>
+      <div class="bar-track"><div class="bar-fill" style="width:12.5%;background:linear-gradient(90deg,#006847,#CE1126)">1×</div></div>
+      <div class="bar-n">1 stem (Pok)</div>
+    </div>
+
+    <div class="verhaal fade-up" style="animation-delay:1.1s;font-style:italic;color:rgba(255,255,255,.6);font-size:.9rem">
+      "4 mensen kiezen Nederland. Het hart wil wat het wil. 🧡"
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SLIDE 9 — MIDDENMOOT ═══════════════════════════════ -->
+<div class="slide" id="slide-9">
+  <div class="foto-full">
+    <img src="49396.jpg" onerror="this.src='49397.jpg'">
+  </div>
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:10px;padding:16px;width:100%">
+    <div class="titel-groot fade-up">📊 DE MIDDENMOOT</div>
+    <div class="goudlijn fade-up" style="animation-delay:.1s"></div>
+    <div class="uitslag-grid fade-up" style="animation-delay:.2s">
+      <div class="uitslag-kaart"><div class="uitslag-pos">1️⃣1️⃣</div><div style="flex:1"><div class="uitslag-naam">Totomaster</div><div class="uitslag-sub">⭐2 · 🇲🇦 Marokko</div></div><div class="uitslag-pt">46pt</div></div>
+      <div class="uitslag-kaart"><div class="uitslag-pos">1️⃣2️⃣</div><div style="flex:1"><div class="uitslag-naam">Chanine</div><div class="uitslag-sub">⭐1 · 🇲🇦 Marokko</div></div><div class="uitslag-pt">45pt</div></div>
+      <div class="uitslag-kaart"><div class="uitslag-pos">1️⃣3️⃣</div><div style="flex:1"><div class="uitslag-naam">Geert Wilders</div><div class="uitslag-sub">⭐1 · 🇳🇱 Nederland</div></div><div class="uitslag-pt">45pt</div></div>
+      <div class="uitslag-kaart"><div class="uitslag-pos">1️⃣4️⃣</div><div style="flex:1"><div class="uitslag-naam">Oetra</div><div class="uitslag-sub">⭐0 · 22 goede uitslagen!</div></div><div class="uitslag-pt">44pt</div></div>
+      <div class="uitslag-kaart"><div class="uitslag-pos">1️⃣5️⃣</div><div style="flex:1"><div class="uitslag-naam">Surya</div><div class="uitslag-sub">⭐0 · 21 goed · 🇫🇷</div></div><div class="uitslag-pt">42pt</div></div>
+    </div>
+    <div class="verhaal fade-up" style="animation-delay:.8s;font-style:italic">
+      <span class="accent">Alles is nog mogelijk.</span><br>
+      Nog 56 wedstrijden. Eén goede week verandert alles.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SLIDE 10 — ACHTERHOEDE ═══════════════════════════════ -->
+<div class="slide" id="slide-10">
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:12px;padding:20px;width:100%">
+    <div class="titel-groot fade-up" style="color:#f87171">😬 DE BOTTOM 5</div>
+    <div class="goudlijn fade-up" style="animation-delay:.1s;background:linear-gradient(90deg,transparent,#f87171,transparent)"></div>
+    <div class="scorebord fade-up" style="animation-delay:.2s;border-color:rgba(248,113,113,.4)">
+      <div class="scorebord-hdr" style="background:linear-gradient(135deg,#7f1d1d,#ef4444);color:#fff">😬 ACHTERHOEDE</div>
+      <div class="score-rij"><div class="score-pos" style="color:#f87171">1️⃣6️⃣</div><div class="score-naam">Kandratiki</div><div class="score-sub">20/40 ingevuld · 🇫🇷</div><div class="score-pt" style="color:#f87171">32 pt</div></div>
+      <div class="score-rij"><div class="score-pos" style="color:#f87171">1️⃣7️⃣</div><div class="score-naam">Ikke</div><div class="score-sub">18/40 ingevuld</div><div class="score-pt" style="color:#f87171">28 pt</div></div>
+      <div class="score-rij"><div class="score-pos" style="color:#f87171">1️⃣8️⃣</div><div class="score-naam">SeanJay</div><div class="score-sub">20/40 ingevuld · 🇫🇷</div><div class="score-pt" style="color:#f87171">27 pt</div></div>
+      <div class="score-rij"><div class="score-pos" style="color:#f87171">1️⃣9️⃣</div><div class="score-naam">KOEKIEE 🦅</div><div class="score-sub">9/40 ingevuld · 🇧🇷</div><div class="score-pt" style="color:#f87171">20 pt</div></div>
+      <div class="score-rij" style="background:rgba(248,113,113,.08)"><div class="score-pos" style="color:#f87171">2️⃣0️⃣</div><div class="score-naam">Rinaldo Jaikaran</div><div class="score-sub" style="color:#f87171">4/40 ingevuld — filosofisch</div><div class="score-pt" style="color:#f87171">6 pt</div></div>
+    </div>
+    <div class="wa-bubbel fade-up" style="animation-delay:.7s;border-color:#f87171">
+      <div class="wa-naam" style="color:#f87171">Shaam aan Ikke</div>
+      💬 "Jij moet vd laatste plek af 😅"
+    </div>
+    <div class="verhaal fade-up" style="animation-delay:.9s;color:rgba(255,255,255,.6);font-style:italic">
+      😴 Rinaldo: 4 voorspellingen. 40 wedstrijden. 6 punten.<br>Een filosofische aanpak.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SLIDE 11 — PRIJZEN ═══════════════════════════════ -->
+<div class="slide" id="slide-11">
+  <div class="confetti-wrap" id="conf11"></div>
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:14px;padding:20px;width:100%">
+    <div style="font-size:3rem;animation:float 2s infinite" class="fade-up">🏆</div>
+    <div class="titel-groot fade-up" style="animation-delay:.15s">DE PRIJZEN</div>
+    <div class="goudlijn fade-up" style="animation-delay:.25s"></div>
+
+    <div class="prijs-kaart fade-up" style="animation-delay:.35s">
+      <div class="prijs-titel">🏆 DE WINNAAR KRIJGT</div>
+      <div class="prijs-sub">
+        De <strong style="color:var(--gold)">Jaikaran Family WK Poule Beker 2026</strong><br>
+        + <strong style="color:var(--oranje)">BBQ-FEEST voor de hele familie</strong><br>
+        Datum en locatie naar keuze van de winnaar.<br>
+        <em style="color:var(--dim)">Iedereen welkom. Altijd.</em>
+      </div>
+    </div>
+
+    <div class="prijs-kaart fade-up" style="animation-delay:.55s;border-color:#f87171">
+      <div class="prijs-titel" style="color:#f87171">🃏 DE POEDELPRIJS</div>
+      <div class="prijs-sub">
+        De hekkensluiter die <strong style="color:#f87171">wél genoeg heeft ingevuld</strong><br>
+        én een kampioen heeft gekozen...<br>
+        krijgt <strong>eeuwige oneer</strong>.<br>
+        <em style="color:var(--dim)">En een mysterieuze verrassing. 👀</em>
+      </div>
+    </div>
+
+    <div class="verhaal fade-up" style="animation-delay:.75s;font-style:italic;color:rgba(255,215,0,.7)">
+      "De beker wacht. Wie pakt hem?"
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SLIDE 12 — TERUGBLIK HOFHOUSE ═══════════════════════════════ -->
+<div class="slide" id="slide-12">
+  <div class="titel-groot fade-up" style="z-index:1;margin-bottom:10px">🧡 ONZE AVOND BIJ HOFHOUSE</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;width:94%;z-index:1" class="fade-up" style="animation-delay:.2s">
+    <div class="foto-wrap" style="border-radius:12px;height:28vh"><img src="49387.jpg" onerror="this.src=''" alt=""></div>
+    <div class="foto-wrap" style="border-radius:12px;height:28vh"><img src="49398.jpg" onerror="this.src=''" alt=""></div>
+    <div class="foto-wrap" style="border-radius:12px;height:28vh"><img src="49399.jpg" onerror="this.src=''" alt=""></div>
+    <div class="foto-wrap" style="border-radius:12px;height:28vh"><img src="WhatsApp Image 2026-06-21 at 13.54.45.jpeg" onerror="this.src='49401.jpg'" alt=""></div>
+    <div class="foto-wrap" style="border-radius:12px;height:28vh"><img src="WhatsApp Image 2026-06-21 at 13.54.45 (1).jpeg" onerror="this.src='49402.jpg'" alt=""></div>
+    <div class="foto-wrap" style="border-radius:12px;height:28vh"><img src="WhatsApp Image 2026-06-21 at 13.54.45 (2).jpeg" onerror="this.src='49400.jpg'" alt=""></div>
+  </div>
+  <div class="goudlijn fade-up" style="animation-delay:.5s;z-index:1;margin-top:10px"></div>
+  <div class="verhaal fade-up" style="animation-delay:.6s;z-index:1;font-size:.9rem">
+    "Het WK speelt op het scherm. De poule in de telefoon. De familie samen." 🧡
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SLIDE 13 — OUTRO ═══════════════════════════════ -->
+<div class="slide" id="slide-13">
+  <div class="confetti-wrap" id="conf13"></div>
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:14px;padding:24px;width:100%;height:100%">
+    <div style="font-size:4.5rem;animation:float 2s infinite" class="fade-up">🏆</div>
+    <div class="titel-mega fade-up" style="animation-delay:.2s">WIE WINT</div>
+    <div class="titel-mega fade-up" style="animation-delay:.3s;color:#fff">DE BEKER?</div>
+    <div class="goudlijn fade-up" style="animation-delay:.4s"></div>
+    <div class="verhaal fade-up" style="animation-delay:.5s">
+      Nog <span class="accent">56 wedstrijden</span> te gaan.<br>
+      Elk doelpunt telt. Elke voorspelling telt.
+    </div>
+    <div style="background:rgba(0,0,0,.5);border:2px solid var(--gold);border-radius:16px;padding:16px 24px;text-align:center;z-index:1" class="fade-up" style="animation-delay:.65s">
+      <div style="color:var(--dim);font-size:.75rem;letter-spacing:2px;text-transform:uppercase">Bekijk de volledige stand live</div>
+      <div style="color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:1.3rem;margin-top:4px">
+        moek72.github.io/wk-poule/wkpoule.html
+      </div>
+      <div style="color:var(--wit);font-size:.8rem;margin-top:6px">Voorspel mee & win de beker!</div>
+    </div>
+    <div style="flex:1;overflow:hidden;width:100%;position:relative;z-index:1" class="fade-up" style="animation-delay:.8s">
+      <ul class="credits-list">
+        <li>🥇 <span>Pok</span> — 61 pt · 🇲🇽 Mexico</li>
+        <li>🥇 <span>Shamma</span> — 61 pt · 🇫🇷 Frankrijk</li>
+        <li>🥉 <span>Shyam Asarfi</span> — 59 pt · ⭐5 exact!</li>
+        <li>4. <span>Céline Jaikaran</span> — 57 pt</li>
+        <li>5. <span>Moek</span> — 55 pt · 🇳🇱</li>
+        <li>6. <span>Kawita</span> — 53 pt · 🇩🇪</li>
+        <li>7. <span>Sunita</span> — 52 pt · 🇳🇱</li>
+        <li>8. <span>Sunaina</span> — 52 pt · 🇫🇷</li>
+        <li>9. <span>Vinay</span> — 49 pt</li>
+        <li>10. <span>Duup</span> — 46 pt · 🇲🇦</li>
+        <li>11. <span>Totomaster</span> — 46 pt · 🇲🇦</li>
+        <li>12. <span>Chanine Jaikaran</span> — 45 pt</li>
+        <li>13. <span>Geert Wilders</span> — 45 pt · 🇳🇱</li>
+        <li>14. <span>Oetra</span> — 44 pt</li>
+        <li>15. <span>Surya</span> — 42 pt · 🇫🇷</li>
+        <li>16. <span>Kandratiki</span> — 32 pt · 🇫🇷</li>
+        <li>17. <span>Ikke</span> — 28 pt</li>
+        <li>18. <span>SeanJay</span> — 27 pt · 🇫🇷</li>
+        <li>19. <span>KOEKIEE 🦅</span> — 20 pt · 🇧🇷</li>
+        <li>20. <span>Rinaldo</span> — 6 pt · 4 voorspellingen 😴</li>
+        <li style="margin-top:20px;color:rgba(255,215,0,.4);font-size:.75rem">Jaikaran Family WK Poule 2026</li>
+        <li style="color:rgba(255,215,0,.4);font-size:.75rem">Gebouwd met ❤️ door Moek</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div><!-- /slides -->
+
+<!-- Navigatie -->
+<div class="nav" id="nav"></div>
+
+<script>
+const SLIDES = document.querySelectorAll('.slide');
+const NAV = document.getElementById('nav');
+const PROGRESS = document.getElementById('progress');
+let cur = 0, autoTimer = null;
+
+// Bouw nav
+const prevBtn = document.createElement('button');
+prevBtn.className='nav-btn'; prevBtn.textContent='‹'; prevBtn.onclick=()=>go(cur-1);
+NAV.appendChild(prevBtn);
+SLIDES.forEach((_,i)=>{
+  const d=document.createElement('div');
+  d.className='nav-dot'+(i===0?' active':'');
+  d.onclick=()=>go(i);
+  NAV.appendChild(d);
+});
+const nextBtn = document.createElement('button');
+nextBtn.className='nav-btn'; nextBtn.textContent='›'; nextBtn.onclick=()=>go(cur+1);
+NAV.appendChild(nextBtn);
+
+function go(n){
+  n = Math.max(0,Math.min(SLIDES.length-1,n));
+  SLIDES[cur].classList.remove('active');
+  SLIDES[n].classList.add('active');
+  document.querySelectorAll('.nav-dot').forEach((d,i)=>d.classList.toggle('active',i===n));
+  PROGRESS.style.width=((n+1)/SLIDES.length*100)+'%';
+  cur=n;
+  if(n===0||n===10) spawnConfetti(n===0?'conf1':'conf11');
+  if(n===12) spawnConfetti('conf13');
+  resetAuto();
+}
+
+function resetAuto(){
+  clearTimeout(autoTimer);
+  if(cur<SLIDES.length-1) autoTimer=setTimeout(()=>go(cur+1),7000);
+}
+
+// Keyboard
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' ') go(cur+1);
+  if(e.key==='ArrowLeft') go(cur-1);
+  if(e.key==='f'||e.key==='F') document.documentElement.requestFullscreen?.();
+});
+
+// Touch swipe
+let tx=0;
+document.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
+document.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-tx;
+  if(Math.abs(dx)>60) go(cur+(dx<0?1:-1));
+},{passive:true});
+
+// Confetti
+function spawnConfetti(id){
+  const wrap=document.getElementById(id);
+  if(!wrap)return;
+  wrap.innerHTML='';
+  const colors=['#FFD700','#FF6B00','#4ade80','#fff','#FF1493','#00C8FF'];
+  for(let i=0;i<50;i++){
+    const c=document.createElement('div');
+    c.className='conf';
+    c.style.cssText=`
+      left:${Math.random()*100}%;
+      width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      border-radius:${Math.random()>.5?'50%':'2px'};
+      animation-duration:${2+Math.random()*3}s;
+      animation-delay:${Math.random()*2}s;
+    `;
+    wrap.appendChild(c);
+  }
+}
+
+// Start
+spawnConfetti('conf1');
+resetAuto();
+</script>
+
+</body>
+</html>
