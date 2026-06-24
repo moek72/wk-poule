@@ -1639,7 +1639,7 @@ function renR(sc,echteKampioen=''){
       :d<0?`<span style="color:#f87171;font-size:.56rem;font-weight:900;display:block;line-height:1;margin-top:2px">▼${-d}</span>`:'';
     return`<div class="rtbl-row ${i===0?'r1':i===1?'r2':i===2?'r3':''}" onclick="toonStats('${nm}')">
       <div class="rtbl-nr">${i===0?'👑':i===1?'🥈':i===2?'🥉':i+1}${pijl}</div>
-      <div class="rtbl-naam">${s.naam==='Moek'&&SHIRTS['Moek']?`<img src="assets/shirts/${SHIRTS['Moek']}.png" style="width:26px;height:26px;object-fit:contain;vertical-align:middle;margin-right:5px;border-radius:4px;">`:''}${s.naam}${i===0&&s.pt>0?' 🍖':''}${kvBadge}${poedelBadge}</div>
+      <div class="rtbl-naam">${SHIRTS[s.naam]?`<img src="assets/shirts/${SHIRTS[s.naam]}.png" style="width:26px;height:26px;object-fit:contain;vertical-align:middle;margin-right:5px;border-radius:4px;">`:''}${s.naam}${i===0&&s.pt>0?' 🍖':''}${kvBadge}${poedelBadge}</div>
       <div class="rtbl-pt">${s.pt}</div>
       <div class="rtbl-st ex">${s.ex}</div>
       <div class="rtbl-st gd">${s.goed}</div>
