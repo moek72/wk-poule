@@ -1037,7 +1037,9 @@ function renW(sd){
   });
   W.forEach(w=>sCD(w));upVG(sd);
   bouwSelect();pasFilterToe();
+  if(_eersteRenderInv){_eersteRenderInv=false;setTimeout(scrollNaarNu,120);}
 }
+let _eersteRenderInv=true;
 
 // ── Filteren op poule / vandaag ──
 const KORT={A:'Groep A',B:'Groep B',C:'Groep C',D:'Groep D',E:'Groep E','F':'Groep F 🇳🇱',G:'Groep G',H:'Groep H',I:'Groep I',J:'Groep J',K:'Groep K',L:'Groep L',X:'1/16 Finales',R:'1/8 Finales',KF:'Kwartfinales',HF:'Halve Finales','3P':'3e Plaats',FIN:'🏆 Finale'};
@@ -1056,10 +1058,25 @@ function chipFilter(f){
   const sel=document.getElementById('fsel');
   if(sel)sel.value=(f==='all'||f==='today')?f:'all';
   pasFilterToe();
+  setTimeout(scrollNaarNu,60);
 }
 window.chipFilter=chipFilter;
 function syncChips(){
   document.querySelectorAll('#fchips .fchip').forEach(c=>c.classList.toggle('active',c.dataset.f===filt));
+}
+// Spring naar de eerstvolgende (nog te spelen) zichtbare wedstrijd
+function scrollNaarNu(){
+  const con=document.getElementById('wcon');if(!con)return;
+  const now=Date.now();
+  const zichtbaar=[...con.querySelectorAll('.wc')].filter(c=>c.style.display!=='none');
+  let doel=zichtbaar.find(c=>{
+    const w=W.find(x=>x.id===parseInt(c.id.slice(1)));
+    return w&&new Date(w.iso).getTime()>=now;
+  })||zichtbaar[0];
+  if(!doel)return;
+  const sec=doel.closest('.daysec')||doel;
+  const y=sec.getBoundingClientRect().top+window.scrollY-60;
+  window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
 }
 function pasFilterToe(){
   const vandaagStr=new Date().toISOString().slice(0,10);
@@ -2158,7 +2175,8 @@ function showTab(naam,el){
   if(naam==='stan')laadStanden();
   el.classList.add('active');
   history.replaceState(null,'','#'+naam);
-  window.scrollTo({top:0,behavior:'smooth'});
+  if(naam==='inv'){window.scrollTo({top:0});setTimeout(scrollNaarNu,80);}
+  else window.scrollTo({top:0,behavior:'smooth'});
 }
 window.showTab=showTab;
 
