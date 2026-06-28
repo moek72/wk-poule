@@ -11,17 +11,15 @@
 | **Live app** | https://moek72.github.io/wk-poule/wkpoule.html (GitHub Pages volgt `main`) |
 | **Shirt-avatars** | ✅ KLAAR & LIVE — alle 20 in `assets/shirts/`, ranglijst + spelerskaart, Shyam- en Oetra-fix gedaan |
 | **Auto-backup** | ✅ Draait automatisch (GitHub Action pusht Firebase-export naar `main`, meermaals per dag) |
-| **8e finale w73** | ✅ INGEVULD & LIVE (25 jun): Zuid-Afrika vs Canada (2e A vs 2e B) |
+| **8e finales (w73-w88)** | ✅ COMPLEET INGEVULD & LIVE (28 jun): alle 16 wedstrijden, alle 12 groepen klaar |
+| **Invullen-filterknoppen** | ✅ LIVE: Alle/Vandaag/Groepsfase/Knockout + auto-scroll naar eerstvolgende wedstrijd |
 
-### 🔴 VOLGENDE TAAK — vrijdag 27 juni 2026
-**De rest van de achtste finales invullen.** Op 25 jun zijn alleen groepen A, B, C klaar:
-- A: 1e Mexico, 2e Zuid-Afrika
-- B: 1e Zwitserland, 2e Canada
-- C: 1e Brazilië, 2e Marokko
+### 🔴 VOLGENDE TAAK — kwartfinales
+**De kwartfinales (en verder) invullen zodra de 8e finales gespeeld zijn.** De 8e finales (w73-w88) lopen 28 jun t/m 4 jul. Zodra die uitslagen in Firebase `_r` staan, de kwartfinale-placeholders (g:"KF") vervangen door de winnaars.
 
-Vanaf vrijdag 27 jun zijn D t/m L klaar → dan in één keer de overige ~15 8e-finales (w74 t/m w88) invullen, inclusief de 3e-plaats-slots (die kunnen pas als ÁLLE groepen gespeeld zijn).
+**Beste nummers 3 die door waren (8e finales):** Bosnië(B), Paraguay(D), Ecuador(E), Zweden(F), Senegal(I), Algerije(J), Congo(K), Ghana(L). Nrs 3 van A/C/G/H vielen af. Toewijzing via FIFA-combinatietabel #67.
 
-**Werkwijze:** bereken groepsstanden uit Firebase `_r` (uitslagen), NOOIT uit voorspellingen. Vervang in `wkpoule.html` de placeholders ("Winnaar Poule X", "2e Poule X", "3e ...") door echte landnamen. Gebruik exact dezelfde spelling als in de groepsfase (bv. "Zuid-Afrika", "Verenigde Staten"). Daarna committen + pushen naar `main`.
+**Werkwijze:** bereken standen/winnaars uit Firebase `_r` (uitslagen), NOOIT uit voorspellingen. Vervang in `wkpoule.html` de placeholders door echte landnamen, exact dezelfde spelling als de groepsfase. Sluitcontrole: elk team max 1x. Daarna committen + pushen naar `main`.
 
 ---
 
