@@ -795,12 +795,34 @@ async function fetchESPN(dateStr){
               isHome
             };
           });
-        espnScores[`w${w.id}`]={th:thSc,ui:uiSc,status:st,clock:comp.status?.displayClock||'',goals,thn:hnl,uin:anl};
+        // Doorgaande/winnende ploeg (penalty-proof: ESPN zet advance op wie doorgaat)
+        const _nl=t=>ESPN_NL[t.team.displayName]||t.team.displayName;
+        const advT=teams.find(t=>t.advance===true),winT=teams.find(t=>t.winner===true);
+        const adv=advT?_nl(advT):null,win=winT?_nl(winT):null;
+        const loseT=advT?teams.find(t=>t!==advT):null,lose=loseT?_nl(loseT):null;
+        espnScores[`w${w.id}`]={th:thSc,ui:uiSc,status:st,clock:comp.status?.displayClock||'',goals,thn:hnl,uin:anl,adv,win,lose};
       }
     }
   }catch(e){console.warn('[ESPN]',e);}
 }
 
+// ── Bracket-resolver: vult W73/Winnaar HF1/Verliezer HF1 enz. uit ESPN-uitslagen ──
+function _winnaarVan(id){const s=espnScores['w'+id];return(s&&s.status==='post'&&s.adv)?s.adv:null;}
+function _verliezerVan(id){const s=espnScores['w'+id];return(s&&s.status==='post'&&s.lose)?s.lose:null;}
+function _resolveToken(tok){
+  let m;
+  if(m=tok.match(/^W(\d+)$/))return _winnaarVan(m[1]);
+  if(m=tok.match(/^Winnaar HF(\d+)$/))return _winnaarVan(m[1]==='1'?101:102);
+  if(m=tok.match(/^Verliezer HF(\d+)$/))return _verliezerVan(m[1]==='1'?101:102);
+  return tok; // al een echte landnaam of poule-placeholder
+}
+function resolveBracket(){
+  W.forEach(w=>{
+    if(w._oth===undefined){w._oth=w.th;w._ou=w.ui;}
+    w.th=_resolveToken(w._oth)||w._oth;
+    w.ui=_resolveToken(w._ou)||w._ou;
+  });
+}
 async function laadESPN(){
   const nu=new Date();
   const nuStr=nu.toISOString().slice(0,10);
@@ -820,11 +842,13 @@ async function laadESPN(){
     }
     // Auto-detect kampioen uit finale (w104)
     const fin=espnScores['w104'];
-    if(fin?.status==='post'&&fin.thn&&fin.uin&&!liveRes.kampioen){
-      ups['v/_r/kampioen']=fin.th>=fin.ui?fin.thn:fin.uin;
+    if(fin?.status==='post'&&!liveRes.kampioen){
+      const kamp=fin.win||fin.adv||(fin.th>fin.ui?fin.thn:fin.ui>fin.th?fin.uin:null);
+      if(kamp)ups['v/_r/kampioen']=kamp;
     }
     if(Object.keys(ups).length)try{await _update(_ref(_db),ups);}catch(e){}
   }
+  resolveBracket();
   if(sp)renW(userSd);
   renRes();renLive();
   clearTimeout(espnPollT);
@@ -980,7 +1004,7 @@ async function laadR(){
   if(fbK){
     try{const s=await _get(_ref(_db,`v/${sp}`));if(s.exists())sd=s.val();}catch(e){}
   }
-  userSd=sd;renW(sd);
+  userSd=sd;resolveBracket();renW(sd);
 }
 
 // ── Wedstrijden renderen (chronologisch) ──
