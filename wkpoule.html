@@ -774,11 +774,15 @@ const ESPN_NL={
   "England":"Engeland","Croatia":"Kroatie","Ghana":"Ghana","Panama":"Panama"
 };
 
+let espnRaw={};
 async function fetchESPN(dateStr){
   try{
-    const r=await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${dateStr}`);
-    if(!r.ok)return;
-    const json=await r.json();
+    if(!espnRaw[dateStr]){
+      const r=await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${dateStr}`);
+      if(!r.ok)return;
+      espnRaw[dateStr]=await r.json();
+    }
+    const json=espnRaw[dateStr];
     for(const ev of (json.events||[])){
       for(const comp of (ev.competitions||[])){
         const teams=comp.competitors||[];if(teams.length<2)continue;
@@ -795,7 +799,13 @@ async function fetchESPN(dateStr){
         if(!w)continue;
         const st=comp.status?.type?.state||'pre';
         const hs=parseInt(hm.score)||0,as_=parseInt(aw.score)||0;
-        const thSc=(w.th===hnl)?hs:as_,uiSc=(w.ui===anl)?as_:hs;
+        // Oriëntatie t.o.v. de app: resolve bracket-tokens (bv. "W73") eerst,
+        // en draai ALLEEN om als we zeker weten dat ESPN thuis/uit gespiegeld is.
+        // Default = ESPN-volgorde (bracket in W-array is daarop gelijkgelegd).
+        const rth=_resolveToken(w._oth||w.th)||w.th;
+        const rui=_resolveToken(w._ou||w.ui)||w.ui;
+        const omgekeerd=(rth===anl)||(rui===hnl);
+        const thSc=omgekeerd?as_:hs,uiSc=omgekeerd?hs:as_;
         // Bouw team-ID → NL naam mapping
         const teamMap={};
         teams.forEach(t=>{teamMap[t.team.id]=ESPN_NL[t.team.displayName]||t.team.displayName;});
@@ -805,7 +815,7 @@ async function fetchESPN(dateStr){
           .map(d=>{
             const tid=d.team?.id||'';
             const teamNl=teamMap[tid]||ESPN_NL[d.team?.displayName]||d.team?.displayName||'?';
-            const isHome=tid===hmId;
+            const isHome=omgekeerd?(tid===awId):(tid===hmId);
             return{
               naam:d.athletesInvolved[0].shortName||d.athletesInvolved[0].displayName||'?',
               team:teamNl,
@@ -818,7 +828,7 @@ async function fetchESPN(dateStr){
         const advT=teams.find(t=>t.advance===true),winT=teams.find(t=>t.winner===true);
         const adv=advT?_nl(advT):null,win=winT?_nl(winT):null;
         const loseT=advT?teams.find(t=>t!==advT):null,lose=loseT?_nl(loseT):null;
-        espnScores[`w${w.id}`]={th:thSc,ui:uiSc,status:st,clock:comp.status?.displayClock||'',goals,thn:hnl,uin:anl,adv,win,lose};
+        espnScores[`w${w.id}`]={th:thSc,ui:uiSc,status:st,clock:comp.status?.displayClock||'',goals,thn:omgekeerd?anl:hnl,uin:omgekeerd?hnl:anl,adv,win,lose};
       }
     }
   }catch(e){console.warn('[ESPN]',e);}
@@ -852,6 +862,11 @@ async function laadESPN(){
   for(let d=new Date(start);d<=morgen;d.setDate(d.getDate()+1)){
     days.push(d.toISOString().slice(0,10).replace(/-/g,''));
   }
+  espnRaw={}; // verse data per poll-cyclus (cache is alleen voor de dubbele pass hieronder)
+  await Promise.all(days.map(fetchESPN));
+  // Tweede pass: nu de bracket-tokens geresolved zijn (W73 → Canada, etc.)
+  // worden knockout-scores gegarandeerd in de juiste oriëntatie verwerkt.
+  resolveBracket();
   await Promise.all(days.map(fetchESPN));
   if(fbK){
     const ups={};
