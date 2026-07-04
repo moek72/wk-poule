@@ -1,6 +1,6 @@
 # Sessie-startprompt voor WK Poule
 
-> **LAATSTE UPDATE: 25 juni 2026** — lees dit blok eerst.
+> **LAATSTE UPDATE: 4 juli 2026 (avond)** — lees dit blok eerst.
 
 ## ⚡ ACTUELE STAND (waar zijn we gebleven)
 
@@ -9,17 +9,18 @@
 | **Leidende/live branch** | `main` van `moek72/wk-poule` (NIET meer `claude/nieuwsbrief`) |
 | **Lokale clone** | `G:\Mijn Drive\wk 26\repo\` — staat op `main`, push-rechten werken |
 | **Live app** | https://moek72.github.io/wk-poule/wkpoule.html (GitHub Pages volgt `main`) |
-| **Shirt-avatars** | ✅ KLAAR & LIVE — alle 20 in `assets/shirts/`, ranglijst + spelerskaart, Shyam- en Oetra-fix gedaan |
-| **Auto-backup** | ✅ Draait automatisch (GitHub Action pusht Firebase-export naar `main`, meermaals per dag) |
-| **8e finales (w73-w88)** | ✅ COMPLEET INGEVULD & LIVE (28 jun): alle 16 wedstrijden, alle 12 groepen klaar |
-| **Invullen-filterknoppen** | ✅ LIVE: Alle/Vandaag/Groepsfase/Knockout + auto-scroll naar eerstvolgende wedstrijd |
+| **Bracket 1/8 finales** | ✅ GEFIXT & LIVE (2 jul): w89-w91 juiste paringen (Canada-Marokko etc.), w94 thuis/uit gelijkgelegd met ESPN |
+| **Pages deploy-timeout** | ✅ GEFIXT (2 jul): `_config.yml` sluit remotion-frames/backups uit; artifact 695MB → 17MB |
+| **KO-score orientatie** | ✅ GEFIXT & LIVE (4 jul, commit 5c538f1): race condition die uitslagen omdraaide (w89 3-0 i.p.v. 0-3) + punten aan verkeerde mensen gaf |
+| **Weekfilm 3** | ✅ KLAAR: "WK Gazette 3 - De Penalty-Week.mp4" (2m27) in `G:\Mijn Drive\wk 26\Film - De Val van Gabbar\` |
+| **Auto-backup** | ✅ Draait automatisch (GitHub Action → `main`, meermaals per dag) |
 
-### 🔴 VOLGENDE TAAK — kwartfinales
-**De kwartfinales (en verder) invullen zodra de 8e finales gespeeld zijn.** De 8e finales (w73-w88) lopen 28 jun t/m 4 jul. Zodra die uitslagen in Firebase `_r` staan, de kwartfinale-placeholders (g:"KF") vervangen door de winnaars.
+**Stand na w89 (4 jul):** 1. Shyam 125 · 2. Moek 123 · 3. Pok 116 · 4. Shamma 115 · 5. Céline 115. Moek was 1 dag koploper, Shyam heroverde de leiding.
 
-**Beste nummers 3 die door waren (8e finales):** Bosnië(B), Paraguay(D), Ecuador(E), Zweden(F), Senegal(I), Algerije(J), Congo(K), Ghana(L). Nrs 3 van A/C/G/H vielen af. Toewijzing via FIFA-combinatietabel #67.
+### 🔴 VOLGENDE TAAK — niets handmatigs, wel monitoren
+De bracket loopt volledig automatisch (resolveBracket + ESPN advance). Kwartfinale-teams verschijnen vanzelf zodra de 1/8 finales gespeeld zijn (t/m 7 jul). **Monitortaak:** na elke KO-wedstrijd even checken of de uitslag in de app de juiste orientatie heeft (er kunnen 4 jul nog telefoons met de oude gecachte app-versie rondlopen die verkeerd naar `_r` schrijven; de nieuwe versie herstelt dat zelf, maar controleer bij twijfel `_r` tegen ESPN).
 
-**Werkwijze:** bereken standen/winnaars uit Firebase `_r` (uitslagen), NOOIT uit voorspellingen. Vervang in `wkpoule.html` de placeholders door echte landnamen, exact dezelfde spelling als de groepsfase. Sluitcontrole: elk team max 1x. Daarna committen + pushen naar `main`.
+**Werkwijze bij twijfel over een uitslag:** vergelijk `v/_r/wNN` in Firebase met ESPN scoreboard van die dag. Firebase = waarheid voor punten. Weergave-bugs zitten in espnScores (client-side).
 
 ---
 
