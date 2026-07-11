@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <rect width="192" height="192" rx="28" fill="#00A3E0"/>
+  <text x="96" y="100" font-family="Arial Black, sans-serif" font-weight="900"
+        font-size="42" text-anchor="middle" fill="white">Moek's</text>
+  <rect x="28" y="112" width="136" height="5" rx="2.5" fill="rgba(255,255,255,.35)"/>
+  <text x="96" y="148" font-family="Arial, sans-serif" font-weight="600"
+        font-size="18" text-anchor="middle" fill="rgba(255,255,255,.85)">Ritten</text>
+</svg>
