@@ -40,8 +40,18 @@ kb30-wear/
 │        ├── data/  WearSync, SyncBus, ListenerService, LocalStore, Haptics
 │        ├── health/HeartRateController   optional, informational HR (default OFF)
 │        └── presentation/  Kb30App router + screens + components + theme
-└── phone-bridge/  Reference contract + WearableListenerService sketch for the PWA host.
+├── phone/         The native PHONE app: hosts the KB30 PWA in a WebView (served
+│                  over an https virtual origin so ES modules / IndexedDB / the
+│                  service worker all work) and bridges it to the watch via the
+│                  Data Layer. The PWA lives in ../kb30-pwa and is synced into
+│                  assets at build time (syncPwa task).
+└── phone-bridge/  Original contract notes + sketch. The real, buildable
+                   implementation now lives in :phone above.
 ```
+
+The full system is three parts: the **PWA** (`../kb30-pwa`, the phone app / source
+of truth), the **:phone** app (WebView host + Data Layer bridge), and the **:wear**
+app. `:shared` defines the wire protocol + safety gates once for all three.
 
 ## Build
 

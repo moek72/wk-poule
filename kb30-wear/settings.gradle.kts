@@ -22,3 +22,4 @@ rootProject.name = "kb30-wear"
 // :wear    -> the Wear OS (Android) companion app. Depends on :shared.
 include(":shared")
 include(":wear")
+include(":phone")

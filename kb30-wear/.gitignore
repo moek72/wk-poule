@@ -8,3 +8,6 @@ local.properties
 captures/
 .externalNativeBuild/
 .cxx/
+
+# Bundled PWA is synced at build time from ../kb30-pwa
+phone/src/main/assets/pwa/
