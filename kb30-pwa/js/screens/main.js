@@ -48,7 +48,9 @@ export async function renderDashboard(nav) {
 
     <div style="margin-top:26px">${heroAction(plan, blocked, doneToday)}</div>
 
-    <div class="rows" style="margin-top:30px">
+    <div class="spacer"></div>
+
+    <div class="rows" style="margin-bottom:8px">
       <div class="rowline">
         <span class="lbl">Week</span>
         <span style="display:flex;align-items:center;gap:14px">
@@ -72,7 +74,6 @@ export async function renderDashboard(nav) {
       </div>
     </div>
 
-    <div class="spacer"></div>
     ${tabbar('dashboard')}
   </div>`);
 
