@@ -86,6 +86,9 @@ window.addEventListener('pointerdown', function once() {
   window.removeEventListener('pointerdown', once);
 }, { once: true });
 
+// Debug handle (handig in de console; ongevaarlijk). Bijv. window.KB30.Engine.
+window.KB30 = { Engine, Store, Bridge, nav };
+
 // Boot.
 export function boot() {
   applyTheme();

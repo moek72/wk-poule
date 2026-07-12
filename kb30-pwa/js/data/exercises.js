@@ -195,27 +195,70 @@ export function byId(id) {
   return EXERCISES.find((e) => e.id === id) || null;
 }
 
+// Uitvoeringsmodus per oefening: 'time' (aftellen), 'reps' (zelf-tempo, target),
+// 'swings' (tik-teller op tijd). Bepaalt hoe de teller op de speler eruitziet.
+const MODES = {
+  kb_deadlift: { mode: 'reps', reps: 10 },
+  box_squat: { mode: 'reps', reps: 10 },
+  farmer_carry: { mode: 'time' },
+  suitcase_carry: { mode: 'time' },
+  front_rack_march: { mode: 'time' },
+  shoulder_press: { mode: 'reps', reps: 8 },
+  goblet_march: { mode: 'time' },
+  calf_raises: { mode: 'reps', reps: 15 },
+  wood_chop: { mode: 'reps', reps: 10 },
+  around_body: { mode: 'time' },
+  halo: { mode: 'reps', reps: 8 },
+  row_support: { mode: 'reps', reps: 10 },
+  russian_swing: { mode: 'swings' },
+  single_swing: { mode: 'swings' },
+};
+
 // Fase-1 basiscircuit (5 oefeningen).
 const PHASE1 = ['kb_deadlift', 'box_squat', 'farmer_carry', 'goblet_march', 'wood_chop'];
 
+function withMode(e) {
+  const m = MODES[e.id] || { mode: 'time' };
+  return { ...clone(e), mode: m.mode, reps: m.reps || null };
+}
+
 /**
- * Bouw de geordende oefeninglijst voor een sessie.
+ * Bouw de geordende sessie: een lijst 'stappen'. Elke circuit-oefening krijgt
+ * meta voor de tellers (ronde X/Y, oefening A/B). Warming-up en cooling-down
+ * staan als aparte stappen zonder ronde-teller.
+ *
  * @param {string} type NORMAAL / LICHT / ALLEEN_MOBILITEIT
  * @param {boolean} swingsUnlocked
  * @param {number} rounds fase-1 standaard 3
  */
 export function buildSession(type, swingsUnlocked, rounds = 3) {
+  let circuit;
+  let r = Math.max(1, Math.min(4, rounds));
   if (type === SessionType.ALLEEN_MOBILITEIT) {
-    return [MOBILITY[0], MOBILITY[1], MOBILITY[2], MOBILITY[4], MOBILITY[0]].map(clone);
+    circuit = [MOBILITY[0], MOBILITY[1], MOBILITY[2], MOBILITY[4]];
+    r = 2;
+  } else {
+    circuit = PHASE1.map(byId);
+    if (type === SessionType.LICHT) circuit = circuit.filter((e) => !e.neckShoulder);
+    if (swingsUnlocked) circuit = [byId('russian_swing'), ...circuit.slice(1)];
   }
-  let circuit = PHASE1.map(byId);
-  if (type === SessionType.LICHT) circuit = circuit.filter((e) => !e.neckShoulder);
-  if (swingsUnlocked) circuit = [byId('russian_swing'), ...circuit.slice(1)];
 
-  const out = [clone(WARMUP)];
-  const r = Math.max(1, Math.min(4, rounds));
-  for (let i = 0; i < r; i++) out.push(...circuit.map(clone));
-  out.push(clone(COOLDOWN));
+  const out = [];
+  if (type !== SessionType.ALLEEN_MOBILITEIT) {
+    out.push({ ...withMode(WARMUP), phaseLabel: 'Warming-up' });
+  }
+  for (let round = 1; round <= r; round++) {
+    circuit.forEach((e, i) => {
+      out.push({
+        ...withMode(e),
+        _round: round, _roundsTotal: r,
+        _pos: i + 1, _circuitLen: circuit.length,
+      });
+    });
+  }
+  if (type !== SessionType.ALLEEN_MOBILITEIT) {
+    out.push({ ...withMode(COOLDOWN), phaseLabel: 'Cooling-down' });
+  }
   return out;
 }
 

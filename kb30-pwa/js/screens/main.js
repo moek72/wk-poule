@@ -42,6 +42,11 @@ export async function renderDashboard(nav) {
         <span class="conn">${Bridge.available ? (Bridge.connected ? '⌚ verbonden' : '⌚ gekoppeld') : ''}</span>
       </div>
       <p class="today-sub">Klaar voor je beweegmoment?</p>
+      <div class="session-chip">${blocked
+        ? '🧘 Vandaag: rustige mobiliteit'
+        : (Store.block.swingsUnlocked
+          ? '🏋️ Kettlebell-circuit · 3 rondes · met swings'
+          : '🏋️ Kettlebell-circuit · 3 rondes · ~30 min')}</div>
       ${blocked ? `<p class="warn-banner">Kettlebells 48u op pauze na een borstklacht — alleen mobiliteit.</p>` : ''}
       <button class="btn good big" data-act="start">Start training</button>
     </div>
