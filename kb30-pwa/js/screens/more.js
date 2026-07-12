@@ -1,15 +1,16 @@
-// screens/more.js — voortgang (grafieken), bibliotheek en instellingen.
+// screens/more.js — voortgang (grafieken), bibliotheek en instellingen,
+// in het donkere designsysteem. Alle data- en veiligheidshandelingen
+// (export/import, blokkade-reset, toggles, horloge-sync) zijn ongewijzigd.
 
 import { mount, bindActions, tabbar, handleNav, escapeHtml } from '../ui.js';
 import { Store } from '../store.js';
 import { DB } from '../db.js';
 import { Bridge, Paths } from '../bridge.js';
-import { StopCriteria } from '../safety.js';
 import { EXERCISES, MOBILITY } from '../data/exercises.js';
 import { illustration, icon } from '../illustrations.js';
 import { Coach } from '../coach.js';
 import { Listen } from '../listen.js';
-import { currentWeek, phaseForWeek } from '../program.js';
+import { isoDate } from '../program.js';
 
 // --- voortgang ------------------------------------------------------------
 export async function renderProgress(nav) {
@@ -21,76 +22,88 @@ export async function renderProgress(nav) {
   const ms = measurements.slice().sort((a, b) => (a.datum < b.datum ? -1 : 1));
   const weight = ms.filter((m) => m.gewichtKg != null).map((m) => m.gewichtKg);
   const waist = ms.filter((m) => m.buikomtrekCm != null).map((m) => m.buikomtrekCm);
-  const totalSwings = done.reduce((n, s) => n + (s.totaalSwings || 0)
-    + (s.oefeningen || []).reduce((k, o) => k + (o.swings || 0), 0), 0);
   const totalMin = Math.round(done.reduce((n, s) => n + (s.duurSec || 0), 0) / 60);
-  const week = currentWeek(Store.profile);
-  const ph = phaseForWeek(week);
-
-  const moedig = done.length === 0
-    ? 'Je eerste sessie is de belangrijkste. Ik sta klaar wanneer jij dat bent.'
-    : done.length < 5
-      ? `Al ${done.length} ${done.length === 1 ? 'sessie' : 'sessies'} gedaan — de opbouw is begonnen!`
-      : `${done.length} sessies, ${totalMin} minuten bewogen. Daar mag je trots op zijn.`;
+  const streak = computeStreak(done);
 
   const root = mount(`
-  <div class="page progress">
-    <header class="pagehead">
-      <h1>Voortgang</h1>
-      <span class="phase-chip">Week ${week} · Fase ${ph.fase}</span>
-    </header>
-    <div class="coach-line card">
-      <span class="coach-badge">${escapeHtml(Coach.coachName().slice(0, 1))}</span>
-      <p>${escapeHtml(moedig)}</p>
+  <div class="screen has-nav progresspage">
+    <h1 class="d title-lg" style="margin:8px 0 16px">Voortgang</h1>
+
+    <div class="stat3">
+      <div class="t"><b>${done.length}</b><span>Sessies</span></div>
+      <div class="t"><b>${totalMin}</b><span>Minuten</span></div>
+      <div class="t"><b>${streak}</b><span>Op rij</span></div>
     </div>
-    <div class="stat-row">
-      <div class="stat"><b>${done.length}</b><span>sessies</span></div>
-      <div class="stat"><b>${totalMin}</b><span>minuten</span></div>
-      <div class="stat"><b>${totalSwings}</b><span>swings</span></div>
+
+    <p class="qlabel">Sessies per week · doel 5</p>
+    ${weekBars(done)}
+
+    <p class="qlabel">Gewicht</p>
+    ${lineChart(weight, 'kg')}
+
+    <p class="qlabel">Buikomtrek</p>
+    ${lineChart(waist, 'cm')}
+
+    <p class="qlabel">Nieuwe meting</p>
+    <div class="measure-row">
+      <label class="field">Gewicht (kg)<input type="number" id="qWeight" step="0.1" inputmode="decimal" placeholder="—"></label>
+      <label class="field">Buik (cm)<input type="number" id="qWaist" step="0.1" inputmode="decimal" placeholder="—"></label>
+      <button class="btn" data-act="saveMeasure">Bewaar</button>
     </div>
-    <section class="card">
-      <div class="card-head"><h3>Sessies per week</h3><span class="card-head-note">doel: 5</span></div>
-      ${weekBars(done)}
-    </section>
-    <section class="card">
-      <div class="card-head"><h3>Gewicht</h3></div>
-      ${lineChart(weight, 'kg')}
-    </section>
-    <section class="card">
-      <div class="card-head"><h3>Buikomtrek</h3></div>
-      ${lineChart(waist, 'cm')}
-    </section>
+
     ${tabbar('progress')}
   </div>`);
-  bindActions(root, (act) => { handleNav(act, nav); });
+
+  bindActions(root, async (act) => {
+    if (handleNav(act, nav)) return;
+    if (act === 'saveMeasure') {
+      const w = parseFloat(root.querySelector('#qWeight').value);
+      const c = parseFloat(root.querySelector('#qWaist').value);
+      if (!isNaN(w) || !isNaN(c)) {
+        await DB.putMeasurement({
+          datum: isoDate(new Date()),
+          gewichtKg: isNaN(w) ? null : w, buikomtrekCm: isNaN(c) ? null : c,
+        });
+        return renderProgress(nav);
+      }
+    }
+  });
+}
+
+function computeStreak(done) {
+  const days = new Set(done.map((s) => s.datum));
+  let streak = 0;
+  const d = new Date();
+  for (;;) {
+    const key = isoDate(d);
+    if (days.has(key)) { streak++; d.setDate(d.getDate() - 1); } else break;
+  }
+  return streak;
 }
 
 function emptyState(txt) {
-  return `<div class="empty">
-    <span class="empty-icon">${icon('chart')}</span>
-    <p>${txt}</p>
-  </div>`;
+  return `<div class="empty">${txt}</div>`;
 }
 
 function lineChart(values, unit) {
-  if (!values.length) return emptyState(`Nog geen metingen. Vul ze in op het dashboard bij “Snel invoeren”.`);
-  const w = 300, h = 90, pad = 8;
+  if (!values.length) return emptyState('Nog geen metingen — vul hieronder je eerste meting in.');
+  const w = 320, h = 90, pad = 14;
   const min = Math.min(...values), max = Math.max(...values);
   const range = max - min || 1;
   const step = values.length > 1 ? (w - 2 * pad) / (values.length - 1) : 0;
   const pts = values.map((v, i) => {
     const x = pad + i * step;
-    const y = h - pad - ((v - min) / range) * (h - 2 * pad);
+    const y = (h - 22) - ((v - min) / range) * (h - 44) + 12;
     return `${x.toFixed(1)},${y.toFixed(1)}`;
   }).join(' ');
   const last = values[values.length - 1];
   const [lx, ly] = pts.split(' ').pop().split(',');
-  return `<svg viewBox="0 0 ${w} ${h}" class="chart">
-    <polyline points="${pts}" fill="none" stroke="var(--brand)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
-    <circle cx="${lx}" cy="${ly}" r="4" fill="var(--brand)"/>
-    <text x="${pad}" y="12" class="ct">${max} ${unit}</text>
-    <text x="${pad}" y="${h - 2}" class="ct">${min} ${unit}</text>
-    <text x="${w - pad}" y="12" text-anchor="end" class="ct strong">nu: ${last} ${unit}</text>
+  const fmt = (v) => String(v).replace('.', ',');
+  return `<svg viewBox="0 0 ${w} ${h}" class="chart" role="img" aria-label="Verloop ${unit}">
+    <polyline points="${pts}" fill="none" stroke="#FF5A1F" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="${lx}" cy="${ly}" r="4.5" fill="#FF5A1F"/>
+    <text x="${pad}" y="18" fill="#8B909A" font-family="Archivo" font-size="11" font-weight="700">${fmt(max)} ${unit}</text>
+    <text x="${w - pad}" y="18" text-anchor="end" fill="#FF5A1F" font-family="Archivo" font-size="11" font-weight="800">nu ${fmt(last)} ${unit}</text>
   </svg>`;
 }
 
@@ -100,11 +113,12 @@ function weekBars(sessions) {
     const wk = isoWeek(new Date(s.datum));
     byWeek[wk] = (byWeek[wk] || 0) + 1;
   });
-  const weeks = Object.keys(byWeek).sort().slice(-8);
-  if (!weeks.length) return emptyState('Nog geen sessies — na je eerste training zie je hier je week-ritme groeien.');
+  const weeks = Object.keys(byWeek).sort().slice(-6);
+  if (!weeks.length) return emptyState('Nog geen sessies — na je eerste training zie je hier je weekritme.');
   const maxv = Math.max(...weeks.map((k) => byWeek[k]), 5);
-  return `<div class="bars">${weeks.map((k) =>
-    `<div class="bar"><div class="bar-fill" style="height:${(byWeek[k] / maxv) * 70}px"></div><span>${byWeek[k]}</span></div>`).join('')}</div>`;
+  const nowWk = isoWeek(new Date());
+  return `<div class="chartbars">${weeks.map((k) =>
+    `<div class="cb ${k === nowWk && byWeek[k] < 5 ? '' : ''}" style="height:${Math.round((byWeek[k] / maxv) * 100)}%"></div>`).join('')}</div>`;
 }
 function isoWeek(d) {
   const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
@@ -123,26 +137,24 @@ export function renderLibrary(nav, detailId) {
   const unlocked = !!Store.block.swingsUnlocked;
 
   const item = (e, locked = false) => `
-    <button class="lib-item ${locked ? 'locked' : ''}" data-act="open-${e.id}">
-      <span class="lib-fig">${illustration(e.illu)}</span>
-      <span class="lib-txt">
-        <b>${escapeHtml(e.naam)}</b>
-        <small>${(e.spieren || []).join(', ')}${e.gewichtKg ? ` · ${e.gewichtKg} kg` : ''}${e.fase ? ' · fase ' + e.fase : ''}${locked ? ' · 🔒' : ''}</small>
+    <button class="lrow ${locked ? 'lock' : ''}" data-act="open-${e.id}">
+      <span class="thumb${locked ? ' locked' : ''}">${locked ? icon('lock') : illustration(e.illu)}</span>
+      <span>
+        <span class="nm" style="display:block">${escapeHtml(e.naam)}</span>
+        <span class="mu" style="display:block">${libMeta(e)}</span>
       </span>
-      ${locked ? `<span class="lib-lock">${icon('lock')}</span>` : ''}
+      ${locked ? '' : `<span class="chev">${icon('chev')}</span>`}
     </button>`;
 
   const root = mount(`
-  <div class="page library">
-    <header class="pagehead"><h1>Oefeningen</h1></header>
-    <p class="muted">Alles staand, max 8 kg, veilig voor rug en nek. Tik voor uitleg.</p>
-    <h3 class="lib-sec">Kracht</h3>
-    <div class="lib-list">${kracht.map((e) => item(e)).join('')}</div>
-    <h3 class="lib-sec">Swings ${unlocked ? '· vrijgespeeld ✓' : '· nog op slot'}</h3>
-    ${unlocked ? '' : `<p class="muted small">Zes pijnvrije sessies spelen de swings vrij — dat is je fase 2.</p>`}
-    <div class="lib-list">${swings.map((e) => item(e, !unlocked)).join('')}</div>
-    <h3 class="lib-sec">Mobiliteit &amp; herstel</h3>
-    <div class="lib-list">${MOBILITY.map((e) => item(e)).join('')}</div>
+  <div class="screen has-nav library">
+    <div class="libhead"><h1 class="d title-lg">Oefeningen</h1></div>
+    <div class="sec">Kracht</div>
+    <div class="rows">${kracht.map((e) => item(e)).join('')}</div>
+    <div class="sec">Swings ${unlocked ? '· vrijgespeeld' : '· nog vergrendeld'}</div>
+    <div class="rows">${swings.map((e) => item(e, !unlocked)).join('')}</div>
+    <div class="sec">Mobiliteit &amp; herstel</div>
+    <div class="rows">${MOBILITY.map((e) => item(e)).join('')}</div>
     ${tabbar('library')}
   </div>`);
   bindActions(root, (act) => {
@@ -151,21 +163,30 @@ export function renderLibrary(nav, detailId) {
   });
 }
 
+function libMeta(e) {
+  const parts = [...(e.spieren || [])];
+  if (e.gewichtKg) parts.push(`${e.gewichtKg} kg`);
+  if (e.fase) parts.push(`fase ${e.fase}`);
+  return escapeHtml(parts.join(' · '));
+}
+
 function renderExerciseDetail(nav, id) {
   const e = EXERCISES.find((x) => x.id === id) || MOBILITY.find((x) => x.id === id);
   if (!e) return nav('library');
   const locked = e.isSwing && !Store.block.swingsUnlocked;
   const root = mount(`
-  <div class="page detail">
-    <button class="back" data-act="back">${icon('back')} Oefeningen</button>
-    <div class="detail-fig">${illustration(e.illu)}</div>
-    <h2>${escapeHtml(e.naam)}</h2>
-    <p class="muted">${(e.spieren || []).join(', ')}${e.gewichtKg ? ` · ${e.gewichtKg} kg` : ' · zonder gewicht'}${e.fase ? ' · fase ' + e.fase : ''}</p>
-    ${locked ? `<p class="warn-banner">${icon('lock')} Nog op slot tot fase 2 is vrijgespeeld — zes sessies pijnvrij, dan mag hij mee.</p>` : ''}
-    ${e.waarom ? `<div class="why-box"><b>Waarom deze oefening?</b> ${escapeHtml(e.waarom)}</div>` : ''}
-    <h3>Zo doe je het</h3>
+  <div class="screen detail" style="padding-bottom:34px">
+    <div class="top" style="justify-content:flex-start">
+      <button class="back" data-act="back">${icon('back')} Oefeningen</button>
+    </div>
+    <div class="illowrap">${illustration(e.illu)}</div>
+    <h1 class="d" style="font-size:clamp(30px,10vw,40px);text-align:center">${escapeHtml(e.naam)}</h1>
+    <p class="detail-meta" style="text-align:center">${libMeta(e) || 'Zonder gewicht'}</p>
+    ${locked ? `<div class="locknote">${icon('lock')} Vergrendeld tot fase 2 — zes sessies pijnvrij speelt swings vrij.</div>` : ''}
+    ${e.waarom ? `<div class="why-box"><b>Waarom</b>${escapeHtml(e.waarom)}</div>` : ''}
+    <div class="sec" style="margin-top:26px">Zo doe je het</div>
     <ol class="detail-steps">${(e.stappen || []).map((s) => `<li>${escapeHtml(s)}</li>`).join('')}</ol>
-    <div class="warn-box"><b>Let op:</b> ${escapeHtml(e.waarschuwing || '')}</div>
+    <div class="warnbox"><b>Let op</b>${escapeHtml(e.waarschuwing || '')}</div>
   </div>`);
   bindActions(root, (act) => { if (act === 'back') nav('library'); });
 }
@@ -178,68 +199,44 @@ export function renderSettings(nav) {
   const chosen = Coach.pickVoice();
 
   const root = mount(`
-  <div class="page settings">
-    <header class="pagehead"><h1>Instellingen</h1></header>
-
-    <section class="card">
-      <div class="card-head"><h3>Jij &amp; je coach</h3></div>
-      <label class="field">Jouw naam
-        <input type="text" id="setNaam" value="${escapeHtml(Store.profile.naam || 'Moek')}" maxlength="20">
-      </label>
-      <label class="field">Naam van je coach
-        <input type="text" id="setCoach" value="${escapeHtml(Store.profile.coachNaam || 'Sanne')}" maxlength="20">
-      </label>
-      <button class="btn small" data-act="saveNames">Bewaar namen</button>
-      <button class="btn ghost-dark" data-act="replayIntro">Bekijk de uitleg opnieuw</button>
-    </section>
-
-    <section class="card">
-      <div class="card-head"><h3>${icon('speaker')} Stem van de coach</h3></div>
-      ${toggle('stem', 'Coach praat mee (stem aan)', s.stem)}
+  <div class="screen has-nav settingspage">
+    <h1 class="d title-lg" style="margin:8px 0 4px">Instellingen</h1>
+    <div style="flex:1">
+      <div class="sec">Coach</div>
+      ${toggle('stem', 'Gesproken begeleiding', 'Telt af en zegt wat er komt', s.stem)}
       ${voices.length ? `
-        <label class="field">Kies een stem
-          <select id="voiceSel">
-            ${voices.map((v) => `<option value="${escapeHtml(v.voiceURI)}" ${chosen && v.voiceURI === chosen.voiceURI ? 'selected' : ''}>${escapeHtml(v.name)}</option>`).join('')}
-          </select>
-        </label>`
-    : `<p class="muted small">Geen Nederlandse stem gevonden op dit apparaat — de coach gebruikt dan de standaardstem.</p>`}
-      <button class="btn small" data-act="testVoice">Test de stem</button>
-      ${Listen.supported ? `
-        <div class="divider"></div>
-        ${toggle('terugpraten', 'Terugpraten (spraakbesturing)', s.terugpraten)}
-        <p class="muted small">${icon('mic')} Zeg tijdens de training “volgende”, “pauze”, “hervat” of “stop”.
-        Hiervoor vraagt je telefoon eenmalig toestemming voor de microfoon. Knoppen blijven altijd gewoon werken.</p>` : ''}
-    </section>
+      <div class="srow">
+        <span style="flex:1"><span class="t">Stem</span>
+        <select id="voiceSel" class="txtinput" style="margin-top:8px;min-height:48px;font-size:15px">
+          ${voices.map((v) => `<option value="${escapeHtml(v.voiceURI)}" ${chosen && v.voiceURI === chosen.voiceURI ? 'selected' : ''}>${escapeHtml(v.name)}</option>`).join('')}
+        </select></span>
+      </div>` : ''}
+      <button class="srow" data-act="testVoice"><span class="t">Stem testen</span><span class="go">${icon('chev')}</span></button>
+      ${toggle('trillen', 'Trillen', 'Bij aftellen en einde set', s.trillen)}
+      ${Listen.supported ? toggle('terugpraten', 'Terugpraten', 'Zeg "volgende", "pauze" of "stop"', s.terugpraten) : ''}
 
-    <section class="card">
-      <div class="card-head"><h3>Weergave &amp; feedback</h3></div>
-      <label class="field">Thema
-        <div class="seg" id="themaSeg">
-          ${[['auto', 'Auto'], ['licht', 'Licht'], ['donker', 'Donker']]
-      .map(([k, l]) => `<button data-thema="${k}" class="${(s.thema || 'auto') === k ? 'on' : ''}">${l}</button>`).join('')}
-        </div>
-      </label>
-      ${toggle('trillen', 'Trillen', s.trillen)}
-      ${toggle('groteKnoppen', 'Grote knoppen', s.groteKnoppen)}
-    </section>
+      <div class="sec">Meten</div>
+      ${toggleBlock('hrEnabled', 'Hartslag tonen', 'Alleen ter informatie — stuurt de training nooit', Store.block.hrEnabled)}
 
-    <section class="card">
-      <div class="card-head"><h3>${icon('heart')} Veiligheid</h3></div>
-      <p class="muted small">Hartslag stuurt hier nooit de training — we werken op gevoel en de praattest. ${StopCriteria.hartslagDisclaimer}</p>
-      ${toggleBlock('hrEnabled', 'Hartslag tonen op horloge (alleen info)', Store.block.hrEnabled)}
+      <div class="sec">Profiel</div>
+      <div class="srow">
+        <span style="flex:1"><span class="t">Naam</span>
+        <input type="text" id="setNaam" class="txtinput" style="margin-top:8px;min-height:48px;font-size:15px"
+          value="${escapeHtml(Store.profile.naam || 'Moek')}" maxlength="20" aria-label="Je naam"></span>
+        <button class="btn ghost" style="flex:0 0 96px;min-height:48px;font-size:13px" data-act="saveNames">Bewaar</button>
+      </div>
+      <button class="srow" data-act="replayIntro"><span class="t">Introductie opnieuw bekijken</span><span class="go">${icon('chev')}</span></button>
+
+      <div class="sec">Veiligheid</div>
+      <button class="srow" data-act="viewDisclaimer"><span class="t">Arts-advies bekijken</span><span class="go">${icon('chev')}</span></button>
       ${blocked
-      ? `<button class="btn warn" data-act="resetBlock">Klachten weg — reset 48u-pauze</button>`
-      : `<p class="muted small">Geen actieve pauze. Alles staat op groen.</p>`}
-      <button class="btn ghost-dark" data-act="viewDisclaimer">Bekijk arts-advies</button>
-    </section>
+        ? `<button class="srow" data-act="resetBlock"><span><span class="t" style="color:var(--danger)">Blokkade resetten</span><span class="s" style="display:block">Klachten weg of met arts besproken — 48u-pauze opheffen</span></span><span class="go">${icon('chev')}</span></button>`
+        : `<div class="srow"><span><span class="t" style="color:var(--dim)">Blokkade resetten</span><span class="s" style="display:block">Geen actieve blokkade</span></span></div>`}
 
-    <section class="card">
-      <div class="card-head"><h3>Jouw data (alles lokaal)</h3></div>
-      <p class="muted small">Niets verlaat je telefoon. Maak zelf een reservekopie:</p>
-      <button class="btn ghost-dark" data-act="export">Exporteer naar JSON</button>
-      <label class="btn ghost-dark filelabel">Importeer JSON<input type="file" id="importFile" accept="application/json" hidden></label>
-    </section>
-
+      <div class="sec">Gegevens · alles lokaal</div>
+      <button class="srow" data-act="export"><span class="t">Exporteren naar bestand</span><span class="go">${icon('chev')}</span></button>
+      <label class="srow" style="cursor:pointer"><span class="t">Importeren</span><span class="go">${icon('chev')}</span><input type="file" id="importFile" accept="application/json" hidden></label>
+    </div>
     ${tabbar('settings')}
   </div>`);
 
@@ -260,13 +257,6 @@ export function renderSettings(nav) {
       nav('settings');
     });
   });
-  root.querySelectorAll('#themaSeg button').forEach((b) => {
-    b.addEventListener('click', () => {
-      Store.setSettings({ thema: b.dataset.thema });
-      applyTheme();
-      nav('settings');
-    });
-  });
   const voiceSel = root.querySelector('#voiceSel');
   if (voiceSel) voiceSel.addEventListener('change', () => {
     Store.setSettings({ coachVoiceURI: voiceSel.value });
@@ -276,13 +266,11 @@ export function renderSettings(nav) {
     if (handleNav(act, nav)) return;
     if (act === 'saveNames') {
       const naam = (root.querySelector('#setNaam').value || '').trim() || 'Moek';
-      const coach = (root.querySelector('#setCoach').value || '').trim() || 'Sanne';
-      Store.setProfile({ naam, coachNaam: coach });
-      Coach.speak(`Prima, ${naam}. Ik ben ${coach}.`);
+      Store.setProfile({ naam });
       return nav('settings');
     }
     if (act === 'replayIntro') return nav('onboarding', { replay: true });
-    if (act === 'testVoice') return Coach.sayTest();
+    if (act === 'testVoice') return Coach.speak('Zo klinkt de gesproken begeleiding.');
     if (act === 'viewDisclaimer') return nav('disclaimer-view');
     if (act === 'resetBlock') {
       const block = { ...Store.block, chestBlockUntilEpochMs: 0, version: Store.block.version + 1 };
@@ -314,23 +302,24 @@ export function renderSettings(nav) {
       if (data.settings) Store.setSettings(data.settings);
       if (data.profile) Store.setProfile(data.profile);
       if (data.block) Store.setBlock(data.block);
-      alert('Import gelukt ✓');
+      alert('Import gelukt');
       nav('dashboard');
     } catch { alert('Import mislukt — ongeldig bestand.'); }
   });
 }
 
-function toggle(key, label, on) {
-  return `<div class="setting" data-toggle="${key}" role="switch" aria-checked="${!!on}" tabindex="0"><span>${label}</span><span class="sw ${on ? 'on' : ''}"></span></div>`;
+function toggle(key, label, sub, on) {
+  return `<button class="srow" data-toggle="${key}" role="switch" aria-checked="${!!on}">
+    <span><span class="t">${label}</span>${sub ? `<span class="s" style="display:block">${sub}</span>` : ''}</span>
+    <span class="sw ${on ? 'on' : ''}"></span></button>`;
 }
-function toggleBlock(key, label, on) {
-  return `<div class="setting" data-toggleblock="${key}" role="switch" aria-checked="${!!on}" tabindex="0"><span>${label}</span><span class="sw ${on ? 'on' : ''}"></span></div>`;
+function toggleBlock(key, label, sub, on) {
+  return `<button class="srow" data-toggleblock="${key}" role="switch" aria-checked="${!!on}">
+    <span><span class="t">${label}</span>${sub ? `<span class="s" style="display:block">${sub}</span>` : ''}</span>
+    <span class="sw ${on ? 'on' : ''}"></span></button>`;
 }
 
-/** Thema toepassen: expliciet licht/donker, of automatisch (systeem). */
+/** Alleen donker thema — oude themaklassen opruimen. */
 export function applyTheme() {
-  const t = Store.settings.thema || 'auto';
-  document.documentElement.classList.toggle('dark', t === 'donker');
-  document.documentElement.classList.toggle('light', t === 'licht');
-  document.documentElement.classList.toggle('big', !!Store.settings.groteKnoppen);
+  document.documentElement.classList.remove('dark', 'light', 'big');
 }

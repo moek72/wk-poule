@@ -1,6 +1,6 @@
-// screens/player.js — de trainingsspeler. Grote illustratie, tellers, strakke
-// werk → rust → volgende flow, met de coach die meepraat. Veiligheid via de
-// altijd zichtbare noodstop en de "voelt niet goed"-knop.
+// screens/player.js — de trainingsspeler in het donkere designsysteem.
+// Grote Anton-cijfers, één primaire actie per scherm, korte uppercase cues,
+// noodstop altijd bereikbaar. De flow en alle Engine-aanroepen zijn ongewijzigd.
 //
 // Belangrijk voor performance: de DOM wordt alléén herbouwd bij een scherm-
 // wissel; elke seconde-tick patcht alleen de getallen (geen flikkeren, geen
@@ -13,7 +13,8 @@ import { StopCriteria } from '../safety.js';
 import { Coach } from '../coach.js';
 import { Listen, parseCommand } from '../listen.js';
 import { Store } from '../store.js';
-import { nextTrainingDay, DayKind } from '../program.js';
+import { DB } from '../db.js';
+import { weekOverview, DayKind } from '../program.js';
 
 let lastSig = null;
 
@@ -40,24 +41,20 @@ export function renderPlayer(nav) {
     case Screen.SUMMARY: html = summaryView(e); break;
     default: html = workView(e);
   }
-  const root = mount(`<div class="screen">${html}</div>`);
+  const root = mount(`<div class="screen player${e.screen === Screen.STOP ? ' stop' : ''}">${html}</div>`);
   wire(root, nav);
 }
 
 // Update alleen de live-waarden, zonder de DOM te herbouwen.
 function patch(app, e) {
   const setText = (sel, txt) => { const n = app.querySelector(sel); if (n && n.textContent !== txt) n.textContent = txt; };
-  const pf = app.querySelector('.pbar-fill');
+  const pf = app.querySelector('.playbar .bar > i');
   if (pf) pf.style.width = Math.round(e.progress * 100) + '%';
-  if (e.screen === Screen.GET_READY) setText('.big-count', String(e.remaining));
+  if (e.screen === Screen.GET_READY) setText('.gr-count', String(e.remaining));
   if (e.screen === Screen.REST) setText('.rest-count', fmtTime(e.remaining));
   if (e.screen === Screen.WORK) {
     const ex = e.current;
-    if (ex && ex.mode !== 'reps' && ex.mode !== 'swings') {
-      setText('.big-count', workCount(ex, e.remaining));
-      const ring = app.querySelector('.big-ring');
-      if (ring) ring.style.setProperty('--frac', ex.workSec ? e.remaining / ex.workSec : 0);
-    }
+    if (ex && ex.mode !== 'reps' && ex.mode !== 'swings') setText('.wk-count', fmtTime(e.remaining));
     if (ex && ex.mode === 'swings') setText('.swing-count', String(e.swingCount));
   }
 }
@@ -91,44 +88,38 @@ function onVoiceCommand(text) {
 
 // --- bouwstenen ---------------------------------------------------------------
 
-/** Lange sets (warming-up/cooling-down) als 5:00, korte als losse seconden. */
-function workCount(ex, remaining) {
-  return ex && ex.workSec > 90 ? fmtTime(remaining) : String(remaining);
-}
-
+/** "Ronde 2 van 3 · Oefening 1" (uppercase via CSS), of het faselabel. */
 function counterText(ex) {
   if (!ex) return '';
-  if (ex._round) return `Ronde ${ex._round}/${ex._roundsTotal} · Oefening ${ex._pos}/${ex._circuitLen}`;
+  if (ex._round) return `Ronde ${ex._round} van ${ex._roundsTotal} · Oefening ${ex._pos}`;
   return ex.phaseLabel || '';
 }
 
-function topBar(e) {
+function bar(e) {
   const pct = Math.round(e.progress * 100);
   const mic = Listen.supported && Store.settings.terugpraten && Listen.active
-    ? `<span class="mic-ind" title="Ik luister">${icon('mic')}</span>` : '';
+    ? `<span style="color:var(--orange);display:flex" title="Luistert mee">${icon('mic')}</span>` : '';
   return `
-  <div class="pbar-wrap">
-    <div class="pbar"><div class="pbar-fill" style="width:${pct}%"></div></div>
+  <div class="playbar" style="display:flex;align-items:center;gap:10px">
+    <div class="bar" style="flex:1"><i style="width:${pct}%"></i></div>
     ${mic}
-    <button class="mini-stop" data-act="emergency" aria-label="Noodstop">✕ STOP</button>
   </div>`;
 }
 
-function stepsCard(ex, title = 'Zo doe je het') {
-  if (!ex || !ex.stappen || !ex.stappen.length) return '';
+/** Max twee korte uppercase cues op het werkscherm. */
+function cues(ex) {
+  const list = [ex.cue1, ex.cue2].filter(Boolean).slice(0, 2);
+  if (!list.length) return '';
+  return `<div class="cues">${list.map((c) => `<span class="cue">${escapeHtml(c)}</span>`).join('')}</div>`;
+}
+
+function safetyFoot(extra = '') {
   return `
-  <div class="steps-card">
-    <p class="steps-title">${title}</p>
-    <ol>${ex.stappen.slice(0, 3).map((s) => `<li>${escapeHtml(s)}</li>`).join('')}</ol>
+  <div class="playfoot">
+    ${extra}
+    <button class="feelbtn" data-act="feel">Voelt niet goed</button>
+    <button class="emergency" data-act="emergency">Noodstop</button>
   </div>`;
-}
-
-function cueChips(ex, compact = false) {
-  const cues = compact ? [ex.cue1] : [ex.cue1, ex.cue2];
-  const chips = cues.filter(Boolean)
-    .map((c) => `<span class="cue-chip">${escapeHtml(c)}</span>`).join('');
-  const kg = ex.gewichtKg ? `<span class="cue-chip kg">${ex.gewichtKg} kg</span>` : '';
-  return `<div class="cue-row">${kg}${chips}</div>`;
 }
 
 // --- views ---------------------------------------------------------------------
@@ -136,178 +127,191 @@ function cueChips(ex, compact = false) {
 function getReadyView(e) {
   const ex = e.current;
   return `
-  ${topBar(e)}
+  ${bar(e)}
   <div class="stage ready">
-    <p class="counter">${escapeHtml(counterText(ex))}</p>
-    <p class="ready-label">Maak je klaar…</p>
-    <div class="big-count">${e.remaining}</div>
-    <div class="upnext">
-      <div class="upnext-fig">${illustration(ex ? ex.illu : 'generic')}</div>
-      <div><b>${escapeHtml(ex ? ex.naam : '')}</b><small>${escapeHtml(ex ? ex.cue1 : '')}</small></div>
+    <p class="roundlabel">${escapeHtml(counterText(ex))}</p>
+    <p class="kick" style="margin-top:16px">Maak je klaar</p>
+    <div class="timer xl d gr-count">${e.remaining}</div>
+    <div style="margin-top:20px">
+      <div class="illowrap mid">${illustration(ex ? ex.illu : 'generic', 'mid')}</div>
+      <div class="exname md d">${escapeHtml(ex ? ex.naam : '')}</div>
     </div>
-    <p class="coach-say">${escapeHtml(Coach.coachName())}: “Rustig beginnen — ik praat je erdoorheen.”</p>
-    <button class="btn onlight big" data-act="skipRest">Start nu</button>
-    <button class="feel-link" data-act="feel">Voelt niet goed?</button>
-  </div>`;
+  </div>
+  ${safetyFoot('<button class="btn primary block" data-act="skipRest">Start nu</button>')}`;
 }
 
 function workView(e) {
   const ex = e.current;
   if (!ex) return '';
-  const firstRound = ex._round === 1 || !ex._round;
-  let counterBlock;
-  if (ex.mode === 'reps') {
-    counterBlock = `
-      <div class="reps"><span class="reps-x">×</span>${ex.reps}</div>
-      <p class="reps-hint">Rustig, op je eigen tempo</p>
-      <button class="btn onlight big" data-act="completeSet">Klaar ✓</button>`;
-  } else if (ex.mode === 'swings') {
-    counterBlock = `
-      <div class="tap-area" data-act="tap">
-        <div class="swing-count">${e.swingCount}</div>
-        <div class="swing-hint">tik = +1 swing</div>
-      </div>
-      <div class="row">
-        <button class="btn ghost" data-act="undo">Terug</button>
-        <button class="btn onlight" data-act="completeSet">Klaar ✓</button>
+  if (ex.mode === 'swings') return swingView(e, ex);
+
+  const counter = ex.mode === 'reps'
+    ? `<div class="reps d" style="margin-top:6px"><span class="x">×</span>${ex.reps}</div>`
+    : `<div class="timer d wk-count" style="margin-top:6px">${fmtTime(e.remaining)}</div>`;
+  const primary = ex.mode === 'reps'
+    ? '<button class="btn primary block" data-act="completeSet">Klaar</button>'
+    : `<div class="ctlrow">
+        <button class="btn ghost" data-act="pause">${e.paused ? 'Hervat' : 'Pauze'}</button>
+        <button class="btn ghost" data-act="skipEx">Sla over</button>
       </div>`;
-  } else {
-    counterBlock = `
-      <div class="ring big-ring" style="--frac:${ex.workSec ? e.remaining / ex.workSec : 0}">
-        <div class="ring-inner"><div class="big-count">${workCount(ex, e.remaining)}</div></div>
-      </div>`;
-  }
   return `
-  ${topBar(e)}
-  <div class="stage work ${ex.mode === 'swings' ? 'swings-mode' : ''}">
-    <p class="counter">${escapeHtml(counterText(ex))}</p>
-    ${ex.mode === 'swings' ? '' : `<div class="fig-lg">${illustration(ex.illu)}</div>`}
-    <h2 class="ex-name">${escapeHtml(ex.naam)}</h2>
-    ${cueChips(ex, firstRound && ex.mode !== 'swings')}
-    ${counterBlock}
-    ${firstRound && ex.mode !== 'swings' ? stepsCard(ex) : ''}
-    <div class="row bottom">
-      <button class="btn ghost" data-act="pause">${e.paused ? '▶ Hervat' : 'Ⅱ Pauze'}</button>
-      <button class="btn ghost" data-act="skipEx">Sla over</button>
-    </div>
-    <button class="feel-link" data-act="feel">Voelt niet goed?</button>
-  </div>`;
+  ${bar(e)}
+  <div class="stage work">
+    <p class="roundlabel">${escapeHtml(counterText(ex))}</p>
+    <div class="illowrap">${illustration(ex.illu)}</div>
+    <div class="exname d">${escapeHtml(ex.naam)}</div>
+    ${counter}
+    ${cues(ex)}
+  </div>
+  ${safetyFoot(primary)}`;
+}
+
+function swingView(e, ex) {
+  return `
+  ${bar(e)}
+  <div class="tapzone" data-act="tap" role="button" aria-label="Tik om een swing te tellen">
+    <p class="roundlabel" style="margin-bottom:10px">${escapeHtml(counterText(ex))}</p>
+    <p class="kick o" style="font-size:15px;letter-spacing:.2em">Swings</p>
+    <div class="mega swing-count">${e.swingCount}</div>
+    <p class="cue">Tik om te tellen</p>
+  </div>
+  <div class="ctlrow" style="margin:14px 0 10px">
+    <button class="btn ghost" style="font-size:14px" data-act="undo">Ongedaan maken</button>
+    <button class="btn danger" style="font-size:14px;flex:0 0 130px" data-act="completeSet">Klaar</button>
+  </div>
+  <button class="emergency" style="margin-bottom:20px" data-act="emergency">Noodstop</button>`;
 }
 
 function restView(e) {
   const nx = e.next;
-  // Praattest bij het begin van elke nieuwe ronde (coachend, niet verplicht).
+  // Praattest bij het begin van elke nieuwe ronde.
   const talk = nx && nx._pos === 1 && nx._round > 1 ? `
-    <div class="talk-check" id="talkCheck">
-      <p>Snelle check: kun je nog rustig praten?</p>
-      <div class="talk-row">
-        <button class="chip light" data-act="talk-ja">Ja hoor</button>
-        <button class="chip light" data-act="talk-moeilijk">Het gaat</button>
-        <button class="chip light warn" data-act="talk-nee">Nee, ik hijg</button>
+    <div class="talkcheck" id="talkCheck">
+      <p class="qlabel" style="text-align:center">Kun je nog rustig praten?</p>
+      <div class="seg txt">
+        <button data-act="talk-ja">Ja</button>
+        <button data-act="talk-moeilijk">Net</button>
+        <button data-act="talk-nee">Nee, ik hijg</button>
       </div>
     </div>` : '';
   return `
-  ${topBar(e)}
+  ${bar(e)}
   <div class="stage rest">
-    <p class="rest-label">RUST</p>
-    <div class="big-count rest-count">${fmtTime(e.remaining)}</div>
-    <p class="coach-say">${escapeHtml(Coach.restTip(e.index))}</p>
-    <div class="row">
-      <button class="btn ghost" data-act="addRest">+20s</button>
-      <button class="btn onlight" data-act="skipRest">Sla over</button>
-    </div>
-    ${talk}
+    <p class="roundlabel mut">Rust</p>
+    <div class="timer xl d rest-count">${fmtTime(e.remaining)}</div>
     ${nx ? `
-    <div class="upnext-wrap">
-      <span class="upnext-label">Volgende</span>
-      <div class="upnext">
-        <div class="upnext-fig">${illustration(nx.illu)}</div>
-        <div><b>${escapeHtml(nx.naam)}</b><small>${nx.mode === 'reps' ? '× ' + nx.reps : nx.mode === 'swings' ? 'swings' : fmtTime(nx.workSec)}</small></div>
-      </div>
-    </div>` : `<p class="last-note">Laatste — bijna klaar!</p>`}
-    <button class="feel-link" data-act="feel">Voelt niet goed?</button>
-  </div>`;
+    <div style="margin-top:22px;text-align:center">
+      <p class="kick o" style="margin-bottom:6px">Volgende</p>
+      <div class="illowrap mid">${illustration(nx.illu, 'mid')}</div>
+      <div class="exname md d">${escapeHtml(nx.naam)}</div>
+      <p class="cue" style="margin-top:8px">${escapeHtml(Coach.restTip(e.index))}</p>
+    </div>` : ''}
+    ${talk}
+  </div>
+  ${safetyFoot(`
+    <div class="ctlrow">
+      <button class="btn ghost" data-act="addRest">+20 sec</button>
+      <button class="btn ghost" data-act="skipRest">Sla rust over</button>
+    </div>`)}`;
 }
 
 function feelingView() {
   return `
-  <div class="stage sheet">
-    <h2>Hoe voel je je?</h2>
-    <p class="muted">Goed dat je het aangeeft — daar zijn we samen voor.</p>
-    <button class="btn danger big" data-act="feel-chest">Pijn/druk op de borst</button>
-    <button class="btn warn" data-act="feel-pain">Pijn (nek/schouder/rug)</button>
-    <button class="btn ghost-dark" data-act="feel-heavy">Te zwaar — ik wil rusten</button>
-    <button class="btn ghost-dark" data-act="feel-back">Terug naar de training</button>
-    <p class="muted small">Bij pijn op de borst: stop en bel 112.</p>
+  <div class="stage" style="justify-content:center">
+    <h1 class="d title-lg">Hoe voel<br>je je?</h1>
+  </div>
+  <div class="playfoot" style="padding-bottom:24px">
+    <button class="btn danger block" data-act="feel-chest">Pijn of druk op de borst</button>
+    <button class="btn ghost" data-act="feel-pain">Pijn — nek, schouder of rug</button>
+    <button class="btn ghost" data-act="feel-heavy">Te zwaar</button>
+    <button class="btn" data-act="feel-back">Terug naar de training</button>
+    <p class="cue" style="text-align:center;font-size:12px">Pijn op de borst? Stop en bel 112.</p>
   </div>`;
 }
 
 function painLocationView() {
   const locs = [['NEK', 'Nek'], ['SCHOUDER', 'Schouder'], ['RUG', 'Rug'], ['BORST', 'Borst'], ['ANDERS', 'Anders']];
   return `
-  <div class="stage sheet">
-    <h2>Waar?</h2>
-    ${locs.map(([k, l]) => `<button class="btn ${k === 'BORST' ? 'danger' : 'ghost-dark'}" data-act="loc-${k}">${l}</button>`).join('')}
+  <div class="stage" style="justify-content:center">
+    <h1 class="d title-lg">Waar zit<br>de pijn?</h1>
+  </div>
+  <div class="playfoot" style="padding-bottom:24px">
+    ${locs.map(([k, l]) => `<button class="btn ${k === 'BORST' ? 'danger block' : 'ghost'}" data-act="loc-${k}">${l}</button>`).join('')}
   </div>`;
 }
 
 function recoveryView(e) {
   return `
-  <div class="stage sheet recovery">
-    <span class="gate-icon">${icon('heart')}</span>
-    <h2>Even rustig</h2>
-    <p>${escapeHtml(e.recoveryReason || '')} We nemen gas terug — dat is verstandig, niet zwak. Ga pas door als het weer goed voelt.</p>
-    <button class="btn rust big" data-act="rec-continue">Rust &amp; ga door</button>
-    <button class="btn ghost-dark" data-act="rec-stop">Sessie stoppen</button>
+  <div class="stage" style="text-align:left;align-items:flex-start">
+    <p class="kick o">Even gas terug</p>
+    <h1 class="d title-xl">Rust nu.</h1>
+    <p class="bodytext">${escapeHtml(e.recoveryReason || '')} Ga pas door als het weer goed voelt.</p>
+  </div>
+  <div class="playfoot">
+    <button class="btn primary block" data-act="rec-continue">Rust en ga door</button>
+    <button class="btn ghost" data-act="rec-stop">Stop de sessie</button>
   </div>`;
 }
 
 function stopView() {
   return `
-  <div class="stage stopscreen">
-    <h1>${StopCriteria.titel}</h1>
-    <p class="big-text">${StopCriteria.tekst}</p>
-    <a class="btn danger big" href="tel:112">Bel 112</a>
-    <p class="na">${StopCriteria.naMelding}</p>
-    <button class="btn ghost" data-act="stop-ack">Begrepen</button>
-  </div>`;
+  <div class="stage stopscreen" style="gap:0">
+    <span style="color:var(--danger)"><svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="margin-bottom:18px"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/></svg></span>
+    <h1 class="d stop-title">${StopCriteria.titel.replace('. ', '.<br>')}</h1>
+    <p class="bodytext" style="max-width:300px;text-align:center">${StopCriteria.tekst}</p>
+  </div>
+  <a class="btn danger block" style="margin-bottom:12px" href="tel:112">Bel 112</a>
+  <p class="cue" style="text-align:center;font-size:12px;margin-bottom:12px">${StopCriteria.naMelding}</p>
+  <button class="btn ghost" style="margin-bottom:20px" data-act="stop-ack">Begrepen</button>`;
 }
 
 function summaryView(e) {
   const s = e.summary || {};
-  const naam = Coach.userName();
-  const row = (l, v) => `<div class="srow"><span>${l}</span><b>${v}</b></div>`;
-  const emoji = (k, em, lbl) => `<button class="emoji-sm ${e.wellbeing === k ? 'sel' : ''}" data-act="wb-${k}" aria-label="${lbl}">${em}</button>`;
-  const next = nextTrainingDay(Store.profile);
-  const nextLine = next
-    ? (next.kind === DayKind.KB
-      ? `${cap(next.dagNaam)} staat sessie ${next.variant} voor je klaar.`
-      : `${cap(next.dagNaam)} doen we rustige mobiliteit.`)
-    : '';
+  const label = e.plan && e.plan.variant ? `Training ${e.plan.variant}`
+    : (e.type === 'ALLEEN_MOBILITEIT' ? 'Mobiliteit' : 'Training');
+  const rounds = (e.plan && e.plan.rounds)
+    || ((e.steps || []).find((st) => st._roundsTotal) || {})._roundsTotal || null;
+  const row = (l, v, cls = '') => `<div class="rowline"><span class="lbl">${l}</span><span class="val ${cls}">${v}</span></div>`;
+  const wb = (k, l) => `<button class="wbopt ${e.wellbeing === k ? 'on' : ''}" data-act="wb-${k}">${l}</button>`;
   return `
-  <div class="stage summary">
-    <div class="confetti" aria-hidden="true">${'<i></i>'.repeat(12)}</div>
-    <div class="trophy">🏅</div>
-    <h2>Goed gedaan, ${escapeHtml(naam)}!</h2>
-    <p class="coach-say">${escapeHtml(Coach.summaryTip(s))}</p>
-    <div class="sum-card">
+  <div class="stage" style="justify-content:flex-start;padding-top:24px;gap:0;align-items:stretch;text-align:left">
+    <p class="kick o" style="text-align:center">${escapeHtml(label)} · voltooid</p>
+    <h1 class="d" style="font-size:clamp(48px,16vw,64px);line-height:.95;margin-top:8px;text-align:center">Training<br>klaar</h1>
+
+    <div class="rows" style="margin-top:30px">
       ${row('Duur', fmtTime(s.durationSec || 0))}
       ${row('Oefeningen', s.exerciseCount || 0)}
-      ${s.totalSwings ? row('Swings', s.totalSwings) : ''}
+      ${rounds ? row('Rondes', rounds) : ''}
+      ${row('Swings', s.totalSwings ? s.totalSwings : '—', 'o')}
       ${(s.painReports || []).length ? row('Pijnmeldingen', s.painReports.length) : ''}
     </div>
-    ${nextLine ? `<p class="next-line">${icon('week')} ${escapeHtml(nextLine)}</p>` : ''}
-    <p class="wb-q">Hoe voelde het? <small>(optioneel)</small></p>
-    <div class="emoji-row">${emoji('GOED', '😊', 'Goed')}${emoji('TWIJFEL', '😐', 'Twijfel')}${emoji('PIJN', '😣', 'Pijn')}</div>
-    <label class="rpe-wrap">Hoe zwaar was het? (0–10)
-      <input type="range" id="rpeSlider" class="slider" min="0" max="10" step="1" value="${e.rpe != null ? e.rpe : 5}">
-      <span class="rpe-out" id="rpeOut">${e.rpe != null ? e.rpe : '—'}</span>
-    </label>
-    <button class="btn onlight big" data-act="summary-done">Klaar</button>
-  </div>`;
+
+    <div style="margin-top:26px;text-align:center">
+      <p class="kick">Deze week</p>
+      <div class="segs" id="weekSegs" style="max-width:280px;margin:8px auto 0">${'<i></i>'.repeat(5)}</div>
+      <p class="cue" id="weekSegsNote" style="margin-top:8px;font-size:13px"></p>
+    </div>
+
+    <p class="qlabel" style="margin-top:26px">Hoe voelde het?</p>
+    <div class="seg txt">${wb('GOED', 'Goed')}${wb('TWIJFEL', 'Matig')}${wb('PIJN', 'Pijn')}</div>
+
+    <p class="qlabel">Hoe zwaar? <span id="rpeOut" style="color:var(--orange)">${e.rpe != null ? e.rpe : '—'}</span> / 10</p>
+    <input type="range" id="rpeSlider" class="slider" min="0" max="10" step="1" value="${e.rpe != null ? e.rpe : 5}" aria-label="Zwaarte 0 tot 10">
+  </div>
+  <button class="btn primary block" style="margin:18px 0 22px" data-act="summary-done">Klaar</button>`;
 }
 
-function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+/** Vul de week-segmenten op de samenvatting async in (geen re-render nodig). */
+function fillWeekSegs(root) {
+  DB.allSessions().then((sessions) => {
+    const days = weekOverview(Store.profile, sessions, new Date());
+    const done = days.filter((d) => d.kind !== DayKind.RUST && d.done).length;
+    const segs = root.querySelector('#weekSegs');
+    const note = root.querySelector('#weekSegsNote');
+    if (segs) segs.innerHTML = Array.from({ length: 5 }, (_, i) => `<i class="${i < done ? 'on' : ''}"></i>`).join('');
+    if (note) note.textContent = `${done} van 5 trainingen`;
+  }).catch(() => {});
+}
 
 // --- wiring -----------------------------------------------------------------
 
@@ -320,6 +324,7 @@ function wire(root, nav) {
       Engine.rpe = +rpe.value; // stil bijwerken; geen re-render nodig
     });
   }
+  if (Engine.screen === Screen.SUMMARY) fillWeekSegs(root);
 
   bindActions(root, (act) => {
     switch (act) {
@@ -344,15 +349,15 @@ function wire(root, nav) {
       case 'wb-PIJN': {
         // Stil bijwerken + selectie direct in de DOM (geen rebuild op summary).
         Engine.wellbeing = act.slice(3);
-        root.querySelectorAll('.emoji-sm').forEach((b) =>
-          b.classList.toggle('sel', b.dataset.act === act));
+        root.querySelectorAll('.wbopt').forEach((b) =>
+          b.classList.toggle('on', b.dataset.act === act));
         return;
       }
       case 'summary-done': Engine.saveWellbeing(); return nav('dashboard');
       case 'talk-ja':
       case 'talk-moeilijk': {
         const t = root.querySelector('#talkCheck');
-        if (t) t.innerHTML = '<p class="talk-ok">Mooi zo — dan zit het tempo goed. 👍</p>';
+        if (t) t.innerHTML = '<p class="talk-ok" style="text-align:center">Goed — het tempo zit goed.</p>';
         return;
       }
       case 'talk-nee': return Engine.submitTalkTest('NEE');

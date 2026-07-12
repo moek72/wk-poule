@@ -42,14 +42,14 @@ function render() {
 
 function renderDisclaimerView() {
   const root = mount(`
-  <div class="page">
-    <div class="card disclaimer">
-      <h1>Arts-advies</h1>
-      <p>Bespreek dit programma eerst met je huisarts of cardioloog — vooral de swings.</p>
-      <p class="muted">Bij pijn/druk op de borst, uitstraling naar arm/kaak/rug, duizeligheid, abnormale kortademigheid of hartkloppingen: stop direct en bel 112.</p>
-      <p class="muted">Deze app let met je mee, maar vervangt geen arts.</p>
-      <button class="btn primary" data-act="back">Terug</button>
-    </div>
+  <div class="screen has-nav disclaimer">
+    <p class="kick o" style="margin-top:8px">Veiligheid</p>
+    <h1 class="d title-xl">Arts-advies</h1>
+    <p class="bodytext">Bespreek dit programma eerst met je huisarts of cardioloog — vooral de swings.</p>
+    <p class="bodytext mut">Bij pijn of druk op de borst, uitstraling naar arm, kaak of rug, duizeligheid, abnormale kortademigheid of hartkloppingen: stop direct en bel 112.</p>
+    <p class="bodytext mut">Deze app vervangt geen arts.</p>
+    <div class="spacer"></div>
+    <button class="btn ghost block" style="margin-bottom:18px" data-act="back">Terug</button>
     ${tabbar('settings')}
   </div>`);
   bindActions(root, (a) => { if (a === 'back' || a === 'nav-settings') nav('settings'); else if (a.startsWith('nav-')) nav(a.slice(4)); });

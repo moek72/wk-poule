@@ -1,10 +1,8 @@
 // ui.js — piepkleine DOM-helpers. Geen framework.
 
-import { icon } from './illustrations.js';
-
 export function fmtTime(sec) {
   const s = Math.max(0, sec | 0);
-  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 }
 
 /** Zet HTML in het #app-element en geef het element terug. */
@@ -26,18 +24,16 @@ export function escapeHtml(s) {
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
-/** Vaste navigatiebalk onderin (dashboard / bibliotheek / voortgang / meer). */
+/** Vaste navigatiebalk onderin — minimaal, uppercase, geen iconen. */
 export function tabbar(active) {
   const tabs = [
-    ['dashboard', 'home', 'Vandaag'],
-    ['library', 'book', 'Oefeningen'],
-    ['progress', 'chart', 'Voortgang'],
-    ['settings', 'gear', 'Meer'],
+    ['dashboard', 'Vandaag'],
+    ['library', 'Oefeningen'],
+    ['progress', 'Voortgang'],
+    ['settings', 'Meer'],
   ];
-  return `<nav class="tabbar" aria-label="Hoofdmenu">${tabs.map(([route, icn, label]) => `
-    <button class="tab ${route === active ? 'active' : ''}" data-act="nav-${route}" aria-label="${label}">
-      ${icon(icn)}<span>${label}</span>
-    </button>`).join('')}</nav>`;
+  return `<nav class="nav" aria-label="Hoofdmenu">${tabs.map(([route, label]) => `
+    <button class="tab ${route === active ? 'on' : ''}" data-act="nav-${route}" aria-current="${route === active ? 'page' : 'false'}">${label}</button>`).join('')}</nav>`;
 }
 
 /** Handel 'nav-*' acties af; geeft true terug als de actie navigatie was. */
