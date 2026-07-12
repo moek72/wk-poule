@@ -10,8 +10,14 @@ dependencies {
     testImplementation(kotlin("test"))
 }
 
-kotlin {
-    jvmToolchain(17)
+// Target Java 17 bytecode using whatever JDK runs Gradle (>= 17), rather than
+// pinning a 17 toolchain that would need to be downloaded/provisioned.
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions.jvmTarget = "17"
 }
 
 // `gradle :shared:run` executes the offline self-test harness (nl.kb30.protocol.VerifyKt).

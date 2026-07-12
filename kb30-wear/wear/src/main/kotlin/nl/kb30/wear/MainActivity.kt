@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
     private val ambientObserver = AmbientLifecycleObserver(
         this,
         object : AmbientLifecycleObserver.AmbientLifecycleCallback {
-            override fun onEnterAmbient(details: AmbientLifecycleObserver.AmbientDetails) {
+            override fun onEnterAmbient(ambientDetails: AmbientLifecycleObserver.AmbientDetails) {
                 ambient = true
             }
 

@@ -55,8 +55,11 @@ dependencies {
     implementation("com.google.android.gms:play-services-wearable:18.2.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
 
-    // Optional, informational heart rate only (default OFF)
+    // Optional, informational heart rate only (default OFF).
+    // We use the coroutine (suspend) extensions rather than the *Async APIs, so
+    // no Guava ListenableFuture leaks onto the compile classpath.
     implementation("androidx.health:health-services-client:1.0.0-rc02")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
 }

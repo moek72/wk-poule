@@ -8,9 +8,14 @@ import androidx.health.services.client.data.DataPointContainer
 import androidx.health.services.client.data.DataType
 import androidx.health.services.client.data.DataTypeAvailability
 import androidx.health.services.client.data.DeltaDataType
+import androidx.health.services.client.unregisterMeasureCallback
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 /**
  * OPTIONAL, informational heart rate.
@@ -29,6 +34,7 @@ import kotlinx.coroutines.flow.asStateFlow
 class HeartRateController(context: Context) {
 
     private val measureClient = HealthServices.getClient(context).measureClient
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     /** Latest bpm, or null for "geen meting". Never a guessed value. */
     private val _bpm = MutableStateFlow<Int?>(null)
@@ -63,6 +69,8 @@ class HeartRateController(context: Context) {
         if (!registered) return
         registered = false
         _bpm.value = null
-        runCatching { measureClient.unregisterMeasureCallbackAsync(DataType.HEART_RATE_BPM, callback) }
+        scope.launch {
+            runCatching { measureClient.unregisterMeasureCallback(DataType.HEART_RATE_BPM, callback) }
+        }
     }
 }
