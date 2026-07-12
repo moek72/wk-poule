@@ -1,5 +1,5 @@
 // sw.js — cache-first service worker. Volledig offline na de eerste load.
-const CACHE = 'kb30-v1';
+const CACHE = 'kb30-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -13,10 +13,14 @@ const ASSETS = [
   './js/gates.js',
   './js/swingLedger.js',
   './js/voice.js',
+  './js/coach.js',
+  './js/listen.js',
+  './js/program.js',
   './js/bridge.js',
   './js/engine.js',
   './js/illustrations.js',
   './js/data/exercises.js',
+  './js/screens/onboarding.js',
   './js/screens/main.js',
   './js/screens/player.js',
   './js/screens/more.js',

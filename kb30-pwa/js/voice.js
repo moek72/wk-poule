@@ -47,11 +47,12 @@ export function vibrate(pattern) {
   try { if (navigator.vibrate) navigator.vibrate(pattern); } catch { /* niet ondersteund */ }
 }
 
-// Cues met eigen geluid + trilling.
+// Cues met eigen geluid + trilling. Gesproken woorden komen uit coach.js —
+// hier alleen piepjes en trillen, zodat er nooit dubbel gepraat wordt.
 export const Cue = {
-  workStart() { beep(880, 150, 'square'); vibrate(200); say('Start'); },
-  restStart() { beep(440, 180, 'sine'); vibrate([120, 100, 120]); say('Rust'); },
-  tick(n) { beep(1000, 60, 'square', 0.1); vibrate(60); if (n) say(String(n)); },
+  workStart() { beep(880, 150, 'square'); vibrate(200); },
+  restStart() { beep(440, 180, 'sine'); vibrate([120, 100, 120]); },
+  tick(n) { beep(1000, 60, 'square', 0.1); vibrate(60); },
   setEnd() { beep(660, 120); beep(990, 200); vibrate([150, 80, 250]); },
   swingTick() { beep(1200, 30, 'square', 0.08); vibrate(35); },
   safety() { beep(300, 400, 'sawtooth', 0.2); vibrate([400, 150, 400, 150, 400]); },

@@ -7,15 +7,19 @@ import { SwingLedger } from './swingLedger.js';
 import { blockFromObj } from './safety.js';
 import { DB } from './db.js';
 import { initAudioOnGesture } from './voice.js';
-import { renderDisclaimer, renderDashboard, renderCheckin } from './screens/main.js';
+import { Coach } from './coach.js';
+import { Listen } from './listen.js';
+import { renderOnboarding } from './screens/onboarding.js';
+import { renderDashboard, renderCheckin } from './screens/main.js';
 import { renderPlayer } from './screens/player.js';
 import { renderProgress, renderLibrary, renderSettings, applyTheme } from './screens/more.js';
-import { mount, bindActions } from './ui.js';
+import { mount, bindActions, tabbar } from './ui.js';
 
 let route = 'dashboard';
 let routeArg = null;
 
 export function nav(to, arg = null) {
+  if (to !== route) Coach.stopSpeech(); // spraak niet laten stapelen
   route = to;
   routeArg = arg;
   render();
@@ -23,10 +27,11 @@ export function nav(to, arg = null) {
 
 function render() {
   switch (route) {
-    case 'disclaimer': return renderDisclaimer(nav);
+    case 'onboarding':
+    case 'disclaimer': return renderOnboarding(nav, routeArg);
     case 'disclaimer-view': return renderDisclaimerView();
     case 'dashboard': return renderDashboard(nav);
-    case 'checkin': return renderCheckin(nav);
+    case 'checkin': return renderCheckin(nav, routeArg);
     case 'player': return renderPlayer(nav);
     case 'progress': return renderProgress(nav);
     case 'library': return renderLibrary(nav, routeArg);
@@ -37,13 +42,17 @@ function render() {
 
 function renderDisclaimerView() {
   const root = mount(`
-  <div class="card center disclaimer">
-    <h1>Arts-advies</h1>
-    <p>Bespreek dit programma eerst met je huisarts of cardioloog — vooral de swings.</p>
-    <p class="muted">Bij pijn/druk op de borst, uitstraling, duizeligheid, abnormale kortademigheid of hartkloppingen: stop direct en bel 112.</p>
-    <button class="btn" data-act="back">Terug</button>
+  <div class="page">
+    <div class="card disclaimer">
+      <h1>Arts-advies</h1>
+      <p>Bespreek dit programma eerst met je huisarts of cardioloog — vooral de swings.</p>
+      <p class="muted">Bij pijn/druk op de borst, uitstraling naar arm/kaak/rug, duizeligheid, abnormale kortademigheid of hartkloppingen: stop direct en bel 112.</p>
+      <p class="muted">Deze app let met je mee, maar vervangt geen arts.</p>
+      <button class="btn primary" data-act="back">Terug</button>
+    </div>
+    ${tabbar('settings')}
   </div>`);
-  bindActions(root, (a) => { if (a === 'back') nav('settings'); });
+  bindActions(root, (a) => { if (a === 'back' || a === 'nav-settings') nav('settings'); else if (a.startsWith('nav-')) nav(a.slice(4)); });
 }
 
 // Re-render the player live whenever the engine changes state.
@@ -87,7 +96,7 @@ window.addEventListener('pointerdown', function once() {
 }, { once: true });
 
 // Debug handle (handig in de console; ongevaarlijk). Bijv. window.KB30.Engine.
-window.KB30 = { Engine, Store, Bridge, nav };
+window.KB30 = { Engine, Store, Bridge, Coach, Listen, nav };
 
 // Boot.
 export function boot() {
@@ -95,7 +104,7 @@ export function boot() {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(() => {});
   }
-  nav(Store.profile.disclaimerAccepted ? 'dashboard' : 'disclaimer');
+  nav(Store.profile.onboarded || Store.profile.disclaimerAccepted ? 'dashboard' : 'onboarding');
   // Meld initiële blokkadestatus aan het horloge als er een brug is.
   if (Bridge.available) Bridge.putState(Paths.BLOCK, JSON.stringify(Store.block));
 }

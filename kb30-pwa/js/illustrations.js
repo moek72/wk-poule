@@ -53,3 +53,49 @@ const FIGS = {
 export function illustration(key) {
   return (FIGS[key] || FIGS.generic)();
 }
+
+// ---------------------------------------------------------------------------
+// UI-iconen: één lijnstijl (stroke, ronde uiteinden), 24×24, currentColor.
+// Inline SVG zodat alles offline werkt en meekleurt met de tekstkleur.
+// ---------------------------------------------------------------------------
+
+const ICONS = {
+  // Kettlebell
+  kb: '<path d="M9 8.5V7a3 3 0 0 1 6 0v1.5"/><path d="M7.2 9h9.6a1 1 0 0 1 .97 1.24 l-1.1 4.4a5 5 0 0 1-9.34 0l-1.1-4.4A1 1 0 0 1 7.2 9Z"/>',
+  // Mobiliteit / golf
+  mob: '<path d="M3 15c2.5 0 2.5-5 5-5s2.5 5 5 5 2.5-5 5-5 2.5 5 3 5"/>',
+  // Wandelen
+  walk: '<circle cx="13" cy="4.5" r="1.6"/><path d="M12.5 8l-2 4.5L8 21"/><path d="M12.5 8l2.5 3 3 1"/><path d="M12.5 8L10 9.5 8.5 12"/><path d="M10.5 12.5l2.5 3.5 1 5"/>',
+  // Vinkje
+  check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  // Slotje
+  lock: '<rect x="6" y="11" width="12" height="9" rx="2"/><path d="M9 11V8a3 3 0 0 1 6 0v3"/>',
+  // Vlam (streak)
+  flame: '<path d="M12 3c1 3-3 4.5-3 8a3.5 3.5 0 0 0 7 0c0-1.5-.7-2.6-1.3-3.5C16.5 9 18 10.6 18 13a6 6 0 0 1-12 0c0-4.5 4.5-6.5 6-10Z"/>',
+  // Huis / vandaag
+  home: '<path d="M4 11.5L12 4.5l8 7"/><path d="M6.5 10v9h11v-9"/>',
+  // Boek / oefeningen
+  book: '<path d="M5 5.5A2.5 2.5 0 0 1 7.5 3H19v15.5H7.5A2.5 2.5 0 0 0 5 21V5.5Z"/><path d="M5 18.5A2.5 2.5 0 0 1 7.5 16H19"/>',
+  // Grafiek / voortgang
+  chart: '<path d="M4 20V4"/><path d="M4 20h16"/><path d="M8 15.5l3.5-4 3 2.5L19 8"/>',
+  // Instellingen
+  gear: '<circle cx="12" cy="12" r="3"/><path d="M12 4v2.2M12 17.8V20M20 12h-2.2M6.2 12H4M17.6 6.4l-1.5 1.5M7.9 16.1l-1.5 1.5M17.6 17.6l-1.5-1.5M7.9 7.9L6.4 6.4"/>',
+  // Pijl terug
+  back: '<path d="M14.5 5.5L8 12l6.5 6.5"/>',
+  // Hartje
+  heart: '<path d="M12 20s-7-4.6-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.4-7 10-7 10Z"/>',
+  // Microfoon
+  mic: '<rect x="9.5" y="3.5" width="5" height="10" rx="2.5"/><path d="M6 11a6 6 0 0 0 12 0"/><path d="M12 17v3.5"/>',
+  // Speaker / stem
+  speaker: '<path d="M4 9.5v5h3l5 4v-13l-5 4H4Z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M17.5 6.5a7.5 7.5 0 0 1 0 11"/>',
+  // Kalender / week
+  week: '<rect x="4" y="5.5" width="16" height="14.5" rx="2"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/>',
+  // Zon (rust)
+  rest: '<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M21 12h-2M5 12H3M18.4 5.6l-1.4 1.4M7 17l-1.4 1.4M18.4 18.4L17 17M7 7L5.6 5.6"/>',
+};
+
+/** UI-icoon als inline SVG (stroke = currentColor). */
+export function icon(name, cls = '') {
+  const body = ICONS[name] || ICONS.kb;
+  return `<svg viewBox="0 0 24 24" class="icn ${cls}" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`;
+}

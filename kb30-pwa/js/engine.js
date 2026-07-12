@@ -5,6 +5,7 @@
 
 import { Store } from './store.js';
 import { Cue } from './voice.js';
+import { Coach } from './coach.js';
 import { Bridge, Paths } from './bridge.js';
 import { DB } from './db.js';
 import { buildSession } from './data/exercises.js';
@@ -42,8 +43,17 @@ class WorkoutEngine {
   }
 
   // --- start --------------------------------------------------------------
-  start(type, swingsUnlocked, owner = true) {
-    this.steps = buildSession(type, swingsUnlocked);
+  /**
+   * @param {object|null} plan dagplan uit program.js (variant/fase/rounds);
+   *   zonder plan gelden veilige defaults (variant A, fase uit unlock-status).
+   */
+  start(type, swingsUnlocked, owner = true, plan = null) {
+    this.plan = plan;
+    const rounds = (plan && plan.rounds) || 3;
+    this.steps = buildSession(type, swingsUnlocked, rounds, {
+      variant: plan && plan.variant,
+      fase: plan && plan.fase,
+    });
     this.index = 0;
     this.done = 0;
     this.type = type;
@@ -55,6 +65,7 @@ class WorkoutEngine {
     this.wellbeing = null;
     this.rpe = null;
     this.painReports = [];
+    if (owner) Coach.saySessionStart(plan, type);
     this._enterGetReady();
   }
 
@@ -73,6 +84,7 @@ class WorkoutEngine {
     this.segment = Seg.WERK;
     this.screen = Screen.WORK;
     Cue.workStart();
+    Coach.sayExerciseIntro(ex);
     if (ex.mode === 'reps') {
       this.remaining = null;         // zelf-tempo: geen afteller
       this._clearTick();
@@ -96,6 +108,7 @@ class WorkoutEngine {
     this.screen = Screen.REST;
     this.remaining = Math.max(5, (ex && ex.restSec) || 15);
     Cue.restStart();
+    Coach.sayRest(this.next, this.index);
     this._push(); this._tick(); this._emit();
   }
 
@@ -111,7 +124,16 @@ class WorkoutEngine {
       if (this.paused) return;
       if (this.remaining == null) return;
       this.remaining--;
-      if (this.remaining >= 1 && this.remaining <= 3) Cue.tick(this.remaining);
+      if (this.remaining >= 1 && this.remaining <= 3) {
+        Cue.tick(this.remaining);
+        Coach.sayCount(this.remaining);
+      }
+      // Halverwege een lange werk-set: korte aanmoediging van de coach.
+      const ex = this.current;
+      if (this.screen === Screen.WORK && ex && ex.mode === 'time'
+          && ex.workSec >= 30 && this.remaining === Math.floor(ex.workSec / 2)) {
+        Coach.sayEncourage(this.index);
+      }
       if (this.remaining <= 0) {
         this._clearTick();
         this._onZero();
@@ -189,9 +211,21 @@ class WorkoutEngine {
     Cue.safety();
     this.screen = Screen.RECOVERY;
     this.recoveryReason = 'Je gaf aan dat het te zwaar was.';
+    Coach.sayRecovery();
     this._emit();
   }
   feelingPain() { this.screen = Screen.PAIN_LOCATION; this._emit(); }
+
+  /** Praattest tussen de rondes: "Nee" → herstel-check (RPE-regel uit safety.js). */
+  submitTalkTest(answer) {
+    if (!needsRecoveryCheck(null, answer)) return;
+    if (!this.paused) this.togglePause();
+    Cue.safety();
+    this.recoveryReason = 'Praten ging even niet meer — dat is ons signaal.';
+    this.screen = Screen.RECOVERY;
+    Coach.sayRecovery();
+    this._emit();
+  }
 
   submitPainLocation(location) {
     if (location === PainLocation.BORST) return this._chestStop(true);
@@ -233,12 +267,15 @@ class WorkoutEngine {
     };
     this.segment = Seg.KLAAR;
     this.screen = Screen.SUMMARY;
+    Coach.saySummary(this.summary);
     this._emit();
 
     const record = {
       id: this.sessionId, datum: new Date().toISOString().slice(0, 10),
       type: this.type, oefeningen: circuit.map((s) => ({ id: s.id })),
       voltooid: true, duurSec: durationSec, totaalSwings: this.swingCount,
+      variant: (this.plan && this.plan.variant) || null,
+      week: (this.plan && this.plan.week) || null,
     };
     try {
       await DB.putSession(record);
@@ -272,7 +309,7 @@ class WorkoutEngine {
     this.steps = []; this.index = 0; this.done = 0; this.remaining = 0;
     this.screen = Screen.GET_READY; this.segment = Seg.RUST;
     this.summary = null; this.recoveryReason = ''; this.wellbeing = null; this.rpe = null;
-    this.painReports = []; this.isOwner = false;
+    this.painReports = []; this.isOwner = false; this.plan = null;
   }
 
   // --- watch sync ---------------------------------------------------------

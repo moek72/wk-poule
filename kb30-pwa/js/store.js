@@ -25,9 +25,24 @@ function save(key, val) {
 
 const listeners = new Map(); // key -> Set<cb>
 
+const SETTINGS_DEFAULTS = {
+  stem: true, trillen: true, darkMode: false, groteKnoppen: true,
+  thema: 'auto',            // 'auto' | 'licht' | 'donker'
+  coachVoiceURI: null,      // gekozen TTS-stem (Instellingen)
+  terugpraten: false,       // spraakbesturing, standaard uit
+};
+const PROFILE_DEFAULTS = {
+  fase: 1, disclaimerAccepted: false, onboarded: false,
+  naam: 'Moek', coachNaam: 'Sanne', startDatum: null,
+};
+
+const _settings = { ...SETTINGS_DEFAULTS, ...load(LS.settings, {}) };
+// Migratie: oude boolean darkMode → nieuw thema.
+if (!load(LS.settings, {}).thema && _settings.darkMode) _settings.thema = 'donker';
+
 export const Store = {
-  settings: load(LS.settings, { stem: true, trillen: true, darkMode: false, groteKnoppen: true }),
-  profile: load(LS.profile, { fase: 1, disclaimerAccepted: false }),
+  settings: _settings,
+  profile: { ...PROFILE_DEFAULTS, ...load(LS.profile, {}) },
   block: load(LS.block, emptyBlock()),
   ledger: SwingLedger.fromJSON(load(LS.swings, { added: [], removed: [] })),
 

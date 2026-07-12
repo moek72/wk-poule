@@ -2,8 +2,9 @@
 // diepe squats, geen diep vooroverbuigen, geen belasting boven het hoofd, max
 // 8 kg. Verboden oefeningen bestaan hier simpelweg niet.
 //
-// Elke oefening: id, naam, spiergroepen, moeilijkheid, stappen (B1), Moek-
-// waarschuwing, standaard werk/rust, illustratie-key, en flags.
+// Elke oefening: id, naam, spiergroepen, moeilijkheid, stappen (B1), "waarom"
+// (coach-uitleg), Moek-waarschuwing, standaard werk/rust, illustratie-key en
+// flags.
 
 import { SessionType } from '../safety.js';
 
@@ -18,6 +19,7 @@ export const EXERCISES = [
       'Pak de bel en kom omhoog door je heupen naar voren te duwen.',
       'Knijp je billen aan bovenin. Rustig weer zakken.',
     ],
+    waarom: 'Sterke benen en billen beschermen je rug. Dit is ook de school voor de swing.',
     waarschuwing: 'Dit is de swing-school. Rug altijd neutraal, nooit rond.',
   },
   {
@@ -29,6 +31,7 @@ export const EXERCISES = [
       'Zak rustig tot je de stoel net raakt.',
       'Kom meteen weer omhoog. Rug rechtop.',
     ],
+    waarom: 'Zo blijft opstaan uit een stoel makkelijk. Sterke benen, veilige diepte.',
     waarschuwing: 'Nooit dieper dan de stoel. Knieën blijven achter je tenen.',
   },
   {
@@ -40,6 +43,7 @@ export const EXERCISES = [
       'Sta rechtop, schouders laag en naar achteren.',
       'Loop rustig heen en weer. Adem door.',
     ],
+    waarom: 'Boodschappen sjouwen zonder klachten: grip, houding en core in één.',
     waarschuwing: 'Niet hangen aan je schouders. Rustig tempo.',
   },
   {
@@ -51,6 +55,7 @@ export const EXERCISES = [
       'Sta kaarsrecht, blijf recht ondanks het gewicht aan één kant.',
       'Loop rustig. Wissel daarna van hand.',
     ],
+    waarom: 'Je zijkant leert je rechtop te houden — daar heeft je rug elke dag wat aan.',
     waarschuwing: 'Niet zijwaarts overhangen — je core houdt je recht.',
   },
   {
@@ -62,6 +67,7 @@ export const EXERCISES = [
       'Marcheer op de plaats, knie rustig omhoog.',
       'Blijf rechtop, buik licht aangespannen.',
     ],
+    waarom: 'Balans en core-kracht, zonder je nek te belasten.',
     waarschuwing: 'Blijf rechtop, niet omhoog kijken.',
   },
   {
@@ -73,6 +79,7 @@ export const EXERCISES = [
       'Duw rustig omhoog, alleen zover als pijnvrij is.',
       'Rustig terug. Stop bij nekpijn.',
     ],
+    waarom: 'Soepele, sterke schouders voor alles wat je dagelijks tilt en pakt.',
     waarschuwing: 'Alleen pijnvrije baan. Niet omhoog kijken. Stop bij nekpijn.',
   },
   {
@@ -84,6 +91,7 @@ export const EXERCISES = [
       'Marcheer op de plaats, knie rustig omhoog.',
       'Rustig tempo, rechtop blijven.',
     ],
+    waarom: 'Conditie en core tegelijk, lekker rustig op je eigen tempo.',
     waarschuwing: 'Rustig tempo, rechtop blijven.',
   },
   {
@@ -95,6 +103,7 @@ export const EXERCISES = [
       'Kom rustig op je tenen.',
       'Rustig weer zakken.',
     ],
+    waarom: 'Sterke kuiten helpen je bloedsomloop en je balans.',
     waarschuwing: 'Hand aan de muur mag, voor balans.',
   },
   {
@@ -106,6 +115,7 @@ export const EXERCISES = [
       'Beweeg rustig diagonaal naar je heup aan de andere kant.',
       'Klein bereik, rug neutraal.',
     ],
+    waarom: 'Draaikracht voor het echte leven: iets aanpakken, wegzetten, omdraaien.',
     waarschuwing: 'Klein bereik, nooit tot de grond. Rug neutraal.',
   },
   {
@@ -117,6 +127,7 @@ export const EXERCISES = [
       'Blijf rechtop, rustig tempo.',
       'Wissel halverwege van richting.',
     ],
+    waarom: 'Coördinatie en grip — en je core werkt stilletjes de hele tijd mee.',
     waarschuwing: 'Rechtop blijven, rustig doorgeven.',
   },
   {
@@ -129,6 +140,7 @@ export const EXERCISES = [
       'Maak een klein rondje rond je hoofd.',
       'Rustig, klein bereik.',
     ],
+    waarom: 'Houdt je schouders soepel — klein en gecontroleerd.',
     waarschuwing: 'OPTIONEEL. Overslaan bij nekklachten die dag.',
   },
   {
@@ -140,6 +152,7 @@ export const EXERCISES = [
       'Trek de bel met de andere hand naar je heup.',
       'Rustig laten zakken.',
     ],
+    waarom: 'Een sterke bovenrug helpt je houding, elke dag.',
     waarschuwing: 'OPTIONEEL. Rug recht, lichte hoek, niet diep voorover.',
   },
   // --- Fase 2+ (op slot tot unlock) ---
@@ -154,6 +167,7 @@ export const EXERCISES = [
       'Duw je heupen explosief naar voren — de bel zwaait tot borsthoogte.',
       'Laat de bel terugvallen, vang met een nieuwe hip hinge.',
     ],
+    waarom: 'Dé oefening: kracht én conditie in één. Deze verdien je in fase 2.',
     waarschuwing: 'Kracht uit de heupen, armen ontspannen. NOOIT trekken met rug of armen. Max tot borsthoogte.',
   },
   {
@@ -166,28 +180,31 @@ export const EXERCISES = [
       'Houd je schouder laag en stabiel.',
       'Wissel per set van arm.',
     ],
+    waarom: 'Zelfde kracht als de swing, met extra balans en core.',
     waarschuwing: 'Fase 3, optioneel. Alleen als de two-hand swing pijnvrij is.',
   },
 ];
 
-const MOBILITY = [
-  { id: 'mob_march', naam: 'Marcheren op de plaats', gewichtKg: 0, workSec: 40, restSec: 20, illu: 'march', cue1: 'Rustig tempo', cue2: 'Adem door', spieren: ['benen'], stappen: ['Marcheer rustig op de plaats.', 'Adem rustig door.'], waarschuwing: 'Rustig aan.' },
-  { id: 'mob_shoulder', naam: 'Schouderrolletjes', gewichtKg: 0, workSec: 30, restSec: 15, illu: 'generic', cue1: 'Klein rondje', cue2: 'Ontspannen', spieren: ['schouders'], stappen: ['Rol je schouders rustig naar achteren.'], waarschuwing: 'Ontspannen bewegen.' },
-  { id: 'mob_hip', naam: 'Heupcirkels', gewichtKg: 0, workSec: 30, restSec: 15, illu: 'generic', cue1: 'Kleine cirkel', cue2: 'Rug neutraal', spieren: ['heupen'], stappen: ['Handen op je heupen, maak rustige cirkels.'], waarschuwing: 'Kleine, rustige cirkels.' },
-  { id: 'mob_counter', naam: 'Rugmobilisatie (aanrecht)', gewichtKg: 0, workSec: 30, restSec: 15, illu: 'generic', cue1: 'Handen op aanrecht', cue2: 'Lichte hoek', spieren: ['rug'], stappen: ['Handen op het aanrecht, lichte hoek, rug lang maken.'], waarschuwing: 'Onbelast, lichte hoek.' },
-  { id: 'mob_suitcase', naam: 'Lichte Suitcase Carry', gewichtKg: 4, workSec: 30, restSec: 20, illu: 'carry', cue1: '4 kg', cue2: 'Rechtop', spieren: ['core'], stappen: ['Eén lichte bel, loop rechtop.'], waarschuwing: 'Licht gewicht, rechtop.' },
+export const MOBILITY = [
+  { id: 'mob_march', naam: 'Marcheren op de plaats', gewichtKg: 0, workSec: 40, restSec: 20, illu: 'march', cue1: 'Rustig tempo', cue2: 'Adem door', spieren: ['benen'], stappen: ['Marcheer rustig op de plaats.', 'Adem rustig door.'], waarom: 'Zet je bloedsomloop zachtjes aan.', waarschuwing: 'Rustig aan.' },
+  { id: 'mob_shoulder', naam: 'Schouderrolletjes', gewichtKg: 0, workSec: 30, restSec: 15, illu: 'generic', cue1: 'Klein rondje', cue2: 'Ontspannen', spieren: ['schouders'], stappen: ['Rol je schouders rustig naar achteren.'], waarom: 'Maakt je schouders en nek losser.', waarschuwing: 'Ontspannen bewegen.' },
+  { id: 'mob_hip', naam: 'Heupcirkels', gewichtKg: 0, workSec: 30, restSec: 15, illu: 'generic', cue1: 'Kleine cirkel', cue2: 'Rug neutraal', spieren: ['heupen'], stappen: ['Handen op je heupen, maak rustige cirkels.'], waarom: 'Soepele heupen maken alles makkelijker.', waarschuwing: 'Kleine, rustige cirkels.' },
+  { id: 'mob_counter', naam: 'Rugmobilisatie (aanrecht)', gewichtKg: 0, workSec: 30, restSec: 15, illu: 'generic', cue1: 'Handen op aanrecht', cue2: 'Lichte hoek', spieren: ['rug'], stappen: ['Handen op het aanrecht, lichte hoek, rug lang maken.'], waarom: 'Geeft je rug rustig ruimte, zonder belasting.', waarschuwing: 'Onbelast, lichte hoek.' },
+  { id: 'mob_suitcase', naam: 'Lichte Suitcase Carry', gewichtKg: 4, workSec: 30, restSec: 20, illu: 'carry', cue1: '4 kg', cue2: 'Rechtop', spieren: ['core'], stappen: ['Eén lichte bel, loop rechtop.'], waarom: 'Licht werk voor je core, houdt je actief.', waarschuwing: 'Licht gewicht, rechtop.' },
 ];
 
 export const WARMUP = {
   id: 'warmup', naam: 'Warming-up', gewichtKg: 0, workSec: 300, restSec: 0, illu: 'march',
   cue1: 'Marcheren + armcirkels', cue2: 'Losmaken', spieren: ['algemeen'],
   stappen: ['Marcheer op de plaats.', 'Armcirkels en schouderrolletjes.', 'Heupscharnier zonder gewicht.'],
+  waarom: 'Warm spierweefsel beweegt soepeler en beschermt je rug.',
   waarschuwing: 'Niet stiekem overslaan — dit beschermt je rug.',
 };
 export const COOLDOWN = {
   id: 'cooldown', naam: 'Cooling-down', gewichtKg: 0, workSec: 300, restSec: 0, illu: 'march',
   cue1: 'Rustig marcheren', cue2: 'Staande stretches', spieren: ['algemeen'],
   stappen: ['Rustig marcheren.', 'Staande stretches, rustig ademen.'],
+  waarom: 'Zo komt je lijf rustig tot rust na het werk.',
   waarschuwing: 'Rustig uitlopen.',
 };
 
@@ -214,8 +231,10 @@ const MODES = {
   single_swing: { mode: 'swings' },
 };
 
-// Fase-1 basiscircuit (5 oefeningen).
-const PHASE1 = ['kb_deadlift', 'box_squat', 'farmer_carry', 'goblet_march', 'wood_chop'];
+// De twee circuits die Ma/Wo/Vr afwisselen. Deadlift blijft in beide: dat is
+// de swing-school én de veiligste kracht-basis.
+export const SESSION_A = ['kb_deadlift', 'box_squat', 'farmer_carry', 'goblet_march', 'wood_chop'];
+export const SESSION_B = ['kb_deadlift', 'shoulder_press', 'suitcase_carry', 'calf_raises', 'around_body'];
 
 function withMode(e) {
   const m = MODES[e.id] || { mode: 'time' };
@@ -227,20 +246,34 @@ function withMode(e) {
  * meta voor de tellers (ronde X/Y, oefening A/B). Warming-up en cooling-down
  * staan als aparte stappen zonder ronde-teller.
  *
+ * Swings doen alleen mee als swingsUnlocked (veiligheids-gate) én de fase het
+ * toelaat: fase 2 → 1 van de 5 slots (20%), fase 3 → 2 van de 5 (40%).
+ *
  * @param {string} type NORMAAL / LICHT / ALLEEN_MOBILITEIT
  * @param {boolean} swingsUnlocked
- * @param {number} rounds fase-1 standaard 3
+ * @param {number} rounds standaard 3 (fase 3, week 9+: 4)
+ * @param {{variant?:('A'|'B'), fase?:number}} opts
  */
-export function buildSession(type, swingsUnlocked, rounds = 3) {
+export function buildSession(type, swingsUnlocked, rounds = 3, opts = {}) {
+  const variant = opts.variant === 'B' ? 'B' : 'A';
+  const fase = opts.fase || (swingsUnlocked ? 2 : 1);
   let circuit;
   let r = Math.max(1, Math.min(4, rounds));
+
   if (type === SessionType.ALLEEN_MOBILITEIT) {
-    circuit = [MOBILITY[0], MOBILITY[1], MOBILITY[2], MOBILITY[4]];
-    r = 2;
+    circuit = MOBILITY.slice();
+    r = Math.min(3, r);
   } else {
-    circuit = PHASE1.map(byId);
+    circuit = (variant === 'B' ? SESSION_B : SESSION_A).map(byId);
     if (type === SessionType.LICHT) circuit = circuit.filter((e) => !e.neckShoulder);
-    if (swingsUnlocked) circuit = [byId('russian_swing'), ...circuit.slice(1)];
+    if (swingsUnlocked && fase >= 2) {
+      // Deadlift-slot wordt de swing (max ~20–30% van het circuit).
+      circuit = [byId('russian_swing'), ...circuit.slice(1)];
+      if (fase >= 3 && circuit.length >= 3) {
+        // Fase 3: tweede swing-slot achteraan (~40%).
+        circuit = [...circuit.slice(0, circuit.length - 1), byId('single_swing')];
+      }
+    }
   }
 
   const out = [];
