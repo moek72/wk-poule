@@ -1,7 +1,7 @@
 import React from "react";
 import { Composition } from "remotion";
 import { FamilieClip } from "./FamilieClip";
-import { FPS, WIDTH, HEIGHT, TOTAL_FRAMES } from "./clips";
+import { FPS, WIDTH, HEIGHT, TOTAL_FRAMES } from "./segments";
 
 export const RemotionRoot: React.FC = () => {
   return (

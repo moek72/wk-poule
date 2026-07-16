@@ -1,68 +1,60 @@
 import React from "react";
-import { AbsoluteFill, Audio, staticFile, Sequence, useVideoConfig } from "remotion";
+import { AbsoluteFill, Audio, staticFile, useVideoConfig } from "remotion";
 import { TransitionSeries, linearTiming } from "@remotion/transitions";
 import { fade } from "@remotion/transitions/fade";
-import { slide } from "@remotion/transitions/slide";
-import { wipe } from "@remotion/transitions/wipe";
-import {
-  CLIPS,
-  INTRO_FRAMES,
-  OUTRO_FRAMES,
-  TRANSITION_FRAMES,
-} from "./clips";
-import { ClipScene } from "./ClipScene";
-import { IntroCard, OutroCard } from "./Cards";
-
-const presentations = [
-  slide({ direction: "from-right" }),
-  wipe({ direction: "from-left" }),
-  slide({ direction: "from-bottom" }),
-  fade(),
-  slide({ direction: "from-left" }),
-  wipe({ direction: "from-top" }),
-];
+import { TIMELINE, TRANSITION_FRAMES } from "./segments";
+import { Shot } from "./Shot";
 
 export const FamilieClip: React.FC = () => {
   const { durationInFrames } = useVideoConfig();
   const timing = linearTiming({ durationInFrames: TRANSITION_FRAMES });
 
   return (
-    <AbsoluteFill style={{ backgroundColor: "#040a04" }}>
+    <AbsoluteFill style={{ backgroundColor: "#000" }}>
       <TransitionSeries>
-        <TransitionSeries.Sequence durationInFrames={INTRO_FRAMES}>
-          <IntroCard />
-        </TransitionSeries.Sequence>
-
-        <TransitionSeries.Transition presentation={fade()} timing={timing} />
-
-        {CLIPS.map((clip, i) => (
-          <React.Fragment key={clip.src}>
-            <TransitionSeries.Sequence durationInFrames={clip.durationInFrames}>
-              <ClipScene clip={clip} index={i} total={CLIPS.length} />
+        {TIMELINE.flatMap((item, i) => {
+          const seq = (
+            <TransitionSeries.Sequence
+              key={`seq-${i}`}
+              durationInFrames={item.durationInFrames}
+            >
+              {item.kind === "shot" ? (
+                <Shot
+                  src={item.src}
+                  trimBefore={item.trimBefore}
+                  durationInFrames={item.durationInFrames}
+                  zoomDir={item.zoomDir}
+                  fadeInFromBlack={item.fadeInFromBlack}
+                  fadeOutToBlack={item.fadeOutToBlack}
+                />
+              ) : (
+                <AbsoluteFill style={{ backgroundColor: "#000" }} />
+              )}
             </TransitionSeries.Sequence>
+          );
+          // Cross-dissolve tussen elk shot (behalve na het laatste).
+          if (i === TIMELINE.length - 1) return [seq];
+          return [
+            seq,
             <TransitionSeries.Transition
-              presentation={presentations[i % presentations.length]}
+              key={`tr-${i}`}
+              presentation={fade()}
               timing={timing}
-            />
-          </React.Fragment>
-        ))}
-
-        <TransitionSeries.Sequence durationInFrames={OUTRO_FRAMES}>
-          <OutroCard />
-        </TransitionSeries.Sequence>
+            />,
+          ];
+        })}
       </TransitionSeries>
 
-      {/* Achtergrondmuziek met fade-in en fade-out */}
-      <Sequence>
-        <Audio
-          src={staticFile("bgm.wav")}
-          volume={(f) => {
-            const fadeIn = Math.min(1, f / 20);
-            const fadeOut = Math.min(1, (durationInFrames - f) / 30);
-            return Math.max(0, Math.min(fadeIn, fadeOut)) * 0.85;
-          }}
-        />
-      </Sequence>
+      {/* Subtiele achtergrondmuziek — vult vooral de stiltes en overgangen.
+          Onder het originele feestgeluid; komt naar voren tijdens de dips. */}
+      <Audio
+        src={staticFile("bgm.wav")}
+        volume={(f) => {
+          const fadeIn = Math.min(1, f / 24);
+          const fadeOut = Math.min(1, (durationInFrames - f) / 36);
+          return Math.max(0, Math.min(fadeIn, fadeOut)) * 0.17;
+        }}
+      />
     </AbsoluteFill>
   );
 };
