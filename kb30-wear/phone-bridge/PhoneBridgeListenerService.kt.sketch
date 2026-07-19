@@ -1,0 +1,68 @@
+// REFERENCE SKETCH — belongs in the phone app module, not this Gradle build.
+// Rename to .kt, put it in the phone app, and add it to that app's manifest as a
+// <service> with the same /kb30 pathPrefix intent-filter the watch uses.
+//
+// It receives everything the watch sends, updates the PWA (via your chosen
+// WebView/postMessage bridge), and — critically — enforces the shared safety
+// gates even when the PWA UI is not in the foreground.
+
+package nl.kb30.phone.bridge
+
+import com.google.android.gms.wearable.DataEvent
+import com.google.android.gms.wearable.DataEventBuffer
+import com.google.android.gms.wearable.DataMapItem
+import com.google.android.gms.wearable.MessageEvent
+import com.google.android.gms.wearable.WearableListenerService
+import nl.kb30.protocol.BlockState
+import nl.kb30.protocol.Json
+import nl.kb30.protocol.PainLocation
+import nl.kb30.protocol.SafetyGate
+import nl.kb30.protocol.SessionSummary
+import nl.kb30.protocol.WearPaths
+
+class PhoneBridgeListenerService : WearableListenerService() {
+
+    // Replace with your app's local store + a hook into the PWA (WebView bridge).
+    private val store get() = PhoneStore(applicationContext)   // your impl
+    private val pwa get() = PwaBridge(applicationContext)      // your impl
+
+    override fun onDataChanged(buffer: DataEventBuffer) {
+        for (event in buffer) {
+            if (event.type != DataEvent.TYPE_CHANGED) continue
+            val path = event.dataItem.uri.path ?: continue
+            val json = DataMapItem.fromDataItem(event.dataItem).dataMap.getString("json") ?: continue
+            when (path) {
+                WearPaths.BLOCK -> {
+                    // Merge by version; the higher version wins on both devices.
+                    val merged = store.loadBlock().mergeWith(BlockState.fromJson(json))
+                    store.saveBlock(merged)
+                    pwa.push("block", merged.toJson())
+                }
+                WearPaths.SESSION -> pwa.push("session", json)
+                WearPaths.SWINGS -> pwa.push("swings", json)   // let the PWA merge the CRDT
+            }
+        }
+    }
+
+    override fun onMessageReceived(event: MessageEvent) {
+        val payload = runCatching { Json.decodeObject(String(event.data)) }.getOrDefault(emptyMap())
+        when (event.path) {
+            WearPaths.CTRL_EMERGENCY -> armChestStop()
+            WearPaths.PAIN_REPORT ->
+                if (PainLocation.fromKey(payload["location"]?.toString()) == PainLocation.BORST) armChestStop()
+                else pwa.push("pain", String(event.data))
+            WearPaths.SUMMARY ->
+                SessionSummary.fromJson(String(event.data))?.let { store.appendHistory(it) } // watch keeps none
+            else -> pwa.push("ctrl", event.path)  // pause/resume/skip/set_done/rpe/talktest
+        }
+    }
+
+    /** Same effect as the watch: stop screen + 48h block, propagated back. */
+    private fun armChestStop() {
+        val blocked = SafetyGate.applyChestEvent(store.loadBlock(), System.currentTimeMillis())
+        store.saveBlock(blocked)
+        pwa.push("stop", blocked.toJson())   // PWA shows the stop-criteria screen
+        // Also write the block back to the Data Layer so the watch stays in lock-step.
+        WearBlockWriter(applicationContext).put(blocked)   // your DataClient.putDataItem wrapper
+    }
+}

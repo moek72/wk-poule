@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple standing figure. One consistent line style across illustrations. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp" android:height="96dp"
+    android:viewportWidth="96" android:viewportHeight="96"
+    android:tint="?android:attr/colorForeground">
+    <path android:fillColor="#000000"
+        android:pathData="M48,16 m-7,0 a7,7 0 1,0 14,0 a7,7 0 1,0 -14,0" />
+    <path android:strokeColor="#000000" android:strokeWidth="5"
+        android:strokeLineCap="round" android:fillColor="#00000000"
+        android:pathData="M48,30 L48,58 M48,36 L33,50 M48,36 L63,50 M48,58 L38,84 M48,58 L58,84" />
+</vector>
