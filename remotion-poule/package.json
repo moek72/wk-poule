@@ -1,18 +1,30 @@
 {
   "name": "jaikaran-wk-video",
   "version": "1.0.0",
+  "description": "WK Poule 'WK Gazette' videos, gemaakt met Remotion (React compositions).",
   "scripts": {
-    "build": "remotion render src/index.tsx WKPoule out/wk-poule.mp4 --codec=h264"
-  },
-  "devDependencies": {
-    "@remotion/renderer": "^4.0.481",
-    "@types/react": "^18.0.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "remotion": "^4.0.481",
-    "typescript": "^5.0.0"
+    "dev": "remotion studio",
+    "studio": "remotion studio",
+    "render": "remotion render WKGazette out/wk-gazette.mp4 --codec=h264",
+    "still": "remotion still WKGazette out/wk-gazette.png",
+    "upgrade": "remotion upgrade",
+    "render:canvas": "node render.js",
+    "render:html": "node render-html.js"
   },
   "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "4.0.489"
+  },
+  "devDependencies": {
+    "@remotion/bundler": "4.0.489",
+    "@remotion/cli": "4.0.489",
+    "@remotion/renderer": "4.0.489",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "typescript": "^5.0.0"
+  },
+  "optionalDependencies": {
     "canvas": "^3.2.3",
     "puppeteer": "^25.1.0"
   }
