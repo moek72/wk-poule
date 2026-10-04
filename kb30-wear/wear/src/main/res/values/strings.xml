@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">KB30</string>
+
+    <!-- Today -->
+    <string name="today_title">Vandaag</string>
+    <string name="start_training">Start training</string>
+    <string name="mobility_only">Alleen mobiliteit</string>
+
+    <!-- Player -->
+    <string name="work">WERK</string>
+    <string name="rest">RUST</string>
+    <string name="next">Straks</string>
+    <string name="pause">Pauze</string>
+    <string name="resume">Hervat</string>
+    <string name="skip">Overslaan</string>
+    <string name="set_done">Set klaar</string>
+    <string name="report_pain">Pijn melden</string>
+    <string name="emergency_stop">NOODSTOP</string>
+
+    <!-- Swings -->
+    <string name="tap_to_count">Tik = +1 swing</string>
+    <string name="undo">Terug</string>
+
+    <!-- Feedback -->
+    <string name="how_was_it">Hoe ging het?</string>
+    <string name="where_pain">Waar?</string>
+    <string name="rpe_question">Hoe zwaar? (0–10)</string>
+    <string name="talk_test_question">Kun je nog een hele zin zeggen?</string>
+
+    <!-- Recovery / stop -->
+    <string name="recovery_title">Even rustig</string>
+    <string name="recovery_body">We nemen gas terug. Rust uit en ga pas door als het goed voelt.</string>
+    <string name="stop_title">Stop. Ga zitten.</string>
+    <string name="call_112">Bel 112</string>
+
+    <!-- Settings -->
+    <string name="settings">Instellingen</string>
+    <string name="hr_setting">Hartslag tonen</string>
+    <string name="hr_disclaimer">Alleen ter informatie. Niet gebruiken als medische beoordeling.</string>
+    <string name="no_reading">Geen meting</string>
+    <string name="hr_permission_rationale">Voor het tonen van je hartslag heeft het horloge toegang tot de hartslagsensor nodig. De waarde blijft op je horloge en stuurt de training nooit.</string>
+</resources>
