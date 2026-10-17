@@ -1,0 +1,214 @@
+TRUST SIGNALS — 5 CONCRETE VOORBEELDEN (2024–2026)
+Onderzoeksdatum: 2026-05-17
+Methode: WebSearch + WebFetch per voorbeeld individueel geverifieerd
+=====================================================================
+
+EERLIJKE STATUS PER VOORBEELD
+------------------------------
+Van de 5 gevraagde categorieën is 1 voorbeeld volledig geverifieerd als
+pre-betaling EN 2024-2026 EN pagina open EN letterlijke tekst zichtbaar.
+Voor de overige 4 categorieën is het dichtstbijzijnde gevonden voorbeeld
+opgenomen, met expliciet vermeld waarom het net wél of net niet aan de
+criteria voldoet. Geen fabricaties, geen snippets, geen 403-pagina's.
+
+---
+
+VOORBEELD 1 — AANNEMER / DAKDEKKER
+Status: ✅ Volledig geverifieerd. Pre-betaling. Pagina open. Letterlijke tekst.
+=====================================================================
+
+Link:     https://radar-forum.avrotros.nl/aannemers-installateurs-en-glazenwassers-f16/dakdekbedrijf-almere-t202162.html
+Platform: Radar AVROTROS consumentenforum (subforum Aannemers/installateurs)
+Datum:    4 april 2024, 19:09
+Gebruiker: integ345
+
+LETTERLIJKE TEKST VAN EERSTE POST:
+------------------------------------
+"WIE HEEFT ERVARING MET TIP TOP DAK B.V.?
+Zij zitten in het zelfde pand als het in een eerder item reeds besproken
+Multifix, Randstad 22 46, 1316 BZ Almere. Overigens zijn of waren daar ook
+Mijn Dakonderhoud en Dak-Perfect gevestigd.
+Volgens degene, die de dakinspectie deed en de offerte maakte ging het om
+een bedrijf met ruime (15+) jaar ervaring en een uitgebreid team medewerkers,
+maar volgens de KvK is dit bedrijf pas 1 jaar ingeschreven met 1 medewerker,
+zonder certificaten. Op de website is geen eigenaar te vinden, noch namen van
+medewerkers. De reviews zijn niet-geverifieerde reviews van Google. Er wordt
+wel een aanbetaling van 30% gevraagd op de werkzaamheden.
+Graag reacties, bij voorbaat dank."
+
+WAAROM DIT VÓÓR BETALING VALT:
+De poster heeft een offerte ontvangen en wil inhuren. Er is nog niets betaald.
+De 30%-aanbetaling is geëist maar NIET voldaan. De thread wordt aangemaakt
+juist om te checken vóór die betaling plaatsvindt. Respondenten bevestigen:
+adres is virtueel kantoor met 351+ ingeschreven bedrijven, reviews zijn
+niet-geverifieerd, bedrijf heeft daarna ook nog naam veranderd naar "UW-dak".
+
+WAAROM DIT EEN RANKMIJ-SIGNAAL IS:
+Iemand heeft een concreete dakdekker gevonden, een offerte gekregen, en zoekt
+online naar ervaringen met die specifieke naam vóór betaling. Dit is het exacte
+zoekmoment dat een vertrouwenstool onderschept. De poster weet niet hoe hij
+de rode vlaggen (KvK-discrepantie, niet-geverifieerde reviews, gedeeld adres)
+zelf moet wegen — dat is precies wat RankMij zou aggregeren.
+
+---
+
+VOORBEELD 2 — DROPSHIPPING WEBSHOP
+Status: ⚠️ Post-betaling, maar zelfde dag (direct na bestelling, vóór ontvangst).
+         Pagina open. Letterlijke tekst. Datum 2024.
+=====================================================================
+
+Link:     https://radar-forum.avrotros.nl/webwinkels-f69/styleria-nl-webshop-t202635.html
+Platform: Radar AVROTROS consumentenforum (subforum Webwinkels)
+Datum:    7 september 2024, 16:10
+Gebruiker: nouria
+
+LETTERLIJKE TEKST VAN EERSTE POST:
+------------------------------------
+"Een webshop die zich profileert als een winkel van Nederlandse eigenaren die
+in denhaag een winkel hebben. Na bestelling kreeg ik een twijfel gevoel.
+Direct online mail gestuurd dat ik wilde annuleren. Volgende dag kreeg ik een
+tracktrace code. Komt uit china over ongeveer 5 weken bijmij aan. Ik wil geen
+troep uit china ik koop nooit kleding uit china. Retouren zal voor mij eigen
+rekening zijn ik voel .ik voel mij echt opgelicht."
+
+WAAROM DIT GRENSGEVAL IS:
+Betaling vond plaats bij bestelling. De twijfel ("twijfel gevoel") ontstond
+direct daarna, nog dezelfde dag, en leidde tot een directe annuleringsmail.
+Geen goederen ontvangen. Het gaat dus om de eerste minuten ná klik op
+"bestellen" — het moment waarop de consument de webshop nogmaals bekeek en
+signalen ontdekte die ze eerder had gemist.
+
+GEVONDEN DROPSHIPPING-KENMERKEN (door andere forumleden geverifieerd):
+- KvK-nummer behoort tot "SCC services" (ander bedrijf)
+- Adres is privéwoning
+- Nergens levertijden vermeld op de site
+- Levering uit China, 5 weken
+- Retourneren op eigen kosten
+
+WAAROM DIT EEN RANKMIJ-SIGNAAL IS:
+De twijfel is openbaar gemaakt op het moment dat de consument de site
+opnieuw beoordeelde. Als ze vóór het klikken op "bestellen" de naam had
+gegoogeld en RankMij had gevonden — waarop andere kopers hetzelfde al
+ontdekten — had ze niet betaald. De thread bewijst dat die controle
+ontbreekt op het beslismoment.
+
+---
+
+VOORBEELD 3 — DURE CURSUS / COACH
+Status: ❌ Geen voorbeeld gevonden uit 2024–2026 dat pagina open heeft,
+          letterlijke tekst toont, EN pre-betaling is.
+=====================================================================
+
+ONDERZOEKSRESULTAAT:
+Het meest relevante gevonden voorbeeld (BNNVARA/Joop: "Hoe ik verleid werd
+door de online coaching industrie") is gepubliceerd op 3 augustus 2020.
+Link: https://www.bnnvara.nl/joop/artikelen/hoe-ik-verleid-werd-door-de-online-coaching-industrie
+
+Dit artikel bevat pre-betaling twijfel met letterlijke tekst:
+"Ik stond na mijn onderzoek bijna op het punt om de aanbetaling over te maken
+(van een totaalbedrag van, schrik niet, zo'n €5000), maar iets in me zei dat
+ik het niet moest doen. Het klonk veelbelovend, maar ik had ook mijn twijfels."
+— maar voldoet NIET aan de 2024-2026 eis.
+
+WAAROM CATEGORIE 3 NIET GEVONDEN WERD:
+- Reddit (r/oplichting, r/juridischadvies): geblokkeerd voor automatisch crawlen
+- Higherlevel.nl forum: geen recente threads over coach-betrouwbaarheid gevonden
+- radar-forum cursussen-subforum: meest recente relevante thread is uit 2008
+- Consumentenbond community: offline per 2024
+- Nieuws/journalistieke artikelen bevatten geen individuele consumentencitaten
+  met naam uit 2024-2025 over coach-twijfel vóór betaling
+
+AANBEVELING VOOR HANDMATIG VERVOLGONDERZOEK:
+- Reddit r/oplichting zoeken op "coach" + "2024" of "2025" (handmatig)
+- Reddit r/juridischadvies zoeken op "opleiding" + "te vertrouwen"
+- Zoeken op Facebook-groepen "Ervaringen online coaches Nederland"
+
+---
+
+VOORBEELD 4 — ONBEKENDE WEBSHOP
+Status: ⚠️ Post-betaling. Pagina open. Letterlijke tekst. Datum 2025.
+=====================================================================
+
+Link:     https://radar-forum.avrotros.nl/webwinkels-f69/vandermeerutrecht-nl-t205165.html
+Platform: Radar AVROTROS consumentenforum (subforum Webwinkels)
+Datum:    15 november 2025, 12:43
+Gebruiker: niet zichtbaar in fetch
+
+LETTERLIJKE TEKST VAN EERSTE POST:
+------------------------------------
+"Ik heb onlangs een vest besteld bij vandermeerutrecht.nl. In de advertentie
+stond dat het gemaakt zou zijn van een uiterst zachte katoenmix. Na weken
+wachten ontving ik echter een trui van 100% synthetisch materiaal."
+
+STATUS: Post-betaling. De persoon heeft al besteld en ontvangen.
+
+GEVONDEN KENMERKEN (door forum geverifieerd):
+- Dropshipper via Shopify
+- Operator ook actief met Noors webshop, geregistreerd 2023
+- Shop toont inmiddels: "Deze winkel is nu even niet beschikbaar"
+- Geen KvK-nummer vindbaar
+- Retour alleen naar buitenlands adres
+
+WAAROM DIT EEN RANKMIJ-SIGNAAL IS:
+Iemand die in november 2025 "vandermeerutrecht.nl" googelt vóór bestelling,
+vindt deze thread. Dat is pre-betaling voor de zoeker. De consument die de
+thread startte, zat te laat. RankMij zou de volgorde omdraaien: eerste
+zoeken, dan pas betalen.
+
+---
+
+VOORBEELD 5 — WEBSHOP MET TWIJFEL OVER REVIEWS
+Status: ⚠️ Post-betaling (€29,95 lidmaatschap). Pagina open. Letterlijke tekst.
+         Datum 2025. Bevat expliciete observatie over nep-reviews.
+=====================================================================
+
+Link:     https://radar-forum.avrotros.nl/diversen-f1/jouwhuisje-nl-niet-betrouwbaar-t203161.html
+Platform: Radar AVROTROS consumentenforum (subforum Diversen)
+Datum:    20 maart 2025, 18:04
+Gebruiker: EricVerlies
+
+LETTERLIJKE TEKST VAN EERSTE POST:
+------------------------------------
+"Prijzen op hun website staan honderden euro's goedkoper dan de werkelijke
+huurprijs."
+
+STATUS: Post-betaling (poster heeft €29,95 lidmaatschapskosten betaald).
+Andere forumleden voegen later toe over de reviews:
+- Negatieve reviews worden verwijderd of geblokkeerd
+- 5-sterren reviews worden beschermd terwijl ze vermoedelijk nep zijn
+- Bedrijf (Vano Vastgoed Management, Lelystad) opgericht november 2024
+
+WAAROM DIT EEN RANKMIJ-SIGNAAL IS:
+Dit is een dienst waarbij de consument €29,95 betaalt vóór ze iets van waarde
+ontvangen. De signalen die hadden moeten waarschuwen (nep 5-sterren reviews,
+jonge inschrijving, geen reacties na betaling) waren zichtbaar bij navraag op
+onafhankelijke platforms — maar niet op de site zelf. Een RankMij-check had
+de negatieve reviews en de jonge inschrijvingsdatum naar boven gebracht.
+
+---
+
+SAMENVATTING ONDERZOEKSRESULTATEN
+====================================
+
+| # | Categorie         | Voorbeeld                  | Datum        | Pre-betaling? | Pagina open? |
+|---|-------------------|----------------------------|--------------|---------------|--------------|
+| 1 | Aannemer/dakdekker| Tip Top Dak B.V.           | Apr 2024     | ✅ Ja         | ✅ Ja        |
+| 2 | Dropshipping      | Styleria.nl                | Sep 2024     | ⚠️ Grensgeval | ✅ Ja        |
+| 3 | Dure cursus/coach | Niet gevonden (2024-2026)  | n.v.t.       | n.v.t.        | n.v.t.       |
+| 4 | Onbekende webshop | vandermeerutrecht.nl       | Nov 2025     | ⚠️ Post       | ✅ Ja        |
+| 5 | Reviews twijfel   | Jouwhuisje.nl              | Mrt 2025     | ⚠️ Post       | ✅ Ja        |
+
+VERKLARING VOOR ONTBREKENDE PRE-BETALING VOORBEELDEN:
+Pre-betaling twijfel wordt meestal privé uitgedrukt (Google zoeken, vrienden
+vragen), niet publiek op forums. Als het WEL publiek is, zit het op:
+- Reddit (r/oplichting, r/nederland, r/juridischadvies): geblokkeerd voor
+  automatisch crawlen
+- FOK.nl Digital Corner (meest gebruikte plek voor "Is X betrouwbaar?"):
+  geeft 403 Forbidden bij alle paginaopvragen
+- Consumentenbond Community: offline per januari 2024
+
+Handmatig browsen op Reddit en FOK.nl Digital Corner zal de ontbrekende
+categorieën (met name cursus/coach en pre-betaling voor webshops) opleveren.
+
+---
+Opgesteld door Claude Code | Familie-Club2000 project repository | Mei 2026
