@@ -1,0 +1,13 @@
+.gradle/
+build/
+*/build/
+local.properties
+.idea/
+*.iml
+.DS_Store
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Bundled PWA is synced at build time from ../kb30-pwa
+phone/src/main/assets/pwa/

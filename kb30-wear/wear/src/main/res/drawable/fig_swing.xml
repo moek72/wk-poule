@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hip-hinge figure with a kettlebell held low in front (Russian swing, chest height max). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp" android:height="96dp"
+    android:viewportWidth="96" android:viewportHeight="96"
+    android:tint="?android:attr/colorForeground">
+    <path android:fillColor="#000000"
+        android:pathData="M40,18 m-7,0 a7,7 0 1,0 14,0 a7,7 0 1,0 -14,0" />
+    <path android:strokeColor="#000000" android:strokeWidth="5"
+        android:strokeLineCap="round" android:fillColor="#00000000"
+        android:pathData="M44,30 L54,52 M44,34 L60,58 M54,52 L48,84 M54,52 L66,80" />
+    <!-- kettlebell -->
+    <path android:fillColor="#000000"
+        android:pathData="M60,60 m-8,0 a8,8 0 1,0 16,0 a8,8 0 1,0 -16,0" />
+    <path android:strokeColor="#000000" android:strokeWidth="3" android:fillColor="#00000000"
+        android:pathData="M56,58 C56,53 64,53 64,58" />
+</vector>

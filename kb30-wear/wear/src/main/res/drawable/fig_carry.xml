@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Standing figure with weights at both sides (farmer / suitcase carry). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp" android:height="96dp"
+    android:viewportWidth="96" android:viewportHeight="96"
+    android:tint="?android:attr/colorForeground">
+    <path android:fillColor="#000000"
+        android:pathData="M48,16 m-7,0 a7,7 0 1,0 14,0 a7,7 0 1,0 -14,0" />
+    <path android:strokeColor="#000000" android:strokeWidth="5"
+        android:strokeLineCap="round" android:fillColor="#00000000"
+        android:pathData="M48,30 L48,60 M48,34 L34,58 M48,34 L62,58 M48,60 L40,84 M48,60 L56,84" />
+    <path android:fillColor="#000000"
+        android:pathData="M34,64 m-6,0 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0
+                          M62,64 m-6,0 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0" />
+</vector>
